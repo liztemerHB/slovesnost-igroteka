@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажёр: Итоговое собеседование ОГЭ (стр. 323–329)</title>
+  <style>
+    /* ==========================================================================
+       ДИЗАЙН-СИСТЕМА HALLMARK (ANTI-AI-SLOP) & ТОКЕНЫ С УВЕЛИЧЕННЫМ ШРИФТОМ
+       ========================================================================== */
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-soft: #f1f5f9;
+      --bg-surface-elevated: #ffffff;
+      --border-subtle: #e2e8f0;
+      --border-medium: #cbd5e1;
+      --border-strong: #94a3b8;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      
+      --accent-navy: #1e3a8a;
+      --accent-navy-hover: #172554;
+      --accent-blue-soft: #eff6ff;
+      --accent-blue-border: #bfdbfe;
+      
+      --accent-gold: #b45309;
+      --accent-gold-soft: #fef3c7;
+      --accent-gold-border: #fde68a;
+      
+      --success: #047857;
+      --success-soft: #ecfdf5;
+      --success-border: #a7f3d0;
+      
+      --error: #b91c1c;
+      --error-soft: #fef2f2;
+      --error-border: #fecaca;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      
+      --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 6px 12px -2px rgba(15, 23, 42, 0.08), 0 3px 6px -3px rgba(15, 23, 42, 0.05);
+      --shadow-lg: 0 12px 20px -4px rgba(15, 23, 42, 0.1), 0 5px 8px -4px rgba(15, 23, 42, 0.05);
+      
+      --font-serif: Georgia, "PT Serif", "Times New Roman", serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: clip;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 18px; /* Увеличенный комфортный базовый шрифт */
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       КОНТЕЙНЕР И ШАПКА
+       ========================================================================== */
+    .app-container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 28px 24px 90px;
+    }
+
+    header.app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 28px;
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-fipi {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--accent-navy);
+      background: var(--accent-blue-soft);
+      border: 1px solid var(--accent-blue-border);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      width: fit-content;
+    }
+
+    h1.app-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-icon {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.15s ease;
+    }
+    .btn-icon:hover {
+      background: var(--bg-surface-soft);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    /* ==========================================================================
+       ИНДИКАТОР ПРОГРЕССА (HUD)
+       ========================================================================== */
+    .hud-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      margin-bottom: 26px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hud-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .hud-modules {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .module-pill {
+      flex: 1;
+      text-align: center;
+      padding: 8px 6px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-soft);
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .module-pill.active {
+      background: var(--accent-navy);
+      color: #ffffff;
+      border-color: var(--accent-navy);
+    }
+
+    .module-pill.completed {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: var(--success-border);
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--bg-surface-soft);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-navy);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ==========================================================================
+       ОСНОВНАЯ КАРТОЧКА
+       ========================================================================== */
+    .trainer-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      padding: 36px 36px 32px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent-navy);
+      margin-bottom: 16px;
+      line-height: 1.35;
+    }
+
+    .card-description {
+      font-size: 19px;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       АККОРДЕОН С ИСХОДНЫМИ МАТЕРИАЛАМИ КИМ
+       ========================================================================== */
+    .kim-accordion {
+      background: var(--bg-surface-soft);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      margin-bottom: 26px;
+      overflow: hidden;
+    }
+
+    .kim-header {
+      padding: 14px 18px;
+      background: #e2e8f0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .kim-body {
+      padding: 20px 22px;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-medium);
+      background: var(--bg-surface);
+      display: none;
+    }
+    .kim-body.open {
+      display: block;
+    }
+
+    .kim-quote {
+      display: block;
+      font-style: italic;
+      border-left: 4px solid var(--accent-navy);
+      padding-left: 14px;
+      margin: 12px 0;
+      color: var(--text-primary);
+      font-size: 16.5px;
+    }
+
+    /* ==========================================================================
+       ВАРИАНТЫ ОТВЕТОВ
+       ========================================================================== */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 16px 22px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: 18px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      line-height: 1.5;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent-navy);
+      background: var(--accent-blue-soft);
+    }
+
+    .option-prefix {
+      font-weight: 700;
+      color: var(--accent-navy);
+      flex-shrink: 0;
+    }
+
+    .option-btn.selected {
+      border-color: var(--accent-navy);
+      background: var(--accent-blue-soft);
+    }
+
+    .option-btn.correct {
+      border-color: var(--success);
+      background: var(--success-soft);
+      color: #064e3b;
+    }
+    .option-btn.correct .option-prefix {
+      color: var(--success);
+    }
+
+    .option-btn.wrong {
+      border-color: var(--error);
+      background: var(--error-soft);
+      color: #7f1d1d;
+    }
+    .option-btn.wrong .option-prefix {
+      color: var(--error);
+    }
+
+    /* Чекбоксы для множественного выбора */
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 15px 20px;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .checkbox-item:hover {
+      background: var(--bg-surface-soft);
+    }
+    .checkbox-item.checked {
+      border-color: var(--accent-navy);
+      background: var(--accent-blue-soft);
+    }
+    .checkbox-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin-top: 3px;
+      accent-color: var(--accent-navy);
+    }
+
+    /* ==========================================================================
+       БЛОК ОБРАТНОЙ СВЯЗИ
+       ========================================================================== */
+    .feedback-box {
+      border-radius: var(--radius-md);
+      padding: 18px 24px;
+      margin-top: 22px;
+      margin-bottom: 26px;
+      font-size: 17px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .feedback-box.success {
+      background: var(--success-soft);
+      border: 1px solid var(--success-border);
+      color: #065f46;
+    }
+
+    .feedback-box.error {
+      background: var(--error-soft);
+      border: 1px solid var(--error-border);
+      color: #991b1b;
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feedback-quote {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: var(--radius-sm);
+      font-size: 15.5px;
+      border-left: 4px solid currentColor;
+    }
+
+    /* ==========================================================================
+       КНОПКИ ДЕЙСТВИЙ
+       ========================================================================== */
+    .action-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .btn-primary {
+      background: var(--accent-navy);
+      color: #ffffff;
+      border: 1px solid var(--accent-navy);
+      border-radius: var(--radius-md);
+      padding: 14px 28px;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-navy-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 14px 24px;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary:hover {
+      background: var(--bg-surface-soft);
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       ИНТЕРАКТИВНЫЕ МЕХАНИКИ МОДУЛЯ 2 (MATCHING, КОНСТРУКТОР, КОРЗИНЫ)
+       ========================================================================== */
+    .matching-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .matching-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .matching-header {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .match-slot {
+      min-height: 64px;
+      padding: 12px 16px;
+      background: var(--bg-surface-soft);
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .match-slot.has-item {
+      border-style: solid;
+      border-color: var(--accent-navy);
+      background: var(--accent-blue-soft);
+    }
+
+    .match-slot.is-targeted {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold-soft);
+    }
+
+    .chip-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 16px;
+      background: var(--bg-surface-soft);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-top: 16px;
+    }
+
+    .interactive-chip {
+      padding: 10px 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .interactive-chip:hover {
+      border-color: var(--accent-navy);
+      transform: translateY(-1px);
+    }
+
+    .interactive-chip.is-selected {
+      border-color: var(--accent-navy);
+      background: var(--accent-navy);
+      color: #ffffff;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .interactive-chip.placed {
+      opacity: 0.6;
+      background: #f1f5f9;
+      border-color: var(--border-medium);
+      cursor: pointer;
+      box-shadow: none;
+    }
+
+    /* Конструктор числительных (2.2) */
+    .constructor-target {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .target-slot {
+      min-height: 68px;
+      background: var(--bg-surface-soft);
+      border: 2px dashed var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .target-slot.is-empty {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .target-slot.filled {
+      border-style: solid;
+      border-color: var(--accent-navy);
+      background: var(--accent-blue-soft);
+      color: var(--accent-navy);
+    }
+
+    /* 3 корзины сортировки (2.4) */
+    .baskets-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .basket-box {
+      background: var(--bg-surface-soft);
+      border: 2px dashed var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .basket-box.is-targeted {
+      border-color: var(--accent-gold);
+      background: var(--accent-gold-soft);
+    }
+
+    .basket-title {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      text-align: center;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .basket-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .basket-box.trap-basket {
+      border-color: #fca5a5;
+      background: #fff5f5;
+    }
+    .basket-box.trap-basket .basket-title {
+      color: #991b1b;
+      border-bottom-color: #fecaca;
+    }
+
+    /* ==========================================================================
+       ЭКРАН ДИПЛОМА И ПЕЧАТИ
+       ========================================================================== */
+    .diploma-wrapper {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .certificate-card {
+      border: 4px double var(--accent-gold);
+      background: #fffdfa;
+      border-radius: var(--radius-lg);
+      padding: 44px 36px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .cert-heading {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      color: var(--accent-navy);
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .cert-subheading {
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-bottom: 26px;
+    }
+
+    .student-name-input {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      text-align: center;
+      border: none;
+      border-bottom: 2px solid var(--accent-navy);
+      background: transparent;
+      padding: 8px 14px;
+      width: 80%;
+      max-width: 440px;
+      margin-bottom: 22px;
+      outline: none;
+      color: var(--text-primary);
+    }
+    .student-name-input:focus {
+      border-bottom-color: var(--accent-gold);
+    }
+
+    .cert-score-banner {
+      display: inline-block;
+      background: var(--accent-blue-soft);
+      border: 1px solid var(--accent-blue-border);
+      padding: 10px 24px;
+      border-radius: 9999px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-navy);
+      margin-bottom: 26px;
+    }
+
+    .cert-seal-container {
+      margin: 22px auto;
+      width: 150px;
+      height: 150px;
+      position: relative;
+    }
+
+    .seal-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+    }
+
+    .cheat-sheet-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      text-align: left;
+      font-size: 16.5px;
+      line-height: 1.65;
+      margin-bottom: 26px;
+    }
+    .cheat-sheet-card h3 {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      color: var(--accent-navy);
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+    }
+    .cheat-sheet-card ul {
+      padding-left: 24px;
+      margin-bottom: 14px;
+    }
+    .cheat-sheet-card li {
+      margin-bottom: 8px;
+    }
+
+    /* ==========================================================================
+       АДАПТИВНОСТЬ
+       ========================================================================== */
+    @media (max-width: 640px) {
+      html, body {
+        font-size: 17px;
+      }
+      .app-container {
+        padding: 16px 14px 60px;
+      }
+      .trainer-card {
+        padding: 22px 18px;
+      }
+      .matching-container {
+        grid-template-columns: 1fr;
+      }
+      .constructor-target {
+        grid-template-columns: 1fr 1fr;
+      }
+      .baskets-container {
+        grid-template-columns: 1fr;
+      }
+      .basket-box {
+        min-height: 130px;
+      }
+      .certificate-card {
+        padding: 26px 18px;
+      }
+      .cert-heading {
+        font-size: 24px;
+      }
+    }
+
+    /* ==========================================================================
+       СТИЛИ ПЕЧАТИ (@media print)
+       ========================================================================== */
+    @media print {
+      body {
+        background: #ffffff;
+        font-size: 15px;
+      }
+      header.app-header,
+      .hud-card,
+      .action-row,
+      .btn-icon,
+      .header-controls {
+        display: none !important;
+      }
+      .app-container {
+        max-width: 100%;
+        padding: 0;
+      }
+      .certificate-card {
+        box-shadow: none;
+        border: 2px solid #000000;
+        page-break-after: always;
+      }
+      .cheat-sheet-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ШАПКА -->
+  <header class="app-header">
+    <div class="brand-meta">
+      <span class="badge-fipi">Практикум ОГЭ • стр. 323–329</span>
+      <h1 class="app-title">Итоговое собеседование: Глубинный тренажёр</h1>
+    </div>
+    <div class="header-controls">
+      <button class="btn-icon" id="soundToggleBtn" title="Включить/выключить звук" aria-label="Звук">🔊</button>
+      <button class="btn-icon" id="resetBtn" title="Начать заново" aria-label="Сброс">🔄</button>
+    </div>
+  </header>
+
+  <!-- HUD & ПРОГРЕСС -->
+  <div class="hud-card">
+    <div class="hud-modules">
+      <div class="module-pill active" id="modPill1">Модуль 1</div>
+      <div class="module-pill" id="modPill2">Модуль 2</div>
+      <div class="module-pill" id="modPill3">Модуль 3</div>
+    </div>
+    <div class="hud-stats">
+      <span id="hudStep">Задание 1 из 11</span>
+      <span id="hudScore">Баллы: 0 / 14</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- КАРТОЧКА ЗАДАНИЯ -->
+  <main class="trainer-card" id="trainerCard">
+    <!-- Заполняется динамически -->
+  </main>
+
+</div>
+
+<script>
+/* ==========================================================================
+   АУДИО-СИНТЕЗАТОР (WEB AUDIO API)
+   ========================================================================== */
+class SoundEngine {
+  constructor() {
+    this.audioCtx = null;
+    this.muted = false;
+  }
+  init() {
+    if (!this.audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioCtx = new AudioContext();
+    }
+  }
+  playClick() {
+    if (this.muted) return;
+    this.init();
+    try {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, this.audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.04, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.06);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.06);
+    } catch(e) {}
+  }
+  playSuccess() {
+    if (this.muted) return;
+    this.init();
+    try {
+      const notes = [523.25, 659.25, 783.99]; // До-Ми-Соль
+      notes.forEach((freq, idx) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime + idx * 0.08);
+        gain.gain.setValueAtTime(0.06, this.audioCtx.currentTime + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + idx * 0.08 + 0.25);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(this.audioCtx.currentTime + idx * 0.08);
+        osc.stop(this.audioCtx.currentTime + idx * 0.08 + 0.25);
+      });
+    } catch(e) {}
+  }
+  playError() {
+    if (this.muted) return;
+    this.init();
+    try {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(196, this.audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.22);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.22);
+    } catch(e) {}
+  }
+}
+
+const sounds = new SoundEngine();
+document.getElementById('soundToggleBtn').addEventListener('click', function() {
+  sounds.muted = !sounds.muted;
+  this.textContent = sounds.muted ? '🔇' : '🔊';
+  this.title = sounds.muted ? 'Включить звук' : 'Выключить звук';
+});
+
+/* ==========================================================================
+   ДАННЫЕ ЗАДАНИЙ (СТРОГО: Модуль X, Вопрос X.X / Задание X.X)
+   ========================================================================== */
+const RAW_TASKS = [
+  // --- МОДУЛЬ 1: РЕГЛАМЕНТ И СКРЫТЫЕ ЛОВУШКИ (5 БАЛЛОВ) ---
+  {
+    module: 1,
+    type: 'single',
+    points: 1,
+    title: 'Модуль 1. Вопрос 1.1',
+    description: 'Что происходит с исходным текстом после того, как ученик закончил выразительное чтение вслух (Задание 1) и переходит к беседе (Задание 2)?',
+    options: [
+      { text: 'Текст остаётся перед учеником на столе до конца экзамена', correct: false },
+      { text: 'Собеседник забирает исходный текст, отвечать нужно по памяти и пометкам', correct: true },
+      { text: 'Текст разрешают просматривать только в течение 10 секунд на вопрос', correct: false },
+      { text: 'Собеседник закрывает текст только при ответе на вопрос № 5', correct: false }
+    ],
+    quote: 'Страница 327, пункт 3: «Собеседник забирает исходный текст». Именно поэтому поле для заметок во время 5-минутной подготовки — критический инструмент!'
+  },
+  {
+    module: 1,
+    type: 'single',
+    points: 1,
+    title: 'Модуль 1. Вопрос 1.2',
+    description: 'Сколько минут выделяется непосредственно на подготовку к Заданию 2 (беседа по тексту) ПОСЛЕ завершения чтения вслух?',
+    options: [
+      { text: 'Ровно 2 минуты', correct: false },
+      { text: 'Ровно 1 минута', correct: false },
+      { text: '0 минут (отдельного времени нет)', correct: true },
+      { text: 'Ровно 3 минуты', correct: false }
+    ],
+    quote: 'Страница 323, 327: «Подготовка к чтению и беседе по тексту составляет 5 минут (на оба задания)». Отдельного времени перед вопросами нет!'
+  },
+  {
+    module: 1,
+    type: 'single',
+    points: 1,
+    title: 'Модуль 1. Вопрос 1.3',
+    description: 'В тексте встретилось сложное имя (например: Валерий Абисалович Ге́ргиев, Мариинский театр), в самом тексте ударения нет. Где ученик может гарантированно увидеть правильное ударение?',
+    options: [
+      { text: 'Непосредственно в формулировке условия задания перед текстом', correct: true },
+      { text: 'В сносках под текстом на последней странице бланка', correct: false },
+      { text: 'Ударения в именах собственных никогда не указываются в КИМ', correct: false },
+      { text: 'Спросить у экзаменатора-собеседника прямо во время чтения', correct: false }
+    ],
+    quote: 'Страница 324, пункт 2: «В условии задания прочитай, как правильно произнести имя, фамилию и отчество... В задании будет стоять ударение, а в тексте его может не быть».'
+  },
+  {
+    module: 1,
+    type: 'single',
+    points: 1,
+    title: 'Модуль 1. Вопрос 1.4',
+    description: 'Вопрос № 5 содержит цитату и требует анализа и аргументации примерами из текста. Какова правильная стратегия работы с ним согласно методичке?',
+    options: [
+      { text: 'Продумать тезисы заранее во время общих 5 минут подготовки', correct: true },
+      { text: 'Дождаться, пока собеседник озвучит вопрос после чтения текста', correct: false },
+      { text: 'Зачитать цитату вслух без собственных комментариев и аргументов', correct: false },
+      { text: 'Отвечать строго общими фразами, не упоминая факты из текста', correct: false }
+    ],
+    quote: 'Страницы 327-328: «К ответу на вопрос 5 ученик должен подготовиться заранее (этот вопрос будет содержаться в материалах к заданию 2)». Текст заберут, поэтому заготовки аргументов пишут в черновик!'
+  },
+  {
+    module: 1,
+    type: 'multiple',
+    points: 1,
+    title: 'Модуль 1. Вопрос 1.5',
+    description: 'В тексте встретилось предложение: «Экспедиция отправилась в плавание в 1501 году». Отметьте ВСЕ ОШИБОЧНЫЕ (недопустимые) варианты прочтения этой даты:',
+    checkboxes: [
+      { id: 'optA', text: '«В тысяча пятьсот первом году»', isError: false },
+      { id: 'optB', text: '«В одна тысяча пятьсот первом году» (лишнее слово)', isError: true },
+      { id: 'optC', text: '«В тысяча пятисотом первом году» (склонение двух сотен)', isError: true },
+      { id: 'optD', text: '«В тыща пятьсот первом году» (просторечие)', isError: true }
+    ],
+    quote: 'Страница 324: Ошибки чтения числительных: «Одна тысяча пятьсот первый год... Верно: тысяча...» и «Тыща... Верно: тысяча».'
+  },
+
+  // --- МОДУЛЬ 2: ЛАБОРАТОРИЯ ЧИСЛИТЕЛЬНЫХ (5 БАЛЛОВ) ---
+  {
+    module: 2,
+    type: 'matching_notes',
+    points: 1,
+    title: 'Модуль 2. Задание 2.1',
+    description: 'Сопоставьте падеж с правильной формой числительного, используя проверочное слово «ноты». Кликните сначала на падеж слева, затем на подходящую плашку из банка справа (в банке есть ловушки!):',
+    slots: [
+      { id: 's1', label: 'Творительный (чем?) → пятью нотАМИ', targetText: 'пятьюстами' },
+      { id: 's2', label: 'Родительный (чего?) → семи нот', targetText: 'семисот' },
+      { id: 's3', label: 'Дательный (чему?) → двум нотАМ', targetText: 'двумстам' },
+      { id: 's4', label: 'Предложный (о чём?) → о двух нотАХ', targetText: 'о двухстах' }
+    ],
+    bank: ['пятьюстами', 'семисот', 'двумстам', 'о двухстах', 'пятистами', 'двухстами', 'семистами'],
+    quote: 'Страницы 325: «ДВЕСТИ, ТРИСТА, ЧЕТЫРЕСТА, ПЯТЬСОТ... Склоняются обе части как НОТЫ. Например: Тв.п. пятью нотами — пятьюстами! Формы пятистами в литературном языке нет».'
+  },
+  {
+    module: 2,
+    type: 'numeral_constructor',
+    points: 1,
+    title: 'Модуль 2. Задание 2.2',
+    description: 'Соберите грамматически верную форму для фразы: «Книга с 2 573 иллюстрациями» (Творительный падеж). Помните: в составных количественных числительных изменяется КАЖДОЕ слово! Кликайте по плашкам для вставки в слоты:',
+    expected: ['двумя тысячами', 'пятьюстами', 'семьюдесятью', 'тремя'],
+    chips: [
+      'двумя тысячами', 'двух тысячами',
+      'пятьюстами', 'пятистами',
+      'семьюдесятью', 'семидесятью',
+      'тремя', 'троими'
+    ],
+    quote: 'Страница 326: «При склонении составных числительных, обозначающих целые числа, изменяется каждое слово: двумя тысячами пятьюстами семьюдесятью тремя».'
+  },
+  {
+    module: 2,
+    type: 'single',
+    points: 1,
+    title: 'Модуль 2. Задание 2.3',
+    description: 'Ученику нужно найти: «Кабинет № 204». К какому кабинету нужно подойти?',
+    options: [
+      { text: 'К двумстам четвёртому кабинету', correct: false },
+      { text: 'К двухсот четвёртому кабинету', correct: false },
+      { text: 'К двести четвёртому кабинету', correct: true },
+      { text: 'К двухста четвёртому кабинету', correct: false }
+    ],
+    quote: 'Страница 326: «При склонении составных порядковых числительных (отвечают на вопрос КОТОРЫЙ?) изменяется только последнее слово: к двести четвёртому кабинету».'
+  },
+  {
+    module: 2,
+    type: 'baskets_sorting',
+    points: 2,
+    title: 'Модуль 2. Задание 2.4',
+    description: 'Распределите 5 карточек по трём корзинам. Внимание: среди карточек спрятана опасная грамматическая ловушка (несуществующее слово)! Кликните на карточку, затем на корзину (если передумали — кликните на карточку в корзине, чтобы вернуть её, или выберите для неё другую корзину):',
+    baskets: [
+      { id: 'b_nom', name: 'Им. и Вин. падежи', desc: 'Формы: полтора, полторы, полтораста' },
+      { id: 'b_obl', name: 'Косвенные падежи (Р, Д, Т, П)', desc: 'Формы с полу-: полутора, полутораста' },
+      { id: 'b_trap', name: '🗑️ Ловушка: ошибка!', desc: 'Несуществующая в языке форма' }
+    ],
+    items: [
+      { id: 'it1', text: 'вижу полторы недели', targetBasket: 'b_nom' },
+      { id: 'it2', text: 'купил полтораста тетрадей', targetBasket: 'b_nom' },
+      { id: 'it3', text: 'около полутора дней', targetBasket: 'b_obl' },
+      { id: 'it4', text: 'рад полутораста рублям', targetBasket: 'b_obl' },
+      { id: 'it5', text: 'с полуторастами рублями', targetBasket: 'b_trap' }
+    ],
+    quote: 'Страница 327: «Числительные полтора, полторы, полтораста имеют только две формы: в Им./Вин. — полтора/полторы/полтораста, во всех остальных — полутора, полутораста. Формы "полуторастами" НЕ СУЩЕСТВУЕТ!»'
+  },
+
+  // --- МОДУЛЬ 3: ЭКСПЕРТИЗА ОТВЕТА (4 БАЛЛА) ---
+  {
+    module: 3,
+    type: 'matching_criteria',
+    points: 1,
+    title: 'Модуль 3. Задание 3.1',
+    description: 'Сопоставьте нормативный термин критерия оценивания из пособия со строгим определением эксперта. Кликните на термин слева, затем на формулировку справа:',
+    terms: [
+      { id: 't1', name: 'Развёрнутый ответ', targetDef: 'd1' },
+      { id: 't2', name: 'Правильный ответ', targetDef: 'd2' },
+      { id: 't3', name: 'Полный ответ', targetDef: 'd3' }
+    ],
+    definitions: [
+      { id: 'd1', text: 'Связное высказывание из не менее чем одного завершённого предложения, включающего часть вопроса собеседника.' },
+      { id: 'd2', text: 'Ответ, в котором отсутствуют какие-либо фактические ошибки, искажения текста или ответ на другой вопрос.' },
+      { id: 'd3', text: 'Ответ, в котором представлена исчерпывающая информация из исходного текста.' }
+    ],
+    quote: 'Страница 328: Сводная таблица требований: развёрнутый, правильный и полный ответ.'
+  },
+  {
+    module: 3,
+    type: 'expert_cases',
+    points: 3,
+    title: 'Модуль 3. Задание 3.2',
+    description: 'Перед вами реальные реплики учеников по тексту о Валерии Гергиеве. Ознакомьтесь с выдержкой из КИМ и вынесите вердикт эксперта: зачтут ли ответ (1 балл) или ученик получит 0 баллов?',
+    kimText: `<strong>Фрагмент исходного текста КИМ:</strong><br>
+Валерий Абисалович Ге́ргиев вырос в Северной Осетии. Более 30 лет он служит бессменным художественным руководителем Мариинского театра в Санкт-Петербурге. В 2008 году выступил с концертом в память о жертвах в Цхинвале, в 2014 году дирижировал на открытии и закрытии зимних Олимпийских игр в Сочи, в 2016 году — в Сирии.<br>
+<span class="kim-quote">Цитата Д.А. Хворостовского: «Гергиев — это наша гордость, наше достоинство. Я считаю, он настоящий герой».</span>`,
+    cases: [
+      {
+        question: 'Вопрос экзаменатора: «Где вырос Валерий Абисалович Гергиев?»',
+        answer: 'Ответ ученика: «В Осетии».',
+        correctVerdict: '0',
+        explanation: '0 баллов! Страница 329: Односложный ответ. Нарушено требование к связному развёрнутому предложению с включением части вопроса («Валерий Гергиев вырос в Северной Осетии»).'
+      },
+      {
+        question: 'Вопрос экзаменатора: «В каких торжественных мероприятиях Валерий Гергиев выступал как дирижёр?»',
+        answer: 'Ответ ученика: «Он дирижировал на церемонии закрытия Олимпиады в Париже и на чемпионате мира по футболу».',
+        correctVerdict: '0',
+        explanation: '0 баллов! Страница 328-329: Грубая фактическая ошибка и искажение фактов текста КИМ (в тексте указаны Сочи-2014, Цхинвал-2008, Сирия-2016).'
+      },
+      {
+        question: 'Вопрос 5: «Какой вклад Гергиева в культуру отражён в словах Хворостовского? Обоснуйте примером из текста».',
+        answer: 'Ответ ученика: «Я согласен с Хворостовским, Гергиев замечательный дирижёр и настоящий герой».',
+        correctVerdict: '0',
+        explanation: '0 баллов! Страница 328-329: Ответ неполный. Цитата не проанализирована, конкретные примеры из текста КИМ (30 лет во главе Мариинского, поддержка молодых талантов) не приведены.'
+      }
+    ]
+  }
+];
+
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ==========================================================================
+   STATE MACHINE
+   ========================================================================== */
+class TrainerApp {
+  constructor() {
+    this.tasks = [];
+    this.currentIndex = 0;
+    this.totalScore = 0;
+    this.interactiveState = {};
+    this.initData();
+  }
+
+  initData() {
+    this.tasks = RAW_TASKS.map(task => {
+      const t = JSON.parse(JSON.stringify(task));
+      if (t.type === 'single') {
+        t.options = shuffle(t.options);
+      } else if (t.type === 'matching_notes') {
+        t.bank = shuffle(t.bank);
+      } else if (t.type === 'numeral_constructor') {
+        t.chips = shuffle(t.chips);
+      } else if (t.type === 'baskets_sorting') {
+        t.items = shuffle(t.items);
+      }
+      return t;
+    });
+    this.currentIndex = 0;
+    this.totalScore = 0;
+  }
+
+  renderCurrentTask() {
+    const card = document.getElementById('trainerCard');
+    if (this.currentIndex >= this.tasks.length) {
+      this.renderDiploma();
+      return;
+    }
+
+    const task = this.tasks[this.currentIndex];
+    this.updateHUD();
+
+    let html = `
+      <h2 class="card-title">${task.title}</h2>
+      <p class="card-description">${task.description}</p>
+    `;
+
+    if (task.type === 'single') {
+      html += this.renderSingleChoice(task);
+    } else if (task.type === 'multiple') {
+      html += this.renderMultipleChoice(task);
+    } else if (task.type === 'matching_notes') {
+      html += this.renderMatchingNotes(task);
+    } else if (task.type === 'numeral_constructor') {
+      html += this.renderNumeralConstructor(task);
+    } else if (task.type === 'baskets_sorting') {
+      html += this.renderBasketsSorting(task);
+    } else if (task.type === 'matching_criteria') {
+      html += this.renderMatchingCriteria(task);
+    } else if (task.type === 'expert_cases') {
+      html += this.renderExpertCases(task);
+    }
+
+    card.innerHTML = html;
+    this.attachTaskEvents(task);
+  }
+
+  updateHUD() {
+    const task = this.tasks[this.currentIndex];
+    const total = this.tasks.length;
+    document.getElementById('hudStep').textContent = `Задание ${this.currentIndex + 1} из ${total}`;
+    document.getElementById('hudScore').textContent = `Баллы: ${this.totalScore} / 14`;
+    const progressPct = ((this.currentIndex) / total) * 100;
+    document.getElementById('progressBar').style.width = `${progressPct}%`;
+
+    const mod = task.module;
+    document.getElementById('modPill1').className = `module-pill ${mod === 1 ? 'active' : (mod > 1 ? 'completed' : '')}`;
+    document.getElementById('modPill2').className = `module-pill ${mod === 2 ? 'active' : (mod > 2 ? 'completed' : '')}`;
+    document.getElementById('modPill3').className = `module-pill ${mod === 3 ? 'active' : ''}`;
+  }
+
+  /* 1. SINGLE CHOICE */
+  renderSingleChoice(task) {
+    const prefixes = ['А', 'Б', 'В', 'Г'];
+    let opts = task.options.map((opt, idx) => `
+      <button class="option-btn" data-index="${idx}">
+        <span class="option-prefix">${prefixes[idx]})</span>
+        <span>${opt.text}</span>
+      </button>
+    `).join('');
+
+    return `
+      <div class="options-grid" id="singleOptions">${opts}</div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="nextBtn" style="display:none;">Следующее задание →</button>
+      </div>
+    `;
+  }
+
+  attachSingleEvents(task) {
+    const btns = document.querySelectorAll('#singleOptions .option-btn');
+    const fBox = document.getElementById('feedbackBox');
+    const nextBtn = document.getElementById('nextBtn');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sounds.playClick();
+        const idx = parseInt(btn.dataset.index);
+        const isCorrect = task.options[idx].correct;
+
+        btns.forEach((b, i) => {
+          b.disabled = true;
+          if (task.options[i].correct) b.classList.add('correct');
+        });
+
+        if (isCorrect) {
+          sounds.playSuccess();
+          btn.classList.add('correct');
+          this.totalScore += task.points;
+          fBox.className = 'feedback-box success show';
+          fBox.innerHTML = `
+            <div class="feedback-title">✓ Абсолютно верно! (+${task.points} балл)</div>
+            <div class="feedback-quote">${task.quote}</div>
+          `;
+        } else {
+          sounds.playError();
+          btn.classList.add('wrong');
+          fBox.className = 'feedback-box error show';
+          fBox.innerHTML = `
+            <div class="feedback-title">✕ Ошибка! Внимание к деталям:</div>
+            <div class="feedback-quote">${task.quote}</div>
+          `;
+        }
+
+        this.updateHUD();
+        nextBtn.style.display = 'inline-flex';
+      });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  /* 2. MULTIPLE CHOICE */
+  renderMultipleChoice(task) {
+    let list = task.checkboxes.map(cb => `
+      <label class="checkbox-item" id="item_${cb.id}">
+        <input type="checkbox" data-id="${cb.id}">
+        <span>${cb.text}</span>
+      </label>
+    `).join('');
+
+    return `
+      <div class="options-grid" id="cbList">${list}</div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="checkMultiBtn">Проверить ответ</button>
+        <button class="btn-primary" id="nextBtn" style="display:none;">Следующее задание →</button>
+      </div>
+    `;
+  }
+
+  attachMultipleEvents(task) {
+    const checkBtn = document.getElementById('checkMultiBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const fBox = document.getElementById('feedbackBox');
+    const items = document.querySelectorAll('#cbList input[type="checkbox"]');
+
+    items.forEach(inp => {
+      inp.addEventListener('change', () => {
+        sounds.playClick();
+        inp.closest('.checkbox-item').classList.toggle('checked', inp.checked);
+      });
+    });
+
+    checkBtn.addEventListener('click', () => {
+      let allCorrect = true;
+      task.checkboxes.forEach(cb => {
+        const inp = document.querySelector(`input[data-id="${cb.id}"]`);
+        if (inp.checked !== cb.isError) allCorrect = false;
+      });
+
+      items.forEach(inp => inp.disabled = true);
+      checkBtn.style.display = 'none';
+
+      if (allCorrect) {
+        sounds.playSuccess();
+        this.totalScore += task.points;
+        fBox.className = 'feedback-box success show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✓ Безупречно! (+${task.points} балл)</div>
+          <div>Вы точно выявили все 3 типичные речевые ошибки из пособия. Форма «В тысяча пятьсот первом» является нормативной.</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      } else {
+        sounds.playError();
+        fBox.className = 'feedback-box error show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✕ Не все ошибки найдены!</div>
+          <div>Ошибками являются варианты Б («одна тысяча...»), В (склонение двух сотен подряд) и Г («тыща»). Норма — «В тысяча пятьсот первом году».</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      }
+
+      this.updateHUD();
+      nextBtn.style.display = 'inline-flex';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  /* 3. MATCHING NOTES */
+  renderMatchingNotes(task) {
+    this.interactiveState = { matches: {} };
+
+    let slotsHtml = task.slots.map(s => `
+      <div class="match-slot" data-slot-id="${s.id}">
+        <strong>${s.label}</strong>
+        <span class="slot-val" style="color:var(--accent-navy); font-weight:700; margin-top:4px;">[ Нажмите для выбора ]</span>
+      </div>
+    `).join('');
+
+    let bankHtml = task.bank.map(chip => `
+      <button class="interactive-chip" data-chip="${chip}">${chip}</button>
+    `).join('');
+
+    return `
+      <div class="matching-container">
+        <div class="matching-col">
+          <div class="matching-header">Падеж и проверочная «нота»:</div>
+          ${slotsHtml}
+        </div>
+        <div class="matching-col">
+          <div class="matching-header">Банк числительных:</div>
+          <div class="chip-bank" id="chipBank">${bankHtml}</div>
+        </div>
+      </div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="checkMatchingBtn">Проверить сопоставление</button>
+        <button class="btn-primary" id="nextBtn" style="display:none;">Следующее задание →</button>
+      </div>
+    `;
+  }
+
+  attachMatchingNotesEvents(task) {
+    const slots = document.querySelectorAll('.match-slot');
+    const chips = document.querySelectorAll('#chipBank .interactive-chip');
+    const checkBtn = document.getElementById('checkMatchingBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const fBox = document.getElementById('feedbackBox');
+
+    let activeSlotId = null;
+
+    slots.forEach(slot => {
+      slot.addEventListener('click', () => {
+        sounds.playClick();
+        slots.forEach(s => s.classList.remove('is-targeted'));
+        activeSlotId = slot.dataset.slotId;
+        slot.classList.add('is-targeted');
+      });
+    });
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        sounds.playClick();
+        const text = chip.dataset.chip;
+        if (!activeSlotId) {
+          const firstEmpty = task.slots.find(s => !this.interactiveState.matches[s.id]);
+          if (firstEmpty) activeSlotId = firstEmpty.id;
+          else return;
+        }
+
+        for (let sId in this.interactiveState.matches) {
+          if (this.interactiveState.matches[sId] === text) {
+            delete this.interactiveState.matches[sId];
+            const oldSlot = document.querySelector(`.match-slot[data-slot-id="${sId}"]`);
+            oldSlot.querySelector('.slot-val').textContent = '[ Нажмите для выбора ]';
+            oldSlot.classList.remove('has-item');
+          }
+        }
+
+        this.interactiveState.matches[activeSlotId] = text;
+        const targetSlot = document.querySelector(`.match-slot[data-slot-id="${activeSlotId}"]`);
+        targetSlot.querySelector('.slot-val').textContent = text;
+        targetSlot.classList.add('has-item');
+        targetSlot.classList.remove('is-targeted');
+
+        chips.forEach(c => {
+          const isPlaced = Object.values(this.interactiveState.matches).includes(c.dataset.chip);
+          c.classList.toggle('placed', isPlaced);
+        });
+
+        activeSlotId = null;
+      });
+    });
+
+    checkBtn.addEventListener('click', () => {
+      let isAllCorrect = true;
+      task.slots.forEach(s => {
+        if (this.interactiveState.matches[s.id] !== s.targetText) isAllCorrect = false;
+      });
+
+      checkBtn.style.display = 'none';
+      slots.forEach(s => s.style.pointerEvents = 'none');
+      chips.forEach(c => c.disabled = true);
+
+      if (isAllCorrect) {
+        sounds.playSuccess();
+        this.totalScore += task.points;
+        fBox.className = 'feedback-box success show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✓ Идеально! (+${task.points} балл)</div>
+          <div>Правило «нот» сработало безошибочно: пятью нотАМИ — пятьюстАМИ; семи нот — семисОт; двум нотАМ — двумстАМ; о двух нотАХ — о двухстАХ!</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      } else {
+        sounds.playError();
+        fBox.className = 'feedback-box error show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✕ Допущены ошибки в формах!</div>
+          <div>Помните: формы <em>«пятистами»</em> и <em>«двухстами»</em> являются ложными! Проверяйте окончания словом «ноты».</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      }
+
+      this.updateHUD();
+      nextBtn.style.display = 'inline-flex';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  /* 4. NUMERAL CONSTRUCTOR */
+  renderNumeralConstructor(task) {
+    this.interactiveState = { slots: [null, null, null, null] };
+
+    let targetSlotsHtml = [0, 1, 2, 3].map(i => `
+      <div class="target-slot is-empty" data-slot-index="${i}">
+        <span>[ Слово ${i + 1} ]</span>
+      </div>
+    `).join('');
+
+    let chipsHtml = task.chips.map(chip => `
+      <button class="interactive-chip" data-chip="${chip}">${chip}</button>
+    `).join('');
+
+    return `
+      <div class="constructor-target" id="constructorSlots">${targetSlotsHtml}</div>
+      <div class="matching-header">Банк слов (клик — вставка, клик по слоту — возврат):</div>
+      <div class="chip-bank" id="constructorBank">${chipsHtml}</div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="checkConstructorBtn">Проверить сборку</button>
+        <button class="btn-primary" id="nextBtn" style="display:none;">Следующее задание →</button>
+      </div>
+    `;
+  }
+
+  attachConstructorEvents(task) {
+    const slots = document.querySelectorAll('#constructorSlots .target-slot');
+    const chips = document.querySelectorAll('#constructorBank .interactive-chip');
+    const checkBtn = document.getElementById('checkConstructorBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const fBox = document.getElementById('feedbackBox');
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        sounds.playClick();
+        const text = chip.dataset.chip;
+        if (chip.classList.contains('placed')) return;
+
+        const emptyIdx = this.interactiveState.slots.findIndex(s => s === null);
+        if (emptyIdx === -1) return;
+
+        this.interactiveState.slots[emptyIdx] = text;
+        const slotEl = slots[emptyIdx];
+        slotEl.innerHTML = `<span>${text}</span>`;
+        slotEl.className = 'target-slot filled';
+        chip.classList.add('placed');
+      });
+    });
+
+    slots.forEach(slot => {
+      slot.addEventListener('click', () => {
+        const idx = parseInt(slot.dataset.slotIndex);
+        const text = this.interactiveState.slots[idx];
+        if (!text) return;
+
+        sounds.playClick();
+        this.interactiveState.slots[idx] = null;
+        slot.innerHTML = `<span>[ Слово ${idx + 1} ]</span>`;
+        slot.className = 'target-slot is-empty';
+
+        chips.forEach(c => {
+          if (c.dataset.chip === text) c.classList.remove('placed');
+        });
+      });
+    });
+
+    checkBtn.addEventListener('click', () => {
+      const isComplete = this.interactiveState.slots.every((s, i) => s === task.expected[i]);
+      checkBtn.style.display = 'none';
+      slots.forEach(s => s.style.pointerEvents = 'none');
+      chips.forEach(c => c.disabled = true);
+
+      if (isComplete) {
+        sounds.playSuccess();
+        this.totalScore += task.points;
+        fBox.className = 'feedback-box success show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✓ Идеально просклоняли каждое слово! (+${task.points} балл)</div>
+          <div>Правильная конструкция: <strong>двумя тысячами пятьюстами семьюдесятью тремя</strong> (иллюстрациями). Вы не попались в ловушки «пятистами» и «троими»!</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      } else {
+        sounds.playError();
+        fBox.className = 'feedback-box error show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✕ Допущена ошибка при склонении!</div>
+          <div>Верно: <strong>двумя тысячами пятьюстами семьюдесятью тремя</strong>. В количественных числительных склоняется абсолютно каждое слово!</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      }
+
+      this.updateHUD();
+      nextBtn.style.display = 'inline-flex';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  /* 5. BASKETS SORTING */
+  renderBasketsSorting(task) {
+    this.interactiveState = { placements: {} };
+
+    let basketsHtml = task.baskets.map(b => `
+      <div class="basket-box ${b.id === 'b_trap' ? 'trap-basket' : ''}" data-basket-id="${b.id}">
+        <div class="basket-title">${b.name}</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px; text-align:center;">${b.desc}</div>
+        <div class="basket-items" id="items_${b.id}"></div>
+      </div>
+    `).join('');
+
+    let chipsHtml = task.items.map(it => `
+      <button class="interactive-chip" data-item-id="${it.id}">${it.text}</button>
+    `).join('');
+
+    return `
+      <div class="baskets-container" id="basketsContainer">${basketsHtml}</div>
+      <div class="matching-header">Карточки для сортировки (клик по карточке, затем по корзине):</div>
+      <div class="chip-bank" id="basketChipsBank">${chipsHtml}</div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="checkBasketsBtn">Проверить корзины</button>
+        <button class="btn-primary" id="nextBtn" style="display:none;">Следующее задание →</button>
+      </div>
+    `;
+  }
+
+  attachBasketsEvents(task) {
+    const chips = document.querySelectorAll('#basketChipsBank .interactive-chip');
+    const baskets = document.querySelectorAll('.basket-box');
+    const checkBtn = document.getElementById('checkBasketsBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const fBox = document.getElementById('feedbackBox');
+
+    let activeItemId = null;
+
+    const selectItem = (itemId) => {
+      // Если кликнули на уже выбранный чип — снимаем выбор
+      if (activeItemId === itemId) {
+        activeItemId = null;
+        chips.forEach(c => c.classList.remove('is-selected'));
+        baskets.forEach(b => b.classList.remove('is-targeted'));
+        return;
+      }
+      sounds.playClick();
+      activeItemId = itemId;
+      chips.forEach(c => {
+        c.classList.toggle('is-selected', c.dataset.itemId === itemId);
+      });
+      baskets.forEach(b => b.classList.add('is-targeted'));
+    };
+
+    const returnItemToBank = (itemId) => {
+      sounds.playClick();
+      delete this.interactiveState.placements[itemId];
+      document.querySelectorAll(`.basket-item-tag[data-item-id="${itemId}"]`).forEach(el => el.remove());
+      const chipEl = document.querySelector(`#basketChipsBank .interactive-chip[data-item-id="${itemId}"]`);
+      if (chipEl) {
+        chipEl.classList.remove('placed');
+        chipEl.classList.remove('is-selected');
+      }
+      if (activeItemId === itemId) {
+        activeItemId = null;
+        baskets.forEach(b => b.classList.remove('is-targeted'));
+      }
+    };
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        selectItem(chip.dataset.itemId);
+      });
+    });
+
+    baskets.forEach(basket => {
+      basket.addEventListener('click', (e) => {
+        // Если клик был по кнопке удаления или тегу внутри корзины, игнорируем клик по самой корзине
+        if (e.target.closest('.tag-close-btn')) return;
+
+        if (!activeItemId) return;
+        sounds.playClick();
+        const bId = basket.dataset.basketId;
+        const itemObj = task.items.find(i => i.id === activeItemId);
+
+        // Удаляем из любой другой корзины, если карточка уже была размещена
+        document.querySelectorAll(`.basket-item-tag[data-item-id="${activeItemId}"]`).forEach(el => el.remove());
+
+        this.interactiveState.placements[activeItemId] = bId;
+
+        const container = basket.querySelector('.basket-items');
+
+        const tag = document.createElement('div');
+        tag.className = 'interactive-chip basket-item-tag';
+        tag.dataset.itemId = activeItemId;
+        tag.style.width = '100%';
+        tag.style.display = 'flex';
+        tag.style.justifyContent = 'space-between';
+        tag.style.alignItems = 'center';
+        tag.style.cursor = 'pointer';
+        tag.style.padding = '8px 12px';
+        tag.title = 'Нажмите, чтобы вернуть или перенести в другую корзину';
+        tag.innerHTML = `
+          <span>${itemObj.text}</span>
+          <span class="tag-close-btn" style="color:var(--error); font-weight:bold; font-size:16px; margin-left:8px; padding:0 4px;" title="Вернуть назад">✕</span>
+        `;
+
+        // Клик по тегу в корзине: если кликнули по ✕ — возвращаем, иначе выделяем для быстрого переноса в другую корзину
+        tag.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          if (ev.target.classList.contains('tag-close-btn')) {
+            returnItemToBank(activeItemId || tag.dataset.itemId);
+          } else {
+            // Клик по самому тегу — можно либо вернуть, либо перенести
+            returnItemToBank(tag.dataset.itemId);
+          }
+        });
+
+        container.appendChild(tag);
+
+        const chipEl = document.querySelector(`#basketChipsBank .interactive-chip[data-item-id="${activeItemId}"]`);
+        chipEl.classList.remove('is-selected');
+        chipEl.classList.add('placed');
+
+        baskets.forEach(b => b.classList.remove('is-targeted'));
+        activeItemId = null;
+      });
+    });
+
+    checkBtn.addEventListener('click', () => {
+      let errorsCount = 0;
+      task.items.forEach(it => {
+        if (this.interactiveState.placements[it.id] !== it.targetBasket) errorsCount++;
+      });
+
+      checkBtn.style.display = 'none';
+      baskets.forEach(b => b.style.pointerEvents = 'none');
+      chips.forEach(c => c.disabled = true);
+
+      let pts = 0;
+      if (errorsCount === 0) pts = 2;
+      else if (errorsCount === 1) pts = 1;
+
+      this.totalScore += pts;
+
+      if (errorsCount === 0) {
+        sounds.playSuccess();
+        fBox.className = 'feedback-box success show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✓ Блестящая сортировка! (+${pts} балла)</div>
+          <div>Вы безошибочно отправили ложную форму «с полуторастами рублями» в корзину с ошибками! В русском языке существуют только две формы: <em>полтора/полторы/полтораста</em> (И.п./В.п.) и <em>полутора/полутораста</em> (косвенные падежи).</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      } else {
+        sounds.playError();
+        fBox.className = 'feedback-box error show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✕ Допущены неточности (+${pts} б.)</div>
+          <div>Помните: слово «полуторастами» — это грамматический фантом (ловушка). Правильно: «с полутораста рублями»!</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      }
+
+      this.updateHUD();
+      nextBtn.style.display = 'inline-flex';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  /* 6. MATCHING CRITERIA */
+  renderMatchingCriteria(task) {
+    this.interactiveState = { pairs: {} };
+
+    let termsHtml = task.terms.map(t => `
+      <div class="match-slot" data-term-id="${t.id}">
+        <strong>${t.name}</strong>
+        <span class="crit-val" style="font-size:14px; color:var(--accent-navy); margin-top:4px;">[ Выберите определение ]</span>
+      </div>
+    `).join('');
+
+    let defsHtml = task.definitions.map(d => `
+      <div class="interactive-chip" data-def-id="${d.id}" style="text-align:left; line-height:1.5; padding:12px 16px;">${d.text}</div>
+    `).join('');
+
+    return `
+      <div class="matching-container">
+        <div class="matching-col">
+          <div class="matching-header">Критерий оценки:</div>
+          ${termsHtml}
+        </div>
+        <div class="matching-col">
+          <div class="matching-header">Определение по пособию (стр. 328):</div>
+          <div style="display:flex; flex-direction:column; gap:10px;" id="critDefs">${defsHtml}</div>
+        </div>
+      </div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="checkCriteriaBtn">Проверить соответствие</button>
+        <button class="btn-primary" id="nextBtn" style="display:none;">Следующее задание →</button>
+      </div>
+    `;
+  }
+
+  attachCriteriaEvents(task) {
+    const termSlots = document.querySelectorAll('.match-slot[data-term-id]');
+    const defChips = document.querySelectorAll('#critDefs .interactive-chip');
+    const checkBtn = document.getElementById('checkCriteriaBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const fBox = document.getElementById('feedbackBox');
+
+    let activeTermId = null;
+
+    termSlots.forEach(slot => {
+      slot.addEventListener('click', () => {
+        sounds.playClick();
+        termSlots.forEach(s => s.classList.remove('is-targeted'));
+        activeTermId = slot.dataset.termId;
+        slot.classList.add('is-targeted');
+      });
+    });
+
+    defChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (!activeTermId) return;
+        sounds.playClick();
+        const defId = chip.dataset.defId;
+
+        this.interactiveState.pairs[activeTermId] = defId;
+        const slotEl = document.querySelector(`.match-slot[data-term-id="${activeTermId}"]`);
+        slotEl.querySelector('.crit-val').textContent = chip.textContent;
+        slotEl.classList.add('has-item');
+        slotEl.classList.remove('is-targeted');
+
+        defChips.forEach(c => {
+          const isMatched = Object.values(this.interactiveState.pairs).includes(c.dataset.defId);
+          c.classList.toggle('placed', isMatched);
+        });
+
+        activeTermId = null;
+      });
+    });
+
+    checkBtn.addEventListener('click', () => {
+      let allCorrect = true;
+      task.terms.forEach(t => {
+        if (this.interactiveState.pairs[t.id] !== t.targetDef) allCorrect = false;
+      });
+
+      checkBtn.style.display = 'none';
+      termSlots.forEach(s => s.style.pointerEvents = 'none');
+      defChips.forEach(c => c.style.pointerEvents = 'none');
+
+      if (allCorrect) {
+        sounds.playSuccess();
+        this.totalScore += task.points;
+        fBox.className = 'feedback-box success show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✓ Точное попадание в терминологию! (+${task.points} балл)</div>
+          <div>Вы четко разграничили <strong>развёрнутый</strong> (структура предложения), <strong>правильный</strong> (фактическая точность) и <strong>полный</strong> (исчерпывающий смысл) ответы.</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      } else {
+        sounds.playError();
+        fBox.className = 'feedback-box error show';
+        fBox.innerHTML = `
+          <div class="feedback-title">✕ Есть несовпадения в критериях!</div>
+          <div>Развёрнутый ответ оценивает грамматическую связность и включение вопроса собеседника, полный — полноту фактов из текста, правильный — отсутствие фактических ошибок.</div>
+          <div class="feedback-quote">${task.quote}</div>
+        `;
+      }
+
+      this.updateHUD();
+      nextBtn.style.display = 'inline-flex';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  /* 7. EXPERT CASES */
+  renderExpertCases(task) {
+    let casesHtml = task.cases.map((cs, idx) => `
+      <div style="background:var(--bg-surface-soft); border:1px solid var(--border-medium); border-radius:var(--radius-md); padding:18px; margin-bottom:16px;">
+        <div style="font-size:15px; font-weight:700; color:var(--accent-navy); margin-bottom:6px;">${cs.question}</div>
+        <div style="font-size:17px; font-style:italic; margin-bottom:14px; color:var(--text-primary);">«${cs.answer}»</div>
+        <div style="display:flex; gap:12px;">
+          <button class="option-btn case-btn" data-case-index="${idx}" data-val="1" style="flex:1; justify-content:center; padding:12px;">
+            <span>✓ Зачесть (1 балл)</span>
+          </button>
+          <button class="option-btn case-btn" data-case-index="${idx}" data-val="0" style="flex:1; justify-content:center; padding:12px;">
+            <span>✕ 0 баллов (не зачтено)</span>
+          </button>
+        </div>
+        <div class="case-expl" id="expl_${idx}" style="display:none; font-size:14.5px; margin-top:12px; padding:10px 14px; border-radius:var(--radius-sm);"></div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="kim-accordion">
+        <div class="kim-header" id="kimToggle">
+          <span>📄 Исходные материалы КИМ (Валерий Гергиев)</span>
+          <span id="kimChevron">▼</span>
+        </div>
+        <div class="kim-body open" id="kimContent">${task.kimText}</div>
+      </div>
+
+      <div id="casesList">${casesHtml}</div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="action-row">
+        <button class="btn-primary" id="finishTrainerBtn" style="display:none;">Получить сертификат и шпаргалку →</button>
+      </div>
+    `;
+  }
+
+  attachExpertEvents(task) {
+    const kimToggle = document.getElementById('kimToggle');
+    const kimContent = document.getElementById('kimContent');
+    const kimChevron = document.getElementById('kimChevron');
+
+    kimToggle.addEventListener('click', () => {
+      kimContent.classList.toggle('open');
+      kimChevron.textContent = kimContent.classList.contains('open') ? '▼' : '►';
+    });
+
+    const caseBtns = document.querySelectorAll('.case-btn');
+    const answeredCases = new Set();
+    let earnedCasesScore = 0;
+
+    caseBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sounds.playClick();
+        const cIdx = parseInt(btn.dataset.caseIndex);
+        const val = btn.dataset.val;
+        const cs = task.cases[cIdx];
+
+        document.querySelectorAll(`.case-btn[data-case-index="${cIdx}"]`).forEach(b => b.disabled = true);
+        answeredCases.add(cIdx);
+
+        const explEl = document.getElementById(`expl_${cIdx}`);
+        explEl.style.display = 'block';
+
+        if (val === cs.correctVerdict) {
+          sounds.playSuccess();
+          btn.classList.add('correct');
+          earnedCasesScore++;
+          explEl.style.background = 'var(--success-soft)';
+          explEl.style.color = '#065f46';
+          explEl.innerHTML = `<strong>Верно!</strong> ${cs.explanation}`;
+        } else {
+          sounds.playError();
+          btn.classList.add('wrong');
+          explEl.style.background = 'var(--error-soft)';
+          explEl.style.color = '#991b1b';
+          explEl.innerHTML = `<strong>Ошибка экспертизы!</strong> ${cs.explanation}`;
+        }
+
+        if (answeredCases.size === task.cases.length) {
+          this.totalScore += earnedCasesScore;
+          this.updateHUD();
+          document.getElementById('finishTrainerBtn').style.display = 'inline-flex';
+        }
+      });
+    });
+
+    document.getElementById('finishTrainerBtn').addEventListener('click', () => {
+      this.currentIndex++;
+      this.renderCurrentTask();
+    });
+  }
+
+  attachTaskEvents(task) {
+    if (task.type === 'single') this.attachSingleEvents(task);
+    else if (task.type === 'multiple') this.attachMultipleEvents(task);
+    else if (task.type === 'matching_notes') this.attachMatchingNotesEvents(task);
+    else if (task.type === 'numeral_constructor') this.attachConstructorEvents(task);
+    else if (task.type === 'baskets_sorting') this.attachBasketsEvents(task);
+    else if (task.type === 'matching_criteria') this.attachCriteriaEvents(task);
+    else if (task.type === 'expert_cases') this.attachExpertEvents(task);
+  }
+
+  /* 8. ЭКРАН ТРИУМФА И ДИПЛОМ */
+  renderDiploma() {
+    sounds.playSuccess();
+    const card = document.getElementById('trainerCard');
+
+    let rankTitle = '';
+    let sealGradient = '';
+
+    if (this.totalScore >= 13) {
+      rankTitle = '🥇 Эксперт высшей категории: Мастер регламента и норм ОГЭ';
+      sealGradient = 'url(#goldGrad)';
+    } else if (this.totalScore >= 10) {
+      rankTitle = '🥈 Сертифицированный знаток критериев ОГЭ';
+      sealGradient = 'url(#silverGrad)';
+    } else {
+      rankTitle = '📜 Кандидат в эксперты (В шаге от максимума)';
+      sealGradient = 'url(#bronzeGrad)';
+    }
+
+    card.innerHTML = `
+      <div class="diploma-wrapper">
+        <div class="certificate-card">
+          <div class="cert-heading">СЕРТИФИКАТ ЭКСПЕРТА</div>
+          <div class="cert-subheading">Итоговое собеседование ОГЭ • Русский язык</div>
+
+          <div style="font-size:18px;">Настоящий документ подтверждает, что</div>
+          <input type="text" class="student-name-input" id="studentNameInput" placeholder="Введите имя и фамилию ученика" value="Ученик 9 класса">
+          <div style="font-size:18px;">успешно освоил(а) регламент, грамматические нормы и критерии оценивания экзамена.</div>
+
+          <div style="margin-top:22px;">
+            <span class="cert-score-banner">Результат: ${this.totalScore} из 14 первичных баллов</span>
+          </div>
+
+          <div style="font-weight:700; font-size:19px; color:var(--text-primary); margin-bottom:16px;">
+            ${rankTitle}
+          </div>
+
+          <!-- 3D СУРГУЧНАЯ ПЕЧАТЬ SVG -->
+          <div class="cert-seal-container">
+            <svg class="seal-svg" viewBox="0 0 200 200">
+              <defs>
+                <radialGradient id="goldGrad" cx="40%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#fef08a" />
+                  <stop offset="60%" stop-color="#d97706" />
+                  <stop offset="100%" stop-color="#92400e" />
+                </radialGradient>
+                <radialGradient id="silverGrad" cx="40%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#f1f5f9" />
+                  <stop offset="60%" stop-color="#94a3b8" />
+                  <stop offset="100%" stop-color="#475569" />
+                </radialGradient>
+                <radialGradient id="bronzeGrad" cx="40%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#fed7aa" />
+                  <stop offset="60%" stop-color="#c2410c" />
+                  <stop offset="100%" stop-color="#7c2d12" />
+                </radialGradient>
+                <path id="sealCircle" d="M 100, 100 m -62, 0 a 62,62 0 1,1 124,0 a 62,62 0 1,1 -124,0" />
+              </defs>
+
+              <polygon points="85,150 70,195 95,180 110,195 100,150" fill="#92400e" opacity="0.85" />
+              <polygon points="105,150 90,195 115,180 130,195 120,150" fill="#78350f" opacity="0.85" />
+
+              <circle cx="100" cy="100" r="75" fill="${sealGradient}" stroke="#78350f" stroke-width="2" />
+              <circle cx="100" cy="100" r="66" fill="none" stroke="rgba(255,255,255,0.4)" stroke-dasharray="4,3" stroke-width="1.5" />
+              <circle cx="100" cy="100" r="48" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
+
+              <text font-size="8" font-family="${varFontSans()}" font-weight="700" fill="#ffffff" letter-spacing="2">
+                <textPath href="#sealCircle" startOffset="50%" text-anchor="middle">
+                  ★ ОГЭ ★ ИТОГОВОЕ СОБЕСЕДОВАНИЕ ★
+                </textPath>
+              </text>
+
+              <text x="100" y="106" font-size="22" text-anchor="middle" fill="#ffffff" font-weight="bold">✓</text>
+            </svg>
+          </div>
+          <div style="font-size:13px; color:var(--text-muted);">Печать верифицирована методическим стандартом пособия</div>
+        </div>
+
+        <div class="action-row" style="justify-content:center; margin-bottom:32px;">
+          <button class="btn-primary" onclick="window.print()">🖨️ Распечатать сертификат и памятку</button>
+          <button class="btn-secondary" id="restartBtn">🔄 Пройти ещё раз</button>
+        </div>
+
+        <!-- ШПАРГАЛКА-ПАМЯТКА ДЛЯ ПЕЧАТИ (СТР. 323–329) -->
+        <div class="cheat-sheet-card">
+          <h3>📌 Главная шпаргалка: Что нужно помнить на экзамене (стр. 323–329)</h3>
+          <ul>
+            <li><strong>Регламент:</strong> Всего 15–16 минут с аудиозаписью. Пометки в КИМ разрешены!</li>
+            <li><strong>Тайминг Части 1:</strong> 5 минут выделяется суммарно на Задание 1 (чтение) и Задание 2 (беседа). Отдельного времени перед вопросами нет!</li>
+            <li><strong>Забор текста:</strong> Перед Заданием 2 экзаменатор забирает текст. Все даты, имена и факты для ответов должны быть в ваших пометках!</li>
+            <li><strong>Вопрос № 5:</strong> Всегда содержит цитату. К нему нужно готовиться заранее, пока текст ещё перед глазами.</li>
+            <li><strong>Сложные имена:</strong> Ударения в фамилиях и названиях ищите в самом задании перед текстом (в тексте ударений может не быть).</li>
+            <li><strong>Правило «нот» для сотен:</strong> Проверяйте окончания словом <em>«ноты»</em>: пятью нотАМИ — пятьюстАМИ (не пятистами!), о двух нотАХ — о двухстАХ.</li>
+            <li><strong>Количественные vs Порядковые:</strong> В целых количественных склоняется каждое слово (<em>двумя тысячами пятьюстами</em>). В порядковых («который?») — только последнее слово (<em>к двести четвёртому</em>).</li>
+            <li><strong>Полтора и полтораста:</strong> Имеют только 2 формы! В косвенных падежах — только <em>полутора</em> и <em>полутораста</em> (слова «полуторастами» нет!).</li>
+            <li><strong>Критерии ответов:</strong> За односложный ответ («Да», «В Осетии») — сразу 0 баллов. Ответ обязан быть развёрнутым (содержать часть вопроса собеседника), полным и без фактических искажений.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      this.initData();
+      this.renderCurrentTask();
+    });
+  }
+}
+
+function varFontSans() {
+  return '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+}
+
+const app = new TrainerApp();
+app.renderCurrentTask();
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('Начать прохождение тренажёра заново?')) {
+    app.initData();
+    app.renderCurrentTask();
+  }
+});
+</script>
+
+</body>
+</html>

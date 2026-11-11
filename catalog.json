@@ -1,0 +1,82 @@
+{
+  "items": [
+    {
+      "id": "slovarnyy-diktant-6-klass-osenniy-trenazhyor",
+      "slug": "slovarnyy-diktant-6-klass-osenniy-trenazhyor",
+      "title": "Словарный диктант, 6 класс — осенний тренажёр",
+      "grade": 6,
+      "topic": "Орфография — словарные слова",
+      "subtitle": "29 словарных слов с голосом диктора и разбором ошибок",
+      "cover": "autumn",
+      "kind": "game",
+      "file": "6.html",
+      "tags": [
+        "словарный диктант",
+        "орфография",
+        "аудио"
+      ],
+      "order": 1,
+      "hidden": false,
+      "archived": false
+    },
+    {
+      "id": "kvest-arkhitektura-slova-proverka-domashnego-zadaniya",
+      "slug": "kvest-arkhitektura-slova-proverka-domashnego-zadaniya",
+      "title": "Квест «Архитектура слова»: проверка домашнего задания",
+      "grade": 6,
+      "topic": "Лексикология и морфемика",
+      "subtitle": "12 интерактивных заданий на морфемику и состав слова",
+      "cover": "quest",
+      "kind": "game",
+      "file": "index (2).html",
+      "tags": [
+        "квест",
+        "лексикология",
+        "морфемика",
+        "домашнее задание"
+      ],
+      "order": 2,
+      "hidden": false,
+      "archived": false
+    },
+    {
+      "id": "trenazhyor-itogovoe-sobesedovanie-oge-str-323-329",
+      "slug": "trenazhyor-itogovoe-sobesedovanie-oge-str-323-329",
+      "title": "Итоговое собеседование ОГЭ: практикум (стр. 323–329)",
+      "grade": 9,
+      "topic": "Итоговое собеседование ОГЭ",
+      "subtitle": "Выразительное чтение, пересказ с цитатой и монолог",
+      "cover": "exam",
+      "kind": "game",
+      "file": "index.html",
+      "tags": [
+        "ОГЭ",
+        "итоговое собеседование",
+        "устная речь"
+      ],
+      "order": 3,
+      "hidden": false,
+      "archived": false
+    },
+    {
+      "id": "domashnee-zadanie-kvest-leksikologiya-i-frazeologiya",
+      "slug": "domashnee-zadanie-kvest-leksikologiya-i-frazeologiya",
+      "title": "Домашнее задание-квест: лексикология и фразеология",
+      "grade": 6,
+      "topic": "Лексикология и фразеология",
+      "subtitle": "Устойчивые обороты, значения слов и контекстные загадки",
+      "cover": "alchemy",
+      "kind": "game",
+      "file": "Лексикология и фразеология.html",
+      "tags": [
+        "квест",
+        "лексикология",
+        "фразеологизмы",
+        "домашнее задание"
+      ],
+      "order": 4,
+      "hidden": false,
+      "archived": false
+    }
+  ]
+}

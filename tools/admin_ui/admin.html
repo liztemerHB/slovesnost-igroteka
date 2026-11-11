@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мастерская репетитора — Словесность</title>
+  <meta name="description" content="Рабочий стол репетитора: публикация HTML-тренажёров, досок Miro и Холст, управление темами уроков и QR-кодами.">
+  <link rel="stylesheet" href="/admin_assets/admin.css">
+  <script src="/qr.js"></script>
+</head>
+<body>
+  <!-- Колонтитул Мастерской -->
+  <header class="admin-header">
+    <div class="container admin-header-inner">
+      <a href="/admin" class="brand-wrap">
+        <span class="brand-wordmark">Слов<span class="brand-stress">е<svg class="brand-stress-tick" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M8.5 1.5L3.8 9.2" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></span>сность</span>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-subtitle">Мастерская репетитора</span>
+      </a>
+
+      <nav class="header-nav">
+        <span id="storage-mode-badge" class="storage-badge" title="Режим сохранения материалов">
+          <span class="storage-dot" aria-hidden="true"></span>
+          <span id="storage-mode-text">Локальный диск</span>
+        </span>
+
+        <button type="button" id="admin-theme-btn" class="icon-btn" title="Переключить дневной и вечерний режим" aria-label="Сменить режим освещения">
+          <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <a href="/" id="public-catalog-link" target="_blank" rel="noopener" class="btn btn-sm" title="Открыть витрину для учеников">
+          <span class="nav-btn-label">Витрина учеников</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+
+        <button type="button" id="logout-btn" class="icon-btn" style="display: none;" title="Выйти из Мастерской" aria-label="Выйти">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 1. Экран входа по паролю -->
+  <main id="login-screen" class="login-screen-wrap">
+    <div class="login-card">
+      <h1 class="login-title">Вход в Мастерскую</h1>
+      <p class="login-desc">Закрытый рабочий стол для добавления HTML-тренажёров, досок уроков и выдачи QR-кодов.</p>
+
+      <div id="login-error-box" class="login-error-box" role="alert"></div>
+
+      <form id="login-form" class="login-form">
+        <div class="form-field">
+          <label for="admin-password-input" class="form-label">Пароль репетитора</label>
+          <input
+            type="password"
+            id="admin-password-input"
+            class="form-input"
+            placeholder="Введите пароль..."
+            required
+            autocomplete="current-password"
+          >
+        </div>
+        <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%;">
+          Войти в кабинет
+        </button>
+      </form>
+
+      <div class="login-hint">
+        Локально пароль хранится в файле <code>.admin_secret</code> (показывается при запуске <code>start_catalog_server.bat</code>). В облаке задаётся переменной <code>TUTOR_ADMIN_PASSWORD</code>.
+      </div>
+    </div>
+  </main>
+
+  <!-- 2. Двухзонный Рабочий Стол -->
+  <main id="admin-hub" class="admin-hub-wrap">
+    <div class="container workbench-grid">
+      <!-- Левая колонка: Панель приёма (2 вкладки) -->
+      <aside class="intake-panel" aria-label="Добавление нового материала">
+        <div class="intake-tabs" role="tablist">
+          <button type="button" class="intake-tab-btn is-active" data-intake="game" role="tab" aria-selected="true">
+            HTML-тренажёр
+          </button>
+          <button type="button" class="intake-tab-btn" data-intake="board" role="tab" aria-selected="false">
+            Доска урока
+          </button>
+        </div>
+
+        <!-- Вкладка 1: Загрузка HTML-файла -->
+        <div id="intake-pane-game" class="intake-pane is-active" role="tabpanel">
+          <p class="pane-intro">Перетащите готовый файл <code>.html</code> — название, класс и наличие звука определятся сами.</p>
+
+          <input type="file" id="game-file-input" accept=".html,text/html" style="display: none;">
+
+          <div id="game-drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Выбрать или перетащить HTML-файл">
+            <svg class="drop-zone-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <polyline points="9 15 12 12 15 15"/>
+            </svg>
+            <span id="drop-zone-filename" class="drop-text-main">Перетащите .html сюда</span>
+            <span class="drop-text-sub">или нажмите для выбора на компьютере</span>
+          </div>
+
+          <form id="upload-preview-form" class="upload-preview-panel">
+            <div class="form-field">
+              <label for="game-title-input" class="form-label">Название в картотеке</label>
+              <input type="text" id="game-title-input" class="form-input" placeholder="Например: Словарный диктант, 6 класс" required>
+            </div>
+
+            <div class="form-field">
+              <span class="form-label">Класс</span>
+              <div id="game-grade-picker" class="grade-picker"></div>
+            </div>
+
+            <div class="form-field">
+              <label for="game-topic-input" class="form-label">Тема урока (собирает задания в общий лист)</label>
+              <input type="text" id="game-topic-input" class="form-input" list="existing-topics-list" placeholder="Например: Лексикология и фразеология">
+              <datalist id="existing-topics-list"></datalist>
+            </div>
+
+            <div class="form-field">
+              <label for="game-subtitle-input" class="form-label">Подпись на карточке</label>
+              <input type="text" id="game-subtitle-input" class="form-input" placeholder="Например: 20 словарных слов с диктором">
+            </div>
+
+            <div class="form-field">
+              <span class="form-label">Книжная иллюстрация</span>
+              <div id="game-cover-picker" class="cover-thumbnails-grid"></div>
+              <div class="custom-cover-row">
+                <input type="file" id="custom-cover-input" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                <button type="button" id="upload-cover-btn" class="btn btn-sm">Своя обложка</button>
+                <span id="custom-cover-status" class="status-note"></span>
+              </div>
+            </div>
+
+            <label class="toggle-field">
+              <input type="checkbox" id="game-hidden-check" class="toggle-input">
+              <span>Скрыть с общей витрины (доступ только по прямой ссылке)</span>
+            </label>
+
+            <button type="submit" id="game-publish-btn" class="btn btn-primary" style="width: 100%;">
+              Опубликовать в картотеку
+            </button>
+          </form>
+        </div>
+
+        <!-- Вкладка 2: Доска Miro / Холст -->
+        <div id="intake-pane-board" class="intake-pane" role="tabpanel">
+          <p class="pane-intro">Прикрепите ссылку на доску Miro, «Холст» или Sboard к нужной теме урока.</p>
+
+          <form id="board-add-form" style="display: flex; flex-direction: column; gap: 13px;">
+            <div class="form-field">
+              <label for="board-url-input" class="form-label">Ссылка на доску (https://...)</label>
+              <input type="url" id="board-url-input" class="form-input" placeholder="https://miro.com/app/board/..." required pattern="^https?://.+">
+            </div>
+
+            <div class="form-field">
+              <label for="board-title-input" class="form-label">Название доски</label>
+              <input type="text" id="board-title-input" class="form-input" placeholder="Например: Конспект и схемы по причастиям" required>
+            </div>
+
+            <div class="form-field">
+              <span class="form-label">Класс</span>
+              <div id="board-grade-picker" class="grade-picker"></div>
+            </div>
+
+            <div class="form-field">
+              <label for="board-topic-input" class="form-label">Тема урока (объединить с тренажёрами)</label>
+              <input type="text" id="board-topic-input" class="form-input" list="existing-topics-list" placeholder="Например: Причастие и причастный оборот">
+            </div>
+
+            <div class="form-field">
+              <label for="board-subtitle-input" class="form-label">Подпись на карточке</label>
+              <input type="text" id="board-subtitle-input" class="form-input" placeholder="Например: Таблицы правил и разбор предложений">
+            </div>
+
+            <label class="toggle-field">
+              <input type="checkbox" id="board-hidden-check" class="toggle-input">
+              <span>Скрыть с общей витрины (доступ только по ссылке)</span>
+            </label>
+
+            <button type="submit" id="board-submit-btn" class="btn btn-cobalt" style="width: 100%;">
+              Прикрепить доску к уроку
+            </button>
+          </form>
+        </div>
+      </aside>
+
+      <!-- Правая колонка: Реестр картотеки -->
+      <section class="items-registry-section" aria-label="Реестр материалов">
+        <div class="registry-header">
+          <h2 class="registry-title">Реестр картотеки</h2>
+          <span id="registry-count-text" class="registry-count">Загрузка записей...</span>
+        </div>
+
+        <div class="registry-toolbar">
+          <div class="registry-tabs" role="tablist">
+            <button type="button" class="reg-tab-btn is-active" data-tab="active">На витрине</button>
+            <button type="button" class="reg-tab-btn" data-tab="hidden">По ссылке</button>
+            <button type="button" class="reg-tab-btn" data-tab="archived">Архив</button>
+            <button type="button" class="reg-tab-btn" data-tab="all">Все</button>
+          </div>
+
+          <div class="reg-search-box">
+            <input type="search" id="registry-search-input" class="form-input" placeholder="Фильтр по названию или теме..." aria-label="Поиск в реестре">
+          </div>
+        </div>
+
+        <div id="registry-list" class="registry-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Модальное окно выдачи ссылки и QR-кода -->
+  <div id="success-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="success-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="success-title" class="modal-title">Карточка материала</h2>
+        <button type="button" id="success-modal-close" class="modal-close-btn" aria-label="Закрыть">✕</button>
+      </div>
+
+      <div class="success-box">
+        <div id="success-qr-wrap" class="success-qr-wrap"></div>
+
+        <div class="success-links-block">
+          <label for="success-game-url-input" class="form-label">Прямая ссылка для ученика:</label>
+          <div class="success-link-row">
+            <input type="text" id="success-game-url-input" class="success-link-input" readonly>
+            <button type="button" id="success-copy-game-btn" class="btn btn-sm">Копировать</button>
+          </div>
+
+          <div id="success-lesson-row" style="display: none; flex-direction: column; gap: 5px; margin-top: 6px;">
+            <label for="success-lesson-url-input" class="form-label">Ссылка на весь лист урока:</label>
+            <div class="success-link-row">
+              <input type="text" id="success-lesson-url-input" class="success-link-input" readonly>
+              <button type="button" id="success-copy-lesson-btn" class="btn btn-sm">Копировать</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; width: 100%; margin-top: 8px;">
+          <a href="#" id="success-open-game-link" target="_blank" rel="noopener" class="btn btn-primary" style="flex: 1;">Открыть материал</a>
+          <button type="button" id="success-done-btn" class="btn" style="flex: 1;">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования -->
+  <div id="edit-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-modal-heading">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="edit-modal-heading" class="modal-title">Редактирование карточки</h2>
+        <button type="button" id="edit-modal-close" class="modal-close-btn" aria-label="Закрыть">✕</button>
+      </div>
+
+      <form id="edit-item-form" style="display: flex; flex-direction: column; gap: 13px;">
+        <input type="hidden" id="edit-item-id">
+
+        <div class="form-field">
+          <label for="edit-title-input" class="form-label">Название</label>
+          <input type="text" id="edit-title-input" class="form-input" required>
+        </div>
+
+        <div class="form-field">
+          <span class="form-label">Класс</span>
+          <div id="edit-grade-picker" class="grade-picker"></div>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-topic-input" class="form-label">Тема урока</label>
+          <input type="text" id="edit-topic-input" class="form-input" list="existing-topics-list">
+        </div>
+
+        <div class="form-field">
+          <label for="edit-subtitle-input" class="form-label">Подпись на карточке</label>
+          <input type="text" id="edit-subtitle-input" class="form-input">
+        </div>
+
+        <div class="form-field" id="edit-url-field" style="display: none;">
+          <label for="edit-url-input" class="form-label">Ссылка на доску</label>
+          <input type="url" id="edit-url-input" class="form-input">
+        </div>
+
+        <div class="form-field">
+          <span class="form-label">Иллюстрация</span>
+          <div id="edit-cover-picker" class="cover-thumbnails-grid"></div>
+        </div>
+
+        <label class="toggle-field">
+          <input type="checkbox" id="edit-hidden-check" class="toggle-input">
+          <span>Скрыть с общей витрины (доступ только по ссылке)</span>
+        </label>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;">
+          <button type="button" id="edit-cancel-btn" class="btn">Отмена</button>
+          <button type="submit" id="edit-save-btn" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Всплывающее уведомление -->
+  <div id="toast-notice" class="toast-notice" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <span id="toast-text">Готово</span>
+  </div>
+
+  <script src="/admin_assets/admin.js"></script>
+</body>
+</html>

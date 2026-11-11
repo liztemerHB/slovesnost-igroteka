@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тесты фильтра и оболочки каталога</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; line-height: 1.5; }
+    .passed { color: #166534; background: #dcfce7; padding: 4px 8px; border-radius: 4px; }
+    .failed { color: #991b1b; background: #fee2e2; padding: 4px 8px; border-radius: 4px; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 6px 0; padding: 6px 10px; border-radius: 4px; }
+    li.pass { background: #f0fdf4; border-left: 4px solid #22c55e; }
+    li.fail { background: #fef2f2; border-left: 4px solid #ef4444; }
+  </style>
+  <script src="../../site_template/filter.js"></script>
+  <script src="../../site_template/qr.js"></script>
+  <script src="../../site_template/_shell/shell.js" data-tutor-shell data-slug="test-slug"></script>
+</head>
+<body>
+  <h1>Результаты тестов фильтра и оболочки</h1>
+  <div id="summary">Выполняются тесты...</div>
+  <ul id="test-list"></ul>
+
+  <script>
+    (function() {
+      const results = [];
+      const listEl = document.getElementById('test-list');
+      const summaryEl = document.getElementById('summary');
+
+      function assert(condition, message) {
+        if (!condition) {
+          throw new Error(message || 'Утверждение ложно');
+        }
+      }
+
+      function assertEqual(actual, expected, message) {
+        const actualStr = JSON.stringify(actual);
+        const expectedStr = JSON.stringify(expected);
+        if (actualStr !== expectedStr) {
+          throw new Error((message ? message + ': ' : '') + `Ожидалось ${expectedStr}, получено ${actualStr}`);
+        }
+      }
+
+      function test(name, fn) {
+        try {
+          fn();
+          results.push({ name, passed: true });
+          const li = document.createElement('li');
+          li.className = 'pass';
+          li.textContent = '✓ ' + name;
+          listEl.appendChild(li);
+        } catch (err) {
+          results.push({ name, passed: false, error: err.message });
+          const li = document.createElement('li');
+          li.className = 'fail';
+          li.textContent = '✗ ' + name + ' — Ошибка: ' + err.message;
+          listEl.appendChild(li);
+          console.error('Test failed:', name, err);
+        }
+      }
+
+      // Проверка наличия модулей
+      test('Модуль CatalogFilter загружен в window', function() {
+        assert(window.CatalogFilter, 'window.CatalogFilter не определён');
+        assert(typeof window.CatalogFilter.normalize === 'function', 'normalize не функция');
+        assert(typeof window.CatalogFilter.filterItems === 'function', 'filterItems не функция');
+        assert(typeof window.CatalogFilter.collectGrades === 'function', 'collectGrades не функция');
+      });
+
+      // Тесты normalize
+      test('normalize: приводит к нижнему регистру, заменяет ё на е и убирает пробелы', function() {
+        const norm = window.CatalogFilter.normalize;
+        assertEqual(norm('  ПрИвЁт  МИР  '), 'привет мир');
+        assertEqual(norm('Ёлка и Ёж'), 'елка и еж');
+        assertEqual(norm('Лексика'), 'лексика');
+        assertEqual(norm(''), '');
+        assertEqual(norm(null), '');
+        assertEqual(norm(undefined), '');
+      });
+
+      // Тестовые данные для filterItems
+      const sampleItems = [
+        { id: '1', slug: 'korni-gor-gar', title: 'Корни гор-гар', grade: 5, topic: 'Орфография', kind: 'game', tags: ['чередование', 'гласные'] },
+        { id: '2', slug: 'leksika-ege', title: 'Лексикология ЕГЭ', grade: 11, topic: 'Лексика и фразеология', kind: 'game', tags: ['егэ', 'синонимы'] },
+        { id: '3', slug: 'doska-chasti-rechi', title: 'Интерактивная доска: Части речи', grade: 6, topic: 'Морфология', kind: 'board', tags: ['доска', 'существительное'] },
+        { id: '4', slug: 'slovar-udarenij', title: 'Словарь ударений (орфоэпия)', grade: null, topic: 'Орфоэпия', kind: 'game', tags: ['ударения', 'нормы'] },
+        { id: '5', slug: 'prichastiya-7', title: 'Причастия и деепричастия', grade: 7, topic: 'Морфология', kind: 'game', tags: ['суффиксы', 'обороты'] }
+      ];
+
+      // Тесты filterItems
+      test('filterItems: пустой запрос и фильтры возвращают все элементы', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, {});
+        assertEqual(res.length, 5);
+      });
+
+      test('filterItems: поиск без учёта регистра', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, { query: 'КОРНИ' });
+        assertEqual(res.length, 1);
+        assertEqual(res[0].slug, 'korni-gor-gar');
+      });
+
+      test('filterItems: поиск с взаимной заменой ё и е', function() {
+        // В заголовке 'егэ' (с е), ищем 'ёГЭ'
+        const res1 = window.CatalogFilter.filterItems(sampleItems, { query: 'ёгэ' });
+        assertEqual(res1.length, 1);
+        assertEqual(res1[0].slug, 'leksika-ege');
+
+        // В тегах 'чередование' (с е), ищем 'чередованиё'
+        const res2 = window.CatalogFilter.filterItems(sampleItems, { query: 'чередованиё' });
+        assertEqual(res2.length, 1);
+        assertEqual(res2[0].slug, 'korni-gor-gar');
+      });
+
+      test('filterItems: поиск по теме (topic)', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, { query: 'Морфология' });
+        assertEqual(res.length, 2);
+        const slugs = res.map(i => i.slug).sort();
+        assertEqual(slugs, ['doska-chasti-rechi', 'prichastiya-7'].sort());
+      });
+
+      test('filterItems: поиск по тегам (tags)', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, { query: 'существительное' });
+        assertEqual(res.length, 1);
+        assertEqual(res[0].slug, 'doska-chasti-rechi');
+      });
+
+      test('filterItems: фильтрация по конкретному классу (число)', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, { grade: 5 });
+        assertEqual(res.length, 1);
+        assertEqual(res[0].slug, 'korni-gor-gar');
+      });
+
+      test('filterItems: фильтрация по классу null (без класса)', function() {
+        const res1 = window.CatalogFilter.filterItems(sampleItems, { grade: null });
+        assertEqual(res1.length, 1);
+        assertEqual(res1[0].slug, 'slovar-udarenij');
+
+        const res2 = window.CatalogFilter.filterItems(sampleItems, { grade: 'null' });
+        assertEqual(res2.length, 1);
+        assertEqual(res2[0].slug, 'slovar-udarenij');
+      });
+
+      test('filterItems: grade "all" или undefined не отсекает элементы', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, { grade: 'all' });
+        assertEqual(res.length, 5);
+      });
+
+      test('filterItems: фильтрация по типу kind (game vs board)', function() {
+        const games = window.CatalogFilter.filterItems(sampleItems, { kind: 'game' });
+        assertEqual(games.length, 4);
+
+        const boards = window.CatalogFilter.filterItems(sampleItems, { kind: 'board' });
+        assertEqual(boards.length, 1);
+        assertEqual(boards[0].slug, 'doska-chasti-rechi');
+      });
+
+      test('filterItems: комбинация query + grade + kind', function() {
+        const res = window.CatalogFilter.filterItems(sampleItems, {
+          query: 'части',
+          grade: 6,
+          kind: 'board'
+        });
+        assertEqual(res.length, 1);
+        assertEqual(res[0].slug, 'doska-chasti-rechi');
+
+        // Несовпадающая комбинация
+        const resNone = window.CatalogFilter.filterItems(sampleItems, {
+          query: 'части',
+          grade: 5,
+          kind: 'board'
+        });
+        assertEqual(resNone.length, 0);
+      });
+
+      // Тесты collectGrades
+      test('collectGrades: сортирует числа по возрастанию и ставит null в конец', function() {
+        const grades = window.CatalogFilter.collectGrades(sampleItems);
+        assertEqual(grades, [5, 6, 7, 11, null]);
+      });
+
+      test('collectGrades: если нет null, возвращает только отсортированные числа', function() {
+        const noNullItems = [
+          { grade: 9 },
+          { grade: 5 },
+          { grade: 9 }
+        ];
+        const grades = window.CatalogFilter.collectGrades(noNullItems);
+        assertEqual(grades, [5, 9]);
+      });
+
+      test('collectGrades: пустой массив возвращает []', function() {
+        assertEqual(window.CatalogFilter.collectGrades([]), []);
+      });
+
+      // Тесты оболочки TutorShell
+      test('TutorShell: объект доступен в window', function() {
+        assert(window.TutorShell, 'window.TutorShell не определён');
+        assert(typeof window.TutorShell.sendResult === 'function', 'sendResult не функция');
+      });
+
+      test('TutorShell.sendResult: валидный результат сохраняется в sessionStorage и возвращает true', function() {
+        try {
+          sessionStorage.removeItem('tutorshell:last:test-slug');
+        } catch (e) {}
+
+        const success = window.TutorShell.sendResult(8, 10, { task: 'Корни' });
+        assertEqual(success, true, 'Ожидался true при валидных данных');
+
+        const saved = JSON.parse(sessionStorage.getItem('tutorshell:last:test-slug') || '{}');
+        assertEqual(saved.score, 8);
+        assertEqual(saved.max, 10);
+        assertEqual(saved.details, { task: 'Корни' });
+        assert(saved.timestamp, 'Должен быть сохранён timestamp');
+      });
+
+      test('TutorShell.sendResult: невалидные данные возвращают false', function() {
+        assertEqual(window.TutorShell.sendResult(-1, 10), false, 'score < 0 должен вернуть false');
+        assertEqual(window.TutorShell.sendResult(11, 10), false, 'score > max должен вернуть false');
+        assertEqual(window.TutorShell.sendResult(5, 0), false, 'max <= 0 должен вернуть false');
+        assertEqual(window.TutorShell.sendResult(NaN, 10), false, 'NaN должен вернуть false');
+        assertEqual(window.TutorShell.sendResult(5, NaN), false, 'NaN в max должен вернуть false');
+        assertEqual(window.TutorShell.sendResult('5', 10), false, 'строка в score должна вернуть false');
+      });
+
+      // --- Новые тесты Этапа 2 (QR, slugifyTopic, groupByTopics, parseRouteHash, return_hash) ---
+
+      test('slugify и slugifyTopic: ГОСТ транслитерация и формирование слага темы', function() {
+        const slugify = window.CatalogFilter.slugify;
+        const slugifyTopic = window.CatalogFilter.slugifyTopic;
+        assert(typeof slugify === 'function', 'slugify не функция');
+        assert(typeof slugifyTopic === 'function', 'slugifyTopic не функция');
+
+        assertEqual(slugify('Лексикология и фразеология'), 'leksikologiya-i-frazeologiya');
+        assertEqual(slugify('Корни гор/гар — 5 класс!'), 'korni-gor-gar-5-klass');
+        assertEqual(slugifyTopic('Лексикология и фразеология', 6), 'leksikologiya-i-frazeologiya-6');
+        assertEqual(slugifyTopic('Орфоэпия', null), 'orfoepiya');
+        assertEqual(slugifyTopic('Орфоэпия', undefined), 'orfoepiya');
+      });
+
+      test('filterItems: скрывает hidden и archived по умолчанию, показывает при includeHidden: true', function() {
+        const itemsWithHidden = [
+          { id: '1', slug: 'game-1', title: 'Игра 1' },
+          { id: '2', slug: 'game-2', title: 'Игра 2', hidden: true },
+          { id: '3', slug: 'game-3', title: 'Игра 3', archived: true }
+        ];
+
+        const visible = window.CatalogFilter.filterItems(itemsWithHidden, {});
+        assertEqual(visible.length, 1);
+        assertEqual(visible[0].slug, 'game-1');
+
+        const all = window.CatalogFilter.filterItems(itemsWithHidden, { includeHidden: true });
+        assertEqual(all.length, 3);
+      });
+
+      test('filterItems: фильтрует по topic_slug', function() {
+        const itemsWithTopics = [
+          { id: '1', slug: 'g1', title: 'Игра 1', topic: 'Лексикология', grade: 6, topic_slug: 'leksikologiya-6' },
+          { id: '2', slug: 'g2', title: 'Игра 2', topic: 'Лексикология', grade: 6 }, // без явного topic_slug
+          { id: '3', slug: 'g3', title: 'Игра 3', topic: 'Орфография', grade: 6, topic_slug: 'orfografiya-6' }
+        ];
+
+        const res = window.CatalogFilter.filterItems(itemsWithTopics, { topic_slug: 'leksikologiya-6' });
+        assertEqual(res.length, 2);
+        assertEqual(res[0].slug, 'g1');
+        assertEqual(res[1].slug, 'g2');
+      });
+
+      test('groupByTopics: группирует элементы по темам уроков и сортирует по order', function() {
+        const itemsForGroups = [
+          { id: '1', slug: 'g1', title: 'Игра 1', topic: 'Синтаксис', grade: 8, order: 10, cover_src: 'covers/syntax.png' },
+          { id: '2', slug: 'g2', title: 'Доска 1', topic: 'Морфемика', grade: 5, order: 2 },
+          { id: '3', slug: 'g3', title: 'Игра 2', topic: 'Морфемика', grade: 5, order: 1 },
+          { id: '4', slug: 'g4', title: 'Без темы', grade: 5 } // без темы не входит в уроки
+        ];
+
+        const groups = window.CatalogFilter.groupByTopics(itemsForGroups);
+        assertEqual(groups.length, 2);
+
+        // Первый урок — Морфемика (min_order = 1 < 10)
+        assertEqual(groups[0].topic, 'Морфемика');
+        assertEqual(groups[0].count, 2);
+        assertEqual(groups[0].grade, 5);
+        assertEqual(groups[0].items[0].slug, 'g3'); // order 1
+        assertEqual(groups[0].items[1].slug, 'g2'); // order 2
+
+        // Второй урок — Синтаксис
+        assertEqual(groups[1].topic, 'Синтаксис');
+        assertEqual(groups[1].count, 1);
+        assertEqual(groups[1].cover_src, 'covers/syntax.png');
+      });
+
+      test('parseRouteHash: корректно разбирает хэши URL', function() {
+        const parse = window.CatalogFilter.parseRouteHash;
+        assertEqual(parse(''), { mode: 'all' });
+        assertEqual(parse('#'), { mode: 'all' });
+        assertEqual(parse('#lesson/leksika-6'), { mode: 'lesson', topic_slug: 'leksika-6' });
+        assertEqual(parse('#topic=leksika-6'), { mode: 'lesson', topic_slug: 'leksika-6' });
+        assertEqual(parse('#korni-gor-gar'), { mode: 'item', slug: 'korni-gor-gar' });
+      });
+
+      test('TutorQR: модуль загружен и генерирует валидный SVG QR-код', function() {
+        assert(window.TutorQR, 'window.TutorQR не определён');
+        assert(typeof window.TutorQR.renderSVG === 'function', 'renderSVG не функция');
+
+        const svg = window.TutorQR.renderSVG('https://tutor.school/g/test-game/', {
+          size: 280,
+          margin: 4,
+          colorDark: '#080d0b',
+          colorLight: '#ffffff'
+        });
+
+        assert(typeof svg === 'string', 'SVG должен быть строкой');
+        assert(svg.includes('<svg'), 'Строка должна содержать открывающий тег <svg');
+        assert(svg.includes('xmlns="http://www.w3.org/2000/svg"'), 'SVG должен содержать xmlns');
+        assert(svg.includes('<rect'), 'SVG должен содержать <rect подложки');
+        assert(svg.includes('fill="#ffffff"'), 'Подложка должна быть белой #ffffff');
+        assert(svg.includes('<path'), 'SVG должен содержать <path тёмных модулей');
+        assert(svg.includes('fill="#080d0b"'), 'Тёмные модули должны быть #080d0b');
+        assert(svg.includes('width="280"'), 'Ширина должна быть 280');
+      });
+
+      test('TutorQR: поддерживает кириллицу и длинные URL без overflow', function() {
+        const longUrl = 'https://tutor.example.com/games/kvest-arkhitektura-slova-morfemika-i-slovoobrazovanie-dlya-6-klassa-so-zvukom-i-kartinkami-2026';
+        const svg = window.TutorQR.renderSVG(longUrl);
+        assert(svg.length > 500, 'SVG для длинного URL должен содержать полную матрицу');
+        assert(svg.endsWith('</svg>'), 'SVG должен корректно закрываться');
+      });
+
+      test('TutorShell: возврат в урок при наличии tutorshell:return_hash в sessionStorage', function() {
+        assert(typeof window.TutorShell.getCatalogReturnUrl === 'function', 'getCatalogReturnUrl должна быть функцией');
+
+        // По умолчанию без return_hash
+        try {
+          sessionStorage.removeItem('tutorshell:return_hash');
+        } catch (e) {}
+        assertEqual(window.TutorShell.getCatalogReturnUrl(), '../../index.html#test-slug');
+
+        // С return_hash урока
+        try {
+          sessionStorage.setItem('tutorshell:return_hash', '#lesson/orfografiya-6');
+        } catch (e) {}
+        assertEqual(window.TutorShell.getCatalogReturnUrl(), '../../index.html#lesson/orfografiya-6');
+
+        try {
+          sessionStorage.removeItem('tutorshell:return_hash');
+        } catch (e) {}
+      });
+
+      // Подведение итогов
+      const failed = results.filter(r => !r.passed);
+      if (failed.length === 0) {
+        document.body.setAttribute('data-status', 'passed');
+        summaryEl.className = 'passed';
+        summaryEl.textContent = `Все тесты успешно пройдены (${results.length}/${results.length})!`;
+      } else {
+        document.body.setAttribute('data-status', 'failed');
+        summaryEl.className = 'failed';
+        summaryEl.textContent = `Провалено тестов: ${failed.length} из ${results.length}.`;
+      }
+    })();
+  </script>
+</body>
+</html>

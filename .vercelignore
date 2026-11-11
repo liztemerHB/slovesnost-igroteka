@@ -1,0 +1,7 @@
+sessions/
+assets_archive/
+tools/tests/
+__pycache__/
+*.pyc
+.admin_secret
+.pytest_cache/

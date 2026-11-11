@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Словесность — картотека интерактивных заданий и досок по русскому языку</title>
+  <meta name="description" content="Интерактивные словарные диктанты, морфемные квесты, практикумы ОГЭ и доски уроков русского языка.">
+  <link rel="stylesheet" href="catalog.css">
+  <script src="qr.js"></script>
+  <script src="filter.js"></script>
+</head>
+<body>
+  <!-- Колонтитул издания -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" id="brand-link" class="brand-wrap" title="К началу картотеки">
+        <span class="brand-wordmark">Слов<span class="brand-stress">е<svg class="brand-stress-tick" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M8.5 1.5L3.8 9.2" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></span>сность</span>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-tagline">Картотека уроков русского языка</span>
+      </a>
+
+      <div class="header-actions">
+        <button type="button" id="theme-toggle-btn" class="header-btn" title="Переключить дневной лист и вечернее чтение" aria-label="Сменить режим освещения">
+          <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <span id="theme-btn-label" class="header-btn-label">Вечерний свет</span>
+        </button>
+
+        <a href="/admin" id="admin-hub-link" class="header-btn" title="Открыть Мастерскую репетитора">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          <span class="header-btn-label">Мастерская</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Сфокусированный Лист Урока (#lesson/<topic_slug>) -->
+      <section id="lesson-focus-hero" class="lesson-focus-hero" aria-label="Лист тематического урока">
+        <button type="button" id="lesson-back-btn" class="lesson-back-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          <span>Ко всем темам картотеки</span>
+        </button>
+
+        <div class="lesson-focus-grid">
+          <div>
+            <h1 id="lesson-title" class="lesson-focus-title">Тема урока</h1>
+            <div class="lesson-focus-details">
+              <span id="lesson-grade-pill" class="lesson-detail-pill">Класс</span>
+              <span id="lesson-count-pill" class="lesson-detail-pill">0 материалов</span>
+            </div>
+          </div>
+
+          <button type="button" id="share-lesson-btn" class="btn-primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            <span>QR и ссылка на весь урок</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Первый экран: Асимметричный разворот 7fr + 5fr -->
+      <section id="hero-block" class="editorial-spread" aria-label="Поиск и выбор материала">
+        <div class="spread-lead-col">
+          <h1 class="hero-title">Тренажёры, диктанты и <em>доски уроков</em> русского языка</h1>
+          <p class="hero-desc">
+            Откройте тему занятия целиком на экране класса или отправьте ученику прямую ссылку и QR-код без скачивания файлов.
+          </p>
+
+          <!-- Живой поиск и вкладки внутри первого экрана -->
+          <div id="catalog-controls" class="catalog-controls">
+            <div class="search-wrap">
+              <svg class="search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="search"
+                id="search-input"
+                class="search-input"
+                placeholder="Найти правило, тему, диктант или ОГЭ..."
+                aria-label="Поиск по картотеке"
+                autocomplete="off"
+              >
+              <span id="search-kbd-hint" class="search-kbd-hint" aria-hidden="true">Ctrl K</span>
+              <button type="button" id="search-clear-btn" class="search-clear-btn" title="Очистить запрос" aria-label="Очистить запрос">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="filters-bar">
+              <div id="grade-chips-wrap" class="chips-row" role="group" aria-label="Выбор класса"></div>
+              <div class="filter-divider" aria-hidden="true"></div>
+              <div id="kind-chips-wrap" class="chips-row" role="group" aria-label="Формат материала">
+                <button type="button" class="chip-btn is-active" data-kind="all" aria-pressed="true">Все форматы</button>
+                <button type="button" class="chip-btn" data-kind="game" aria-pressed="false">Тренажёры и квесты</button>
+                <button type="button" class="chip-btn" data-kind="board" aria-pressed="false">Доски уроков</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Правая колонка: «На столе» в приправочных метках -->
+        <aside id="specimen-desk" class="specimen-desk" aria-label="Рекомендуемый материал на столе"></aside>
+      </section>
+
+      <!-- Оглавление уроков по темам (§ 1, § 2) -->
+      <section id="lessons-shelf" class="lessons-shelf-section">
+        <div class="section-heading-bar">
+          <h2 class="section-title">Оглавление уроков по темам</h2>
+          <span id="lessons-count-note" class="section-meta-note"></span>
+        </div>
+        <div id="lessons-track" class="lessons-track" role="region" aria-label="Темы уроков"></div>
+      </section>
+
+      <!-- Все материалы картотеки -->
+      <div class="catalog-section-header">
+        <h2 id="cards-section-heading" class="section-title">Все материалы картотеки</h2>
+        <div id="stats-bar" class="stats-bar">
+          <span id="stats-counter">Загрузка картотеки...</span>
+          <button type="button" id="reset-filters-btn" class="reset-all-link" style="display: none;">Сбросить отбор</button>
+        </div>
+      </div>
+
+      <div id="cards-container" class="cards-grid" role="region" aria-label="Карточки заданий и досок"></div>
+
+      <!-- Пустое состояние -->
+      <div id="empty-state" class="empty-state" role="status">
+        <div class="empty-mark" aria-hidden="true">§</div>
+        <h3 class="empty-title">По этому запросу материалов пока нет</h3>
+        <p id="empty-desc-text" class="empty-desc">Проверьте написание темы или верните показ всех классов и форматов.</p>
+        <button type="button" id="empty-reset-btn" class="btn-secondary">Показать всю картотеку</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Печатная карточка QR-кода -->
+  <div id="qr-modal" class="qr-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+    <div class="qr-modal-card">
+      <button type="button" id="qr-close-btn" class="qr-close-btn" aria-label="Закрыть окно">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="qr-modal-kicker">Карточка быстрого входа</div>
+      <h2 id="qr-modal-title" class="qr-modal-title">QR-код материала</h2>
+      <p id="qr-modal-subtitle" class="qr-modal-subtitle">Наведите камеру телефона — задание откроется сразу в браузере</p>
+
+      <div id="qr-canvas-box" class="qr-canvas-box"></div>
+
+      <div class="qr-modal-actions">
+        <button type="button" id="qr-copy-link-btn" class="btn-primary qr-copy-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span id="qr-copy-btn-text">Скопировать прямую ссылку</span>
+        </button>
+        <span class="qr-hint-text">Регистрация и скачивание файлов не требуются</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Всплывающее уведомление -->
+  <div id="toast-notice" class="toast-notice" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <span id="toast-text">Ссылка скопирована</span>
+  </div>
+
+  <!-- Подвал -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Словесность — интерактивная картотека для уроков русского языка и литературы</span>
+      <a href="/admin" id="footer-admin-link" class="footer-admin-link">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        <span>Вход для репетитора</span>
+      </a>
+    </div>
+  </footer>
+
+  <!--CATALOG_DATA-->
+
+  <script>
+    (function() {
+      'use strict';
+
+      // Защита от случайного открытия сырого шаблона site_template/index.html по file://
+      const dataScript = document.getElementById('catalog-data');
+      if (!dataScript && window.location.protocol === 'file:') {
+        const probe = document.createElement('script');
+        probe.src = '../dist/qr.js';
+        probe.onload = function() {
+          window.location.replace('../dist/index.html' + window.location.hash);
+        };
+        document.head.appendChild(probe);
+      }
+
+      let catalogItems = [];
+      if (dataScript && dataScript.textContent.trim()) {
+        try {
+          const parsed = JSON.parse(dataScript.textContent);
+          catalogItems = Array.isArray(parsed.items) ? parsed.items : [];
+        } catch (e) {
+          console.error('[TutorCatalog] Ошибка чтения данных картотеки:', e);
+        }
+      }
+
+      const state = {
+        query: '',
+        grade: 'all',
+        kind: 'all',
+        currentRoute: { mode: 'all' },
+        currentModalUrl: '',
+        currentModalTitle: ''
+      };
+
+      const htmlEl = document.documentElement;
+      const themeToggleBtn = document.getElementById('theme-toggle-btn');
+      const themeBtnLabel = document.getElementById('theme-btn-label');
+      const adminHubLink = document.getElementById('admin-hub-link');
+      const footerAdminLink = document.getElementById('footer-admin-link');
+      const brandLink = document.getElementById('brand-link');
+
+      const heroBlock = document.getElementById('hero-block');
+      const specimenDesk = document.getElementById('specimen-desk');
+      const lessonsShelf = document.getElementById('lessons-shelf');
+      const lessonsTrack = document.getElementById('lessons-track');
+      const lessonsCountNote = document.getElementById('lessons-count-note');
+      const searchInput = document.getElementById('search-input');
+      const searchKbdHint = document.getElementById('search-kbd-hint');
+      const searchClearBtn = document.getElementById('search-clear-btn');
+      const gradeChipsWrap = document.getElementById('grade-chips-wrap');
+      const kindChipsWrap = document.getElementById('kind-chips-wrap');
+      const cardsSectionHeading = document.getElementById('cards-section-heading');
+      const statsCounter = document.getElementById('stats-counter');
+      const resetFiltersBtn = document.getElementById('reset-filters-btn');
+      const cardsContainer = document.getElementById('cards-container');
+      const emptyState = document.getElementById('empty-state');
+      const emptyResetBtn = document.getElementById('empty-reset-btn');
+
+      const lessonHero = document.getElementById('lesson-focus-hero');
+      const lessonBackBtn = document.getElementById('lesson-back-btn');
+      const lessonTitle = document.getElementById('lesson-title');
+      const lessonGradePill = document.getElementById('lesson-grade-pill');
+      const lessonCountPill = document.getElementById('lesson-count-pill');
+      const shareLessonBtn = document.getElementById('share-lesson-btn');
+
+      const qrModal = document.getElementById('qr-modal');
+      const qrCloseBtn = document.getElementById('qr-close-btn');
+      const qrModalTitle = document.getElementById('qr-modal-title');
+      const qrCanvasBox = document.getElementById('qr-canvas-box');
+      const qrCopyLinkBtn = document.getElementById('qr-copy-link-btn');
+      const qrCopyBtnText = document.getElementById('qr-copy-btn-text');
+
+      const toastNotice = document.getElementById('toast-notice');
+      const toastText = document.getElementById('toast-text');
+      let toastTimer = null;
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatNoun(n, one, two, five) {
+        const mod10 = n % 10;
+        const mod100 = n % 100;
+        if (mod100 < 11 || mod100 > 14) {
+          if (mod10 === 1) return n + ' ' + one;
+          if (mod10 >= 2 && mod10 <= 4) return n + ' ' + two;
+        }
+        return n + ' ' + five;
+      }
+
+      function formatItemCount(n) {
+        return formatNoun(n, 'материал', 'материала', 'материалов');
+      }
+
+      function getActionVerb(item) {
+        if (item.kind === 'board') return 'Открыть доску';
+        const text = ((item.title || '') + ' ' + (item.subtitle || '')).toLowerCase();
+        const hasAudio = Boolean(item.has_audio || (item.tags && item.tags.indexOf('аудио') !== -1) || text.indexOf('диктант') !== -1);
+        if (hasAudio) return 'Слушать диктант';
+        if (text.indexOf('квест') !== -1) return 'Начать квест';
+        if (text.indexOf('практикум') !== -1 || text.indexOf('собеседование') !== -1 || text.indexOf('огэ') !== -1 || text.indexOf('егэ') !== -1) {
+          return 'Открыть практикум';
+        }
+        return 'Открыть тренажёр';
+      }
+
+      function getFormatMeta(item) {
+        if (item.kind === 'board') {
+          return { label: 'Доска урока', cls: 'is-board' };
+        }
+        const text = ((item.title || '') + ' ' + (item.subtitle || '')).toLowerCase();
+        const hasAudio = Boolean(item.has_audio || (item.tags && item.tags.indexOf('аудио') !== -1));
+        if (hasAudio) {
+          return { label: 'Со звуком', cls: 'is-audio' };
+        }
+        if (text.indexOf('квест') !== -1) {
+          return { label: 'Квест', cls: '' };
+        }
+        return { label: 'Практикум', cls: '' };
+      }
+
+      function resolveItemHref(item) {
+        if (item.kind === 'board') {
+          const rawUrl = item.url || '';
+          return /^https?:\/\//i.test(rawUrl) ? rawUrl : '#';
+        }
+        return item.href || ('g/' + (item.slug || item.id) + '/index.html');
+      }
+
+      function resolveFullUrl(href) {
+        try {
+          if (!href.startsWith('http://') && !href.startsWith('https://')) {
+            return new URL(href, window.location.href).href;
+          }
+        } catch (e) {}
+        return href;
+      }
+
+      // --- 1. Режим освещения (Дневной хлопковый лист по умолчанию) ---
+      function initTheme() {
+        let saved = 'light';
+        try {
+          saved = localStorage.getItem('slovesnost_theme') || 'light';
+        } catch (e) {}
+        applyTheme(saved);
+
+        if (themeToggleBtn) {
+          themeToggleBtn.addEventListener('click', function() {
+            const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+            const next = isDark ? 'light' : 'dark';
+            applyTheme(next);
+            try {
+              localStorage.setItem('slovesnost_theme', next);
+            } catch (e) {}
+          });
+        }
+      }
+
+      function applyTheme(theme) {
+        if (theme === 'dark') {
+          htmlEl.setAttribute('data-theme', 'dark');
+          if (themeBtnLabel) themeBtnLabel.textContent = 'Дневной лист';
+        } else {
+          htmlEl.removeAttribute('data-theme');
+          if (themeBtnLabel) themeBtnLabel.textContent = 'Вечерний свет';
+        }
+      }
+
+      // --- 2. Подсказка для локального запуска Мастерской при file:// ---
+      function initAdminLinks() {
+        function handleAdminClick(e) {
+          if (window.location.protocol === 'file:') {
+            e.preventDefault();
+            showToast('Чтобы открыть Мастерскую локально, запустите файл start_catalog_server.bat', 4200);
+          }
+        }
+        if (adminHubLink) adminHubLink.addEventListener('click', handleAdminClick);
+        if (footerAdminLink) footerAdminLink.addEventListener('click', handleAdminClick);
+      }
+
+      // --- 3. Вкладки классов и форматов ---
+      function initGradeChips() {
+        if (!gradeChipsWrap) return;
+        gradeChipsWrap.innerHTML = '';
+
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.className = 'chip-btn is-active';
+        allBtn.setAttribute('data-grade', 'all');
+        allBtn.setAttribute('aria-pressed', 'true');
+        allBtn.textContent = 'Все классы';
+        gradeChipsWrap.appendChild(allBtn);
+
+        const grades = window.CatalogFilter
+          ? window.CatalogFilter.collectGrades(catalogItems)
+          : [];
+
+        grades.forEach(function(g) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'chip-btn';
+          btn.setAttribute('data-grade', g === null ? 'null' : String(g));
+          btn.setAttribute('aria-pressed', 'false');
+          btn.textContent = g === null ? 'Вне класса' : (g + ' класс');
+          gradeChipsWrap.appendChild(btn);
+        });
+
+        gradeChipsWrap.addEventListener('click', function(e) {
+          const btn = e.target.closest('.chip-btn');
+          if (!btn) return;
+          state.grade = btn.getAttribute('data-grade');
+          gradeChipsWrap.querySelectorAll('.chip-btn').forEach(function(b) {
+            const active = b === btn;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+          render();
+        });
+      }
+
+      function initKindChips() {
+        if (!kindChipsWrap) return;
+        kindChipsWrap.addEventListener('click', function(e) {
+          const btn = e.target.closest('.chip-btn');
+          if (!btn) return;
+          state.kind = btn.getAttribute('data-kind');
+          kindChipsWrap.querySelectorAll('.chip-btn').forEach(function(b) {
+            const active = b === btn;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+          });
+          render();
+        });
+      }
+
+      // --- 4. Живой поиск ---
+      function initSearch() {
+        if (!searchInput) return;
+
+        function syncClearVisibility() {
+          const hasText = Boolean(state.query);
+          if (searchClearBtn) searchClearBtn.style.display = hasText ? 'inline-flex' : 'none';
+          if (searchKbdHint) searchKbdHint.style.display = hasText ? 'none' : '';
+        }
+
+        searchInput.addEventListener('input', function() {
+          state.query = searchInput.value.trim();
+          syncClearVisibility();
+          render();
+        });
+
+        if (searchClearBtn) {
+          searchClearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            state.query = '';
+            syncClearVisibility();
+            searchInput.focus();
+            render();
+          });
+        }
+
+        window.addEventListener('keydown', function(e) {
+          if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (state.currentRoute.mode === 'lesson') {
+              window.location.hash = '';
+            }
+            searchInput.focus();
+            searchInput.select();
+          }
+        });
+      }
+
+      // --- 5. Карточка «На столе» в правом поле первого разворота ---
+      function renderSpecimenDesk(filteredItems) {
+        if (!specimenDesk) return;
+        if (!filteredItems || filteredItems.length === 0) {
+          specimenDesk.style.display = 'none';
+          specimenDesk.innerHTML = '';
+          return;
+        }
+
+        const item = filteredItems[0];
+        const isBoard = item.kind === 'board';
+        const href = resolveItemHref(item);
+        const fullUrl = resolveFullUrl(href);
+        const targetAttr = isBoard ? ' target="_blank" rel="noopener noreferrer"' : '';
+        const gradeLabel = (item.grade !== null && item.grade !== undefined && item.grade !== '')
+          ? (item.grade + ' класс')
+          : 'Общий курс';
+        const coverSrc = item.cover_src || ('covers/' + (item.cover || 'library') + '.png');
+        const verb = getActionVerb(item);
+        const hasFilters = state.query !== '' || state.grade !== 'all' || state.kind !== 'all';
+        const rubricText = hasFilters ? 'Первый в отборе' : 'На столе сегодня';
+
+        specimenDesk.style.display = '';
+        specimenDesk.innerHTML = (
+          '<div class="specimen-card">' +
+            '<div class="specimen-head">' +
+              '<span class="specimen-rubric"><span class="specimen-dot" aria-hidden="true"></span>' + escapeHtml(rubricText) + '</span>' +
+              '<span>' + escapeHtml(gradeLabel) + '</span>' +
+            '</div>' +
+            '<div class="specimen-frame">' +
+              '<img src="' + escapeHtml(coverSrc) + '" alt="' + escapeHtml(item.title) + '" onerror="this.style.display=\'none\'">' +
+            '</div>' +
+            '<h2 class="specimen-title">' + escapeHtml(item.title) + '</h2>' +
+            '<p class="specimen-sub">' + escapeHtml(item.subtitle || item.topic || 'Интерактивное задание') + '</p>' +
+            '<div class="specimen-actions">' +
+              '<a class="btn-primary" style="flex:1;" href="' + escapeHtml(href) + '"' + targetAttr + ' data-game-link>' + escapeHtml(verb) + '</a>' +
+              '<button type="button" class="card-icon-action" data-action="qr" data-url="' + escapeHtml(fullUrl) + '" data-title="' + escapeHtml(item.title) + '" title="Показать QR-код на экране" aria-label="Показать QR-код">' +
+                'QR' +
+              '</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      // --- 6. Книжное оглавление уроков (§ 1, § 2) ---
+      function renderLessonsShelf() {
+        if (!lessonsShelf || !lessonsTrack || !window.CatalogFilter) return;
+
+        const topics = window.CatalogFilter.groupByTopics(catalogItems);
+        if (topics.length === 0) {
+          lessonsShelf.style.display = 'none';
+          return;
+        }
+
+        if (state.currentRoute.mode !== 'lesson') {
+          lessonsShelf.style.display = 'block';
+        }
+        if (lessonsCountNote) {
+          lessonsCountNote.textContent = formatNoun(topics.length, 'готовая тема', 'готовые темы', 'готовых тем');
+        }
+
+        lessonsTrack.innerHTML = topics.map(function(t, idx) {
+          const gradeText = t.grade ? (t.grade + ' класс') : 'Общий курс';
+          const countText = formatItemCount(t.count);
+          const lessonHash = '#lesson/' + t.topic_slug;
+          const lessonFullUrl = resolveFullUrl(window.location.pathname + lessonHash);
+          return (
+            '<div class="lesson-ledger-row" data-topic-slug="' + escapeHtml(t.topic_slug) + '">' +
+              '<span class="ledger-section-num">§\u00a0' + (idx + 1) + '</span>' +
+              '<a href="' + escapeHtml(lessonHash) + '" class="ledger-main-link">' +
+                '<span class="ledger-topic-title">' + escapeHtml(t.topic) + '</span>' +
+                '<span class="ledger-topic-sub">' +
+                  '<span>' + escapeHtml(gradeText) + '</span>' +
+                  '<span class="ledger-sub-sep" aria-hidden="true"></span>' +
+                  '<span>' + escapeHtml(countText) + '</span>' +
+                '</span>' +
+              '</a>' +
+              '<div class="ledger-actions">' +
+                '<a href="' + escapeHtml(lessonHash) + '" class="ledger-open-link">Открыть тему</a>' +
+                '<button type="button" class="card-icon-action" data-action="qr" data-url="' + escapeHtml(lessonFullUrl) + '" data-title="Урок: ' + escapeHtml(t.topic) + '" title="QR-код всей темы для класса" aria-label="QR-код урока">QR</button>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      // --- 7. Отрисовка карточек картотеки ---
+      function render() {
+        const filterFn = window.CatalogFilter ? window.CatalogFilter.filterItems : function(items) { return items; };
+        const route = state.currentRoute;
+        const isLessonMode = route.mode === 'lesson';
+
+        const filterOpts = {
+          query: isLessonMode ? '' : state.query,
+          grade: isLessonMode ? 'all' : state.grade,
+          kind: isLessonMode ? 'all' : state.kind,
+          topic_slug: isLessonMode ? route.topic_slug : null
+        };
+
+        const filtered = filterFn(catalogItems, filterOpts);
+        const hasFilters = state.query !== '' || state.grade !== 'all' || state.kind !== 'all';
+
+        if (!isLessonMode) {
+          renderSpecimenDesk(filtered);
+          if (lessonsShelf && catalogItems.length > 0) {
+            lessonsShelf.style.display = hasFilters ? 'none' : 'block';
+          }
+          if (cardsSectionHeading) {
+            cardsSectionHeading.textContent = hasFilters ? 'Результаты отбора' : 'Все материалы картотеки';
+          }
+        } else if (cardsSectionHeading) {
+          cardsSectionHeading.textContent = 'Материалы урока';
+        }
+
+        statsCounter.textContent = formatItemCount(filtered.length);
+        if (resetFiltersBtn) {
+          resetFiltersBtn.style.display = (!isLessonMode && hasFilters) ? 'inline-flex' : 'none';
+        }
+
+        if (filtered.length === 0) {
+          cardsContainer.innerHTML = '';
+          emptyState.classList.add('is-visible');
+          return;
+        }
+
+        emptyState.classList.remove('is-visible');
+
+        cardsContainer.innerHTML = filtered.map(function(item, index) {
+          const isBoard = item.kind === 'board';
+          const href = resolveItemHref(item);
+          const fullUrl = resolveFullUrl(href);
+          const targetAttr = isBoard ? ' target="_blank" rel="noopener noreferrer"' : '';
+          const gradeText = (item.grade !== null && item.grade !== undefined && item.grade !== '')
+            ? (item.grade + ' класс')
+            : 'Вне класса';
+          const formatMeta = getFormatMeta(item);
+          const coverSrc = item.cover_src || ('covers/' + (item.cover || 'library') + '.png');
+          const subtitleText = item.subtitle || (item.topic ? item.topic : 'Интерактивное упражнение');
+          const folioNum = String(index + 1).padStart(2, '0');
+          const verb = getActionVerb(item);
+
+          return (
+            '<article class="game-card' + (isBoard ? ' is-board-card' : '') + '" id="card-' + escapeHtml(item.slug || item.id) + '" data-slug="' + escapeHtml(item.slug || item.id) + '">' +
+              '<div class="card-folio-bar">' +
+                '<span class="card-folio-num">№\u00a0' + folioNum + '</span>' +
+                '<div class="card-folio-tags">' +
+                  '<span class="folio-tag">' + escapeHtml(gradeText) + '</span>' +
+                  '<span class="folio-tag ' + formatMeta.cls + '">' + escapeHtml(formatMeta.label) + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="card-illustration-wrap">' +
+                '<div class="card-stage">' +
+                  '<div class="card-stage-fallback" aria-hidden="true">§</div>' +
+                  '<img class="card-cover-img" src="' + escapeHtml(coverSrc) + '" alt="' + escapeHtml(item.title) + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+                '</div>' +
+              '</div>' +
+              '<div class="card-body">' +
+                (item.topic ? '<div class="card-topic-line">' + escapeHtml(item.topic) + '</div>' : '') +
+                '<h3 class="card-title">' + escapeHtml(item.title) + '</h3>' +
+                '<p class="card-subtitle">' + escapeHtml(subtitleText) + '</p>' +
+                '<div class="card-actions-bar">' +
+                  '<a class="card-main-action' + (isBoard ? ' is-board' : '') + '" href="' + escapeHtml(href) + '"' + targetAttr + ' data-game-link>' +
+                    escapeHtml(verb) +
+                  '</a>' +
+                  '<button type="button" class="card-icon-action" data-action="copy" data-url="' + escapeHtml(fullUrl) + '" title="Скопировать прямую ссылку" aria-label="Скопировать прямую ссылку">' +
+                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                      '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>' +
+                      '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+                    '</svg>' +
+                  '</button>' +
+                  '<button type="button" class="card-icon-action" data-action="qr" data-url="' + escapeHtml(fullUrl) + '" data-title="' + escapeHtml(item.title) + '" title="Показать QR-код для смартфона" aria-label="Показать QR-код">' +
+                    'QR' +
+                  '</button>' +
+                '</div>' +
+              '</div>' +
+            '</article>'
+          );
+        }).join('');
+      }
+
+      // --- 8. Маршрутизация #lesson/<topic_slug> и #<slug> ---
+      function handleRoute() {
+        if (qrModal && qrModal.classList.contains('is-open')) {
+          closeQRModal();
+        }
+        const parseFn = window.CatalogFilter ? window.CatalogFilter.parseRouteHash : function() { return { mode: 'all' }; };
+        const route = parseFn(window.location.hash);
+        state.currentRoute = route;
+
+        if (route.mode === 'lesson') {
+          enterLessonMode(route.topic_slug);
+        } else {
+          exitLessonMode();
+          if (route.mode === 'item') {
+            highlightItem(route.slug);
+          }
+        }
+      }
+
+      function enterLessonMode(topicSlug) {
+        if (!window.CatalogFilter) return;
+        const topics = window.CatalogFilter.groupByTopics(catalogItems);
+        const currentLesson = topics.find(function(t) { return t.topic_slug === topicSlug; });
+
+        if (heroBlock) heroBlock.style.display = 'none';
+        if (lessonsShelf) lessonsShelf.style.display = 'none';
+
+        if (lessonHero) {
+          lessonHero.classList.add('is-active');
+          if (currentLesson) {
+            lessonTitle.textContent = currentLesson.topic;
+            lessonGradePill.textContent = currentLesson.grade ? (currentLesson.grade + ' класс') : 'Общий курс';
+            lessonCountPill.textContent = formatItemCount(currentLesson.count);
+          } else {
+            lessonTitle.textContent = 'Тема урока: ' + topicSlug;
+            lessonGradePill.textContent = 'Тематическая подборка';
+            lessonCountPill.textContent = '';
+          }
+        }
+
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function exitLessonMode() {
+        if (heroBlock) heroBlock.style.display = '';
+        if (lessonHero) lessonHero.classList.remove('is-active');
+        renderLessonsShelf();
+        render();
+      }
+
+      function highlightItem(slug) {
+        setTimeout(function() {
+          const card = document.querySelector('[data-slug="' + CSS.escape(slug) + '"]');
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.remove('is-highlighted');
+            void card.offsetWidth;
+            card.classList.add('is-highlighted');
+          }
+        }, 50);
+      }
+
+      // --- 9. Клики по карточкам, оглавлению и карточке «На столе» ---
+      function initDelegatedActions() {
+        document.addEventListener('click', function(e) {
+          const gameLink = e.target.closest('[data-game-link]');
+          if (gameLink) {
+            try {
+              if (state.currentRoute.mode === 'lesson') {
+                sessionStorage.setItem('tutorshell:return_hash', window.location.hash);
+              } else {
+                sessionStorage.removeItem('tutorshell:return_hash');
+              }
+            } catch (err) {}
+            return;
+          }
+
+          const copyBtn = e.target.closest('[data-action="copy"]');
+          if (copyBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = copyBtn.getAttribute('data-url');
+            copyToClipboard(url, function() {
+              copyBtn.classList.add('copied');
+              const origHtml = copyBtn.innerHTML;
+              copyBtn.innerHTML = '✓';
+              showToast('Прямая ссылка скопирована');
+              setTimeout(function() {
+                copyBtn.classList.remove('copied');
+                copyBtn.innerHTML = origHtml;
+              }, 1400);
+            });
+            return;
+          }
+
+          const qrBtn = e.target.closest('[data-action="qr"]');
+          if (qrBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            openQRModal(qrBtn.getAttribute('data-url'), qrBtn.getAttribute('data-title'));
+          }
+        });
+      }
+
+      // --- 10. Модальное окно QR-кода ---
+      function openQRModal(url, title) {
+        state.currentModalUrl = url;
+        state.currentModalTitle = title;
+
+        qrModalTitle.textContent = title || 'QR-код материала';
+        qrCanvasBox.innerHTML = '';
+
+        if (window.TutorQR && typeof window.TutorQR.renderSVG === 'function') {
+          qrCanvasBox.innerHTML = window.TutorQR.renderSVG(url, {
+            size: 236,
+            margin: 3,
+            colorDark: '#141926',
+            colorLight: '#ffffff',
+            ariaLabel: 'QR-код: ' + (title || '')
+          });
+        } else {
+          qrCanvasBox.textContent = 'Генератор QR недоступен';
+        }
+
+        qrModal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeQRModal() {
+        qrModal.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+
+      function initModalAndLessonControls() {
+        if (qrCloseBtn) qrCloseBtn.addEventListener('click', closeQRModal);
+        if (qrModal) {
+          qrModal.addEventListener('click', function(e) {
+            if (e.target === qrModal) closeQRModal();
+          });
+        }
+
+        window.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && qrModal && qrModal.classList.contains('is-open')) {
+            closeQRModal();
+          }
+        });
+
+        if (qrCopyLinkBtn) {
+          qrCopyLinkBtn.addEventListener('click', function() {
+            copyToClipboard(state.currentModalUrl, function() {
+              const prev = qrCopyBtnText.textContent;
+              qrCopyBtnText.textContent = 'Ссылка скопирована';
+              showToast('Ссылка скопирована в буфер обмена');
+              setTimeout(function() {
+                qrCopyBtnText.textContent = prev;
+              }, 1600);
+            });
+          });
+        }
+
+        if (lessonBackBtn) {
+          lessonBackBtn.addEventListener('click', function() {
+            window.location.hash = '';
+          });
+        }
+
+        if (brandLink) {
+          brandLink.addEventListener('click', function(e) {
+            if (window.location.hash) {
+              e.preventDefault();
+              window.location.hash = '';
+            }
+          });
+        }
+
+        if (shareLessonBtn) {
+          shareLessonBtn.addEventListener('click', function() {
+            openQRModal(window.location.href, 'Урок: ' + (lessonTitle ? lessonTitle.textContent : ''));
+          });
+        }
+
+        function resetAllFilters() {
+          state.query = '';
+          state.grade = 'all';
+          state.kind = 'all';
+          if (searchInput) searchInput.value = '';
+          if (searchClearBtn) searchClearBtn.style.display = 'none';
+          if (searchKbdHint) searchKbdHint.style.display = '';
+
+          if (gradeChipsWrap) {
+            gradeChipsWrap.querySelectorAll('.chip-btn').forEach(function(b) {
+              const active = b.getAttribute('data-grade') === 'all';
+              b.classList.toggle('is-active', active);
+              b.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+          }
+          if (kindChipsWrap) {
+            kindChipsWrap.querySelectorAll('.chip-btn').forEach(function(b) {
+              const active = b.getAttribute('data-kind') === 'all';
+              b.classList.toggle('is-active', active);
+              b.setAttribute('aria-pressed', active ? 'true' : 'false');
+            });
+          }
+          render();
+        }
+
+        if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetAllFilters);
+        if (emptyResetBtn) emptyResetBtn.addEventListener('click', resetAllFilters);
+      }
+
+      function copyToClipboard(text, onSuccess) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(onSuccess).catch(function() {
+            fallbackCopy(text, onSuccess);
+          });
+        } else {
+          fallbackCopy(text, onSuccess);
+        }
+      }
+
+      function fallbackCopy(text, onSuccess) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          if (onSuccess) onSuccess();
+        } catch (err) {
+          showToast('Скопируйте ссылку вручную: ' + text, 4000);
+        }
+        document.body.removeChild(ta);
+      }
+
+      function showToast(msg, duration) {
+        if (!toastNotice || !toastText) return;
+        toastText.textContent = msg;
+        toastNotice.classList.add('is-visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() {
+          toastNotice.classList.remove('is-visible');
+        }, duration || 2600);
+      }
+
+      // Инициализация
+      initTheme();
+      initAdminLinks();
+      initGradeChips();
+      initKindChips();
+      initSearch();
+      renderLessonsShelf();
+      initDelegatedActions();
+      initModalAndLessonControls();
+      window.addEventListener('hashchange', handleRoute);
+      handleRoute();
+    })();
+  </script>
+</body>
+</html>

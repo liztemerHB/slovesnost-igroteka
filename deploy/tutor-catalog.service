@@ -1,0 +1,16 @@
+[Unit]
+Description=Slovesnost Tutor Games Catalog & Admin Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/tutor-games-catalog
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/usr/bin/python3 /opt/tutor-games-catalog/tools/admin_server.py --host 127.0.0.1 --port 8080
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

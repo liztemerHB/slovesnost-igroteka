@@ -1,0 +1,22 @@
+# Конфигурация Caddy для собственного домена в РФ (опциональный VPS-вариант)
+# Замените slovesnost.example.ru на свой домен; HTTPS-сертификат выпустится автоматически.
+
+slovesnost.example.ru {
+    encode zstd gzip
+
+    # Безопасные заголовки
+    header {
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Админка и REST API проксируются на локальный Python-сервер
+    @admin_routes {
+        path /admin /admin/* /admin_assets/* /api/admin/*
+    }
+    reverse_proxy @admin_routes 127.0.0.1:8080
+
+    # Публичная витрина раздаётся напрямую из собранной папки dist/ с максимальной скоростью
+    root * /opt/tutor-games-catalog/dist
+    file_server
+}

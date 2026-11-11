@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Квест: Архитектура Слова • Проверка Домашнего Задания</title>
+  <style>
+    :root {
+      --bg: #0c121e;
+      --card-bg: #141c2e;
+      --card-inner: #1b263e;
+      --border: #283754;
+      --border-focus: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --gold: #d97706;
+      --gold-bright: #f59e0b;
+      --emerald: #059669;
+      --emerald-bg: rgba(5, 150, 105, 0.14);
+      --rose: #dc2626;
+      --rose-bg: rgba(220, 38, 38, 0.14);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: Georgia, Cambria, "Times New Roman", serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: clip;
+      padding: 12px;
+      line-height: 1.45;
+    }
+
+    .jumpscare-shake {
+      animation: screenRumble 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes screenRumble {
+      10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-0.5deg); }
+      20%, 80% { transform: translate3d(3px, 0, 0) rotate(0.5deg); }
+      30%, 50%, 70% { transform: translate3d(-3px, 0, 0) rotate(-0.8deg); }
+      40%, 60% { transform: translate3d(3px, 0, 0) rotate(0.8deg); }
+    }
+
+    .quest-wrapper {
+      max-width: 840px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .hud-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .level-badge {
+      background: #1e3a8a;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .progress-track {
+      width: 110px;
+      height: 7px;
+      background: #090e18;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, var(--gold-bright));
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .hud-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-btn {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .hud-btn:hover {
+      background: #233150;
+      border-color: #3b82f6;
+    }
+
+    .score-counter {
+      color: var(--gold-bright);
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .character-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .char-avatar {
+      width: 50px;
+      height: 50px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #172338;
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .char-speech {
+      flex: 1;
+    }
+
+    .char-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .char-text {
+      font-size: 13.5px;
+      color: #e2e8f0;
+      line-height: 1.4;
+    }
+
+    .quest-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .room-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .room-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #93c5fd;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .question-counter {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .context-box {
+      background: var(--card-inner);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 6px 6px 0;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #f1f5f9;
+      line-height: 1.48;
+    }
+
+    .context-box b {
+      color: #fbbf24;
+    }
+
+    .academic-question {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      .hud-btn span {
+        display: none;
+      }
+      .progress-track {
+        width: 65px;
+      }
+    }
+
+    .opt-btn {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+      color: #f8fafc;
+      font-size: 13.5px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      line-height: 1.35;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      background: #233150;
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    .opt-key {
+      background: #0c121e;
+      color: var(--gold-bright);
+      font-weight: 700;
+      font-size: 11px;
+      border-radius: 3px;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    @keyframes ghostDissolve {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.7));
+      }
+      50% {
+        opacity: 0.9;
+        transform: scale(1.02) translateY(-2px);
+        background: #064e3b;
+        border-color: #10b981;
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        background: #064e3b;
+        border-color: #10b981;
+      }
+    }
+
+    .opt-btn.correct-glow {
+      animation: ghostDissolve 0.45s ease forwards;
+    }
+
+    .opt-btn.wrong-glow {
+      background: #4c0519 !important;
+      border-color: #dc2626 !important;
+      color: #fecdd3 !important;
+    }
+
+    .feedback-box {
+      display: none;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-top: 4px;
+      font-size: 13px;
+      line-height: 1.45;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-box.correct {
+      display: block;
+      background: var(--emerald-bg);
+      border: 1px solid var(--emerald);
+      color: #a7f3d0;
+    }
+
+    .feedback-box.wrong {
+      display: block;
+      background: var(--rose-bg);
+      border: 1px solid var(--rose);
+      color: #fecdd3;
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feedback-title.correct { color: #34d399; }
+    .feedback-title.wrong { color: #f87171; }
+
+    .next-btn {
+      background: #2563eb;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      transition: background 0.15s;
+    }
+
+    .next-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 15, 0.85);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-overlay.is-active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-focus);
+      border-radius: 10px;
+      max-width: 620px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close:hover { color: #fff; }
+
+    .tabs-nav {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #3b82f6;
+    }
+
+    .tab-pane {
+      display: none;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .tab-pane.active { display: block; }
+
+    .tab-pane h4 {
+      color: var(--gold-bright);
+      font-size: 12.5px;
+      margin: 10px 0 4px 0;
+      text-transform: uppercase;
+    }
+
+    .tab-pane ul {
+      margin-left: 18px;
+      margin-bottom: 8px;
+    }
+
+    .tab-pane li { margin-bottom: 3px; }
+
+    .diploma-card {
+      background: #fdfbf7;
+      color: #0f172a;
+      border: 6px double #b45309;
+      border-radius: 8px;
+      padding: 26px 30px;
+      position: relative;
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+      font-family: var(--font-serif);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .diploma-header h2 {
+      font-size: 21px;
+      color: #78350f;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 2px;
+    }
+
+    .diploma-subtitle {
+      font-size: 12.5px;
+      color: #475569;
+      font-style: italic;
+      margin-bottom: 14px;
+    }
+
+    .student-badge-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: #1e3a8a;
+      letter-spacing: 0.02em;
+      margin: 10px 0;
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+    }
+
+    .competencies-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px 14px;
+      text-align: left;
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      margin: 12px 0;
+      line-height: 1.45;
+    }
+
+    .competencies-box ul {
+      margin-left: 16px;
+    }
+
+    .seal-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed #cbd5e1;
+    }
+
+    .signature {
+      font-family: "Brush Script MT", "Caveat", cursive, sans-serif;
+      font-size: 20px;
+      color: #1e3a8a;
+      border-bottom: 1px solid #94a3b8;
+      padding: 0 10px;
+    }
+
+    .wax-seal {
+      width: 82px;
+      height: 82px;
+      filter: drop-shadow(0 4px 6px rgba(180, 83, 9, 0.35));
+    }
+
+    .diploma-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      .diploma-card, .diploma-card * { visibility: visible; }
+      .diploma-card {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        border: 4px double #78350f;
+        padding: 15mm;
+      }
+      .diploma-actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="quest-wrapper">
+  <!-- HUD Bar -->
+  <header class="hud-bar">
+    <div class="hud-left">
+      <div class="level-badge" id="hud-level-badge">Зал 1 • Архитектура Слова</div>
+      <div class="progress-track" title="Прогресс домашнего задания">
+        <div class="progress-fill" id="hud-progress-fill"></div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="score-counter">
+        <span>📜</span>
+        <span id="hud-score">0 / 12</span>
+      </div>
+      <button class="hud-btn" id="sound-btn" onclick="toggleSound()">
+        <span id="sound-icon">🔊</span>
+        <span>Звук</span>
+      </button>
+      <button class="hud-btn" onclick="openRulebook()">
+        <span>📜</span>
+        <span>Шпаргалка</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Single Speech Bubble Character -->
+  <section class="character-card">
+    <div class="char-avatar">
+      <svg viewBox="0 0 48 48" width="38" height="38">
+        <circle cx="24" cy="26" r="16" fill="#d97706" />
+        <polygon points="12,14 18,22 10,24" fill="#b45309" />
+        <polygon points="36,14 30,22 38,24" fill="#b45309" />
+        <circle cx="19" cy="24" r="5" fill="#0f172a" stroke="#f8fafc" stroke-width="1.5" />
+        <circle cx="29" cy="24" r="5" fill="#0f172a" stroke="#f8fafc" stroke-width="1.5" />
+        <line x1="24" y1="24" x2="24" y2="24" stroke="#f8fafc" stroke-width="2" />
+        <circle cx="19" cy="24" r="2" fill="#38bdf8" />
+        <circle cx="29" cy="24" r="2" fill="#38bdf8" />
+        <polygon points="24,28 22,30 26,30" fill="#f43f5e" />
+        <line x1="15" y1="29" x2="8" y2="28" stroke="#f8fafc" stroke-width="1" />
+        <line x1="15" y1="31" x2="9" y2="33" stroke="#f8fafc" stroke-width="1" />
+        <line x1="33" y1="29" x2="40" y2="28" stroke="#f8fafc" stroke-width="1" />
+        <line x1="33" y1="31" x2="39" y2="33" stroke="#f8fafc" stroke-width="1" />
+        <polygon points="24,4 40,11 24,16 8,11" fill="#1e3a8a" />
+        <polygon points="24,14 32,18 24,20 16,18" fill="#172554" />
+        <line x1="40" y1="11" x2="42" y2="20" stroke="#f59e0b" stroke-width="1.5" />
+        <circle cx="42" cy="21" r="2" fill="#f59e0b" />
+      </svg>
+    </div>
+    <div class="char-speech">
+      <div class="char-name">
+        <span>Архивариус Лексий</span>
+        <span style="font-size: 10px; color: var(--text-muted); font-weight: normal;">• Проверка домашнего задания</span>
+      </div>
+      <div class="char-text" id="character-text">
+        «Приветствую! На уроке мы разобрали третий пазл языка: лексику, лексическое значение, однозначные и многозначные слова, омонимы и их виды. Давай проверим на практике, как ты научился отличать их друг от друга!»
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Quest Stage Card -->
+  <main class="quest-card" id="quest-card">
+    <div class="room-header">
+      <div class="room-title" id="room-title">Зал 1 • Архитектура Слова</div>
+      <div class="question-counter" id="q-counter">Вопрос 1 из 12</div>
+    </div>
+
+    <!-- Context material -->
+    <div class="context-box" id="context-box">
+      Загрузка языкового материала...
+    </div>
+
+    <!-- Academic Question -->
+    <div class="academic-question" id="academic-question">
+      Загрузка вопроса...
+    </div>
+
+    <!-- Options 2x2 Grid -->
+    <div class="options-grid" id="options-container">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- Feedback Drawer -->
+    <div class="feedback-box" id="feedback-box">
+      <div class="feedback-title" id="feedback-title"></div>
+      <div class="feedback-text" id="feedback-text"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+        <span>Следующее испытание</span>
+        <span>→</span>
+      </button>
+    </div>
+  </main>
+</div>
+
+<!-- ================= MODAL: RULEBOOK (ШПАРГАЛКА) ================= -->
+<div class="modal-overlay" id="rulebook-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>📜</span>
+        <span>Шпаргалка по пройденному материалу</span>
+      </div>
+      <button class="modal-close" onclick="closeRulebook()">✕</button>
+    </div>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="switchTab(0)">1. Лексика и значение</button>
+      <button class="tab-btn" onclick="switchTab(1)">2. Однозначные и многозначные</button>
+      <button class="tab-btn" onclick="switchTab(2)">3. Омонимы vs Многозначные</button>
+      <button class="tab-btn" onclick="switchTab(3)">4. Разновидности омонимов</button>
+    </div>
+
+    <!-- Tab 0 -->
+    <div class="tab-pane active" id="tab-0">
+      <h4>Лексика и Лексикология (Пазл № 3)</h4>
+      <ul>
+        <li><b>Фонетика</b> изучала звуки (кирпичики). <b>Орфоэпия</b> — ударения и нормы произношения.</li>
+        <li><b>Лексика</b> — весь словарный состав языка (все слова).</li>
+        <li><b>Лексикология</b> — раздел языкознания, изучающий слово и словарный состав языка.</li>
+        <li><b>Лексическое значение (ЛЗ)</b> — внутренний смысл слова, то, что слово обозначает в реальности. Фиксируется в <i>толковых словарях</i> (словарь Ожегова, Ушакова).</li>
+      </ul>
+    </div>
+
+    <!-- Tab 1 -->
+    <div class="tab-pane" id="tab-1">
+      <h4>Однозначные и Многозначные слова</h4>
+      <ul>
+        <li><b>Однозначные слова (моносемия):</b> имеют ровно 1 значение.
+          <br><i>Примеры:</i> бинт, аппендицит, берёза, гипотенуза, троллейбус.
+        </li>
+        <li><b>Многозначные слова (полисемия):</b> имеют 2 и более значений, связанных <b>общим сходством</b> (по форме, цвету, функции).
+          <br><i>Примеры:</i> кнопка (на рубашке / звонка / в лифте); шляпка (дамы / гриба / гвоздя); ножка (стула / гриба / циркуля).
+        </li>
+        <li><b>Прямое значение:</b> первичное, основное (<i>золотое кольцо</i> — из металла).</li>
+        <li><b>Переносное значение:</b> образное, возникшее по сходству (<i>золотые руки</i> — искусные; <i>железная воля</i>).</li>
+      </ul>
+    </div>
+
+    <!-- Tab 2 -->
+    <div class="tab-pane" id="tab-2">
+      <h4>Омонимы против Многозначных слов (Главный водораздел)</h4>
+      <ul>
+        <li><b>Многозначные слова:</b> сохраняют общую «ниточку» сходства!
+          <br><i>Пример:</i> ручка двери и ручка ребёнка (деталь, за которую держат рукой). В словаре оформляются в <b>одной словарной статье</b> под номерами 1, 2, 3...
+        </li>
+        <li><b>Омонимы:</b> слова, абсолютно одинаковые по звучанию и написанию, но <b>не имеющие никакой смысловой связи (связь разорвана на 100%)</b>!
+          <br><i>Пример:</i> лук (овощ) и лук (оружие со стрелами); брак (семья) и брак (заводской дефект); ключ (от замка) и ключ (родник).
+          <br>В толковом словаре омонимы даются в <b>отдельных словарных статьях</b> с римскими цифрами (<i>ЛУК I</i> и <i>ЛУК II</i>).
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tab 3 -->
+    <div class="tab-pane" id="tab-3">
+      <h4>Разновидности омонимов</h4>
+      <ul>
+        <li><b>1. Омофоны (фонетические):</b> звучат одинаково, но пишутся разными буквами.
+          <br><i>Примеры:</i> плод — плот, луг — лук, туш — тушь, рог — рок, гриб — грипп.
+        </li>
+        <li><b>2. Омографы (графические):</b> пишутся одинаковыми буквами, но различаются ударением и звучанием.
+          <br><i>Примеры:</i> за́мок — замо́к, мука́ — му́ка, а́тлас — атла́с, хло́пок — хлопо́к.
+        </li>
+        <li><b>3. Омоформы (грамматические):</b> совпадают только в одной отдельной грамматической форме разных частей речи.
+          <br><i>Примеры:</i> лечу (в самолёте) — лечу (простуду); печь (сущ.) — печь (глагол); три (число) — три (глагол).
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: MEMO WITH BULLETPROOF TIMER ================= -->
+<div class="modal-overlay" id="memo-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title" style="color: #ef4444;">
+        <span>⚠️</span>
+        <span>Осечка! Изучи правило</span>
+      </div>
+    </div>
+    <div id="memo-modal-body" style="font-size: 13px; line-height: 1.5; color: #e2e8f0; margin-bottom: 16px;">
+      <!-- Injected dynamically -->
+    </div>
+    <button class="next-btn" id="memo-continue-btn" style="width: 100%; justify-content: center;" onclick="closeMemoAndRetry()">
+      Изучи правило (<span id="memo-timer-sec">2</span>с)...
+    </button>
+  </div>
+</div>
+
+<!-- ================= MODAL: ROYAL DIPLOMA ================= -->
+<div class="modal-overlay" id="diploma-modal">
+  <div class="diploma-card">
+    <div class="diploma-header">
+      <h2>Сертификат Успешного Прохождения</h2>
+      <div class="diploma-subtitle">Квест по домашнему заданию • Раздел «Лексикология»</div>
+    </div>
+
+    <p style="font-size: 13.5px; margin-top: 8px;">Настоящим удостоверяется, что студент</p>
+    <div class="student-badge-name" id="diploma-student-name">Знаток Лексикологии</div>
+    <p style="font-size: 13px; color: #334155;">успешно справился с домашним заданием и доказал твёрдое усвоение пройденных тем:</p>
+
+    <div class="competencies-box">
+      <b>Подтверждённые практические умения:</b>
+      <ul>
+        <li>Точное понимание предметов лексикологии и лексического значения слов.</li>
+        <li>Безошибочное распознавание однозначных и многозначных слов без подсказок.</li>
+        <li>Различение прямого и переносного значения на основе признаков сходства.</li>
+        <li>Чёткое разделение многозначности и омонимии по признаку смысловой связи.</li>
+        <li>Безупречное различение видов омонимов: омофонов, омографов и омоформ.</li>
+      </ul>
+    </div>
+
+    <div class="seal-row">
+      <div>
+        <div style="font-size: 10.5px; color: #64748b; text-transform: uppercase;">Проверил преподаватель:</div>
+        <div class="signature">Архивариус Лексий</div>
+      </div>
+
+      <svg class="wax-seal" viewBox="0 0 120 120">
+        <polygon points="50,60 30,115 50,105 70,115 50,60" fill="#991b1b" />
+        <polygon points="70,60 50,115 70,105 90,115 70,60" fill="#7f1d1d" />
+        <circle cx="60" cy="60" r="48" fill="#b45309" stroke="#78350f" stroke-width="2" />
+        <circle cx="60" cy="60" r="42" fill="#d97706" />
+        <circle cx="60" cy="60" r="38" fill="#f59e0b" stroke="#b45309" stroke-width="1.5" />
+        <defs>
+          <path id="seal-text-path" d="M 60,60 m -30,0 a 30,30 0 1,1 60,0 a 30,30 0 1,1 -60,0" />
+        </defs>
+        <text font-size="7" font-weight="bold" fill="#78350f" letter-spacing="1.1">
+          <textPath href="#seal-text-path" startOffset="50%" text-anchor="middle">
+            ★ АКАДЕМИЯ РУССКОЙ СЛОВЕСНОСТИ ★
+          </textPath>
+        </text>
+        <circle cx="60" cy="60" r="17" fill="#78350f" />
+        <polygon points="60,50 63,56 67,52 64,64 56,64 53,52 57,56" fill="#fef3c7" />
+        <circle cx="60" cy="67" r="2" fill="#fef3c7" />
+      </svg>
+
+      <div>
+        <div style="font-size: 10.5px; color: #64748b; text-transform: uppercase;">Оценка ДЗ:</div>
+        <div style="font-size: 19px; font-weight: 800; color: #047857;">ОТЛИЧНО (5.0)</div>
+      </div>
+    </div>
+
+    <div class="diploma-actions">
+      <button class="next-btn" onclick="window.print()" style="background: #1e3a8a;">
+        <span>🖨️ Распечатать / Сохранить в PDF</span>
+      </button>
+      <button class="next-btn" onclick="restartQuest()" style="background: #475569;">
+        <span>🔄 Пройти снова</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==================== PROCEDURAL WEB AUDIO ENGINE ==================== */
+class ProceduralAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.isMuted = false;
+  }
+
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioCtx();
+    }
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  playSuccessChime() {
+    if (this.isMuted) return;
+    this.init();
+    const now = this.ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.07);
+      gain.gain.setValueAtTime(0.18, now + i * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.32);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now + i * 0.07);
+      osc.stop(now + i * 0.07 + 0.33);
+    });
+  }
+
+  playJumpscareError() {
+    if (this.isMuted) return;
+    this.init();
+    const now = this.ctx.currentTime;
+
+    document.body.classList.add('jumpscare-shake');
+    setTimeout(() => document.body.classList.remove('jumpscare-shake'), 500);
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(550, now);
+    filter.frequency.exponentialRampToValueAtTime(100, now + 0.45);
+
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(70, now + 0.45);
+
+    gain.gain.setValueAtTime(0.22, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.46);
+
+    const bufSize = this.ctx.sampleRate * 0.18;
+    const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.03));
+    }
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buf;
+    const nFilter = this.ctx.createBiquadFilter();
+    nFilter.type = 'bandpass';
+    nFilter.frequency.value = 1600;
+    nFilter.Q.value = 3;
+
+    const nGain = this.ctx.createGain();
+    nGain.gain.setValueAtTime(0.18, now);
+    nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+    noise.connect(nFilter);
+    nFilter.connect(nGain);
+    nGain.connect(this.ctx.destination);
+    noise.start(now);
+  }
+}
+
+const audio = new ProceduralAudioEngine();
+function toggleSound() {
+  audio.isMuted = !audio.isMuted;
+  const icon = document.getElementById('sound-icon');
+  icon.textContent = audio.isMuted ? '🔇' : '🔊';
+}
+
+/* ==================== 100% CLEAN QUESTION BANK (ZERO SPOILERS) ==================== */
+const QUESTIONS = [
+  // --- ЗАЛ 1: Архитектура Слова ---
+  {
+    id: 1,
+    level: 1,
+    levelTitle: "Зал 1 • Архитектура Слова",
+    speech: "«Приветствую на проверке домашнего задания! Мы уже изучили звуки речи (фонетику) и ударения (орфоэпию). А какой раздел исследует смысл слов?»",
+    context: "В лингвистике каждый раздел исследует свой уровень языка: фонетика — звуки, орфоэпия — ударения, морфемика — части слова.",
+    question: "Какой раздел языкознания изучает словарный состав языка и значения слов?",
+    options: [
+      "Лексикология",
+      "Фонетика",
+      "Орфоэпия",
+      "Морфемика"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Лексикология (от греч. lexis — слово, logos — учение) изучает именно словарный состав языка (лексику) и внутренний смысл слов.",
+      "Ошибка! Звуки речи и их позиционные чередования изучает Фонетика.",
+      "Ошибка! Нормы литературного произношения и постановки ударения изучает Орфоэпия.",
+      "Ошибка! Морфемный состав слова (приставки, корни, суффиксы, окончания) изучает Морфемика."
+    ],
+    ruleMemo: "<b>Лексика</b> — вся совокупность слов языка.<br><b>Лексикология</b> — раздел языкознания, изучающий слово и словарный состав языка (пазл № 3)."
+  },
+  {
+    id: 2,
+    level: 1,
+    levelTitle: "Зал 1 • Архитектура Слова",
+    speech: "«У каждого слова в языке есть две стороны: грамматическая форма и внутреннее содержание. Как называется это смысловое ядро?»",
+    context: "В словаре зафиксировано: «<b>СТОЛ</b> — предмет мебели в виде широкой горизонтальной пластины на опорах, ножках, для работы или еды».",
+    question: "Какое значение слова раскрывает данная словарная статья?",
+    options: [
+      "Лексическое значение",
+      "Грамматическое значение",
+      "Словообразовательное значение",
+      "Стилистическое значение"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Лексическое значение — это закреплённое в сознании носителей языка смысловое содержание слова, соотнесённость звуков с реальным предметом.",
+      "Ошибка! Грамматическое значение указывает на грамматические признаки (существительное, мужской род, 2-е склонение, ед.ч.).",
+      "Ошибка! Словообразовательное значение показывает способ образования от производящей основы.",
+      "Ошибка! Стилистическое значение отражает эмоциональную окраску или принадлежность к стилю речи."
+    ],
+    ruleMemo: "<b>Лексическое значение (ЛЗ)</b> — внутреннее смысловое содержание слова, закреплённое в толковом словаре. В отличие от грамматического значения, оно называет сам предмет, признак или действие реального мира."
+  },
+  {
+    id: 3,
+    level: 1,
+    levelTitle: "Зал 1 • Архитектура Слова",
+    speech: "«В рецепте врача и в геометрии слова должны быть предельно однозначными. Как называют такие слова в науке?»",
+    context: "Слова из научного текста: <b>БИНТ</b>, <b>АППЕНДИЦИТ</b>, <b>ГИПОТЕНУЗА</b>, <b>БЕРЁЗА</b>.",
+    question: "Какими являются эти слова по количеству лексических значений?",
+    options: [
+      "Однозначными",
+      "Многозначными",
+      "Омонимами",
+      "Омоформами"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Однозначные слова имеют ровно ОДНО закреплённое в словаре лексическое значение (моносемия). Чаще всего это термины, медицинские понятия или названия конкретных деревьев и инструментов.",
+      "Ошибка! Многозначные слова имеют несколько значений, связанных общим сходством (как «кнопка» или «корень»).",
+      "Ошибка! Омонимы — это разные слова, случайно совпавшие по звучанию (лук-овощ / лук-оружие). У слова «аппендицит» омонимов нет.",
+      "Ошибка! Омоформы — это совпадение лишь в одной форме разных слов (лечу самолётом / лечу горло)."
+    ],
+    ruleMemo: "<b>Однозначные слова (моносемия)</b> имеют только одно лексическое значение (<i>бинт, инфаркт, гипотенуза, берёза, фломастер</i>). Они называют одно строго определённое понятие."
+  },
+
+  // --- ЗАЛ 2: Многозначные слова ---
+  {
+    id: 4,
+    level: 2,
+    levelTitle: "Зал 2 • Тайны Многозначных Слов",
+    speech: "«Большинство слов языка — настоящие универсалы. Одно слово обслуживает сразу несколько предметов. Какое явление перед нами?»",
+    context: "Слово <b>КНОПКА</b> употребляется в сочетаниях: канцелярская кнопка, кнопка звонка, кнопка на рубашке, кнопка мыши.",
+    question: "Какое языковое явление иллюстрируют эти примеры?",
+    options: [
+      "Многозначность",
+      "Омонимию",
+      "Омофонию",
+      "Омографию"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Это многозначность (полисемия): между всеми предметами сохраняется смысловая связь — они маленькие, круглые, и на них нажимают.",
+      "Ошибка! Омонимия — это абсолютно чужие слова без всякой смысловой связи (лук-овощ и лук-оружие).",
+      "Ошибка! Омофония — это совпадение лишь в звучании при разном написании (плод — плот).",
+      "Ошибка! Омография — это совпадение букв при разном ударении (за́мок — замо́к)."
+    ],
+    ruleMemo: "<b>Многозначные слова (полисемия)</b> имеют два и более лексических значений, связанных <b>общим смысловым ядром (сходством)</b>: по форме, цвету, расположению или функции (<i>шляпка гриба / дамы; ножка стула / ребёнка</i>)."
+  },
+  {
+    id: 5,
+    level: 2,
+    levelTitle: "Зал 2 • Тайны Многозначных Слов",
+    speech: "«У многозначного слова есть прямое значение и переносное. Сможешь ли ты определить тип значения без подсказок?»",
+    context: "Предложения:<br>1) На пальце блестело золотое кольцо.<br>2) У этого мастера <b>золотые руки</b>.",
+    question: "В каком значении употреблено прилагательное «золотой» во втором предложении?",
+    options: [
+      "В переносном значении",
+      "В прямом значении",
+      "В значении омонима",
+      "В значении омоформы"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Во 2-м предложении значение переносное: руки не сделаны из металла, признак перенесён по высокой ценности и мастерству (искусные руки).",
+      "Ошибка! Прямое значение — сделанный из металла золота (как золотое кольцо в первом предложении).",
+      "Ошибка! Это не омоним, а переносное значение того же многозначного слова «золотой».",
+      "Ошибка! Омоформы — это совпадение форм разных слов (лечу самолётом / лечу горло)."
+    ],
+    ruleMemo: "• <b>Прямое значение:</b> первичное, прямо указывает на предмет (<i>железный гвоздь, золотое кольцо</i>).<br>• <b>Переносное значение:</b> вторичное, образное, возникшее по сходству (<i>железные нервы, золотые руки</i>)."
+  },
+  {
+    id: 6,
+    level: 2,
+    levelTitle: "Зал 2 • Тайны Многозначных Слов",
+    speech: "«А теперь чистая практика без подсказок! Найди слово, у которого в языке есть несколько связанных значений!»",
+    context: "Предложение: «Студент достал деревянную <b>ЛИНЕЙКУ</b>, включил настольную <b>ЛАМПУ</b>, открыл <b>ТЕТРАДЬ</b> и выписал <b>ТЕРМИН</b>».",
+    question: "Какое из выделенных существительных является многозначным?",
+    options: [
+      "Линейка",
+      "Лампа",
+      "Тетрадь",
+      "Термин"
+    ],
+    correct: 0,
+    explanations: [
+      "Точно в цель! Слово «линейка» имеет несколько значений: 1) чертёжная планка с делениями; 2) школьная торжественная линейка; 3) ряд моделей/товаров. Все значения объединены признаком прямого ряда.",
+      "Ошибка! Лампа — однозначное слово, называет осветительный прибор.",
+      "Ошибка! Тетрадь — однозначное слово (сшитые листы бумаги для письма).",
+      "Ошибка! Термин — однозначное слово (точное обозначение специального понятия)."
+    ],
+    ruleMemo: "Многозначное слово в словаре подаётся <b>в одной словарной статье</b> под цифрами 1, 2, 3... (<i>линейка 1. Инструмент. 2. Торжественный сбор в ряд. 3. Ряд моделей</i>)."
+  },
+
+  // --- ЗАЛ 3: Омонимы vs Многозначные слова ---
+  {
+    id: 7,
+    level: 3,
+    levelTitle: "Зал 3 • Омонимы против Многозначных",
+    speech: "«Вот он — главный водораздел нашего урока! В чём принципиальная разница между многозначностью и омонимией?»",
+    context: "Даны две пары словосочетаний:<br>1) Ножка стола — ножка ребёнка.<br>2) Зелёный лук — тугой лук.",
+    question: "К каким лексическим явлениям относятся слова в парах 1 и 2?",
+    options: [
+      "1 — многозначное слово, 2 — омонимы",
+      "1 — омонимы, 2 — многозначное слово",
+      "Обе пары — многозначные слова",
+      "Обе пары — омонимы"
+    ],
+    correct: 0,
+    explanations: [
+      "Браво! В паре 1 есть сходство по функции опоры (многозначность). В паре 2 связь разорвана на 100%: овощ и оружие не связаны ничем — это омонимы!",
+      "Ошибка! Наоборот: ножка стола похожа на ножку ребёнка (многозначность), а лук-овощ и лук-оружие абсолютно независимы.",
+      "Ошибка! Лук-овощ и боевой лук не имеют ничего общего, поэтому не могут быть многозначным словом.",
+      "Ошибка! В первой паре сохраняется ядро сходства (опора), значит это не омонимы."
+    ],
+    ruleMemo: "<b>Главное правило отличия:</b><br>• <b>Многозначные слова:</b> сохраняют общую «ниточку» сходства (<i>шляпка гриба / дамы</i>). В словаре — 1 статья.<br>• <b>Омонимы:</b> связь разорвана на 100% (<i>лук овощ / лук оружие</i>). В словаре — разные статьи с римскими цифрами (ЛУК I и ЛУК II)."
+  },
+  {
+    id: 8,
+    level: 3,
+    levelTitle: "Зал 3 • Омонимы против Многозначных",
+    speech: "«Никаких пояснений в скобках! Только твой ум и языковое чутьё. Найди пару чистокровных омонимов!»",
+    context: "Четыре пары словосочетаний:<br>1) Зерно пшеницы — зерно истины.<br>2) Заводской брак — счастливый брак.<br>3) Гребень петуха — гребень горы.<br>4) Игла ежа — швейная игла.",
+    question: "В какой паре представлены слова-омонимы?",
+    options: [
+      "Заводской брак — счастливый брак",
+      "Зерно пшеницы — зерно истины",
+      "Гребень петуха — гребень горы",
+      "Игла ежа — швейная игла"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Брак (супружество — от славянского «брать») и брак (дефект — от немецкого «brack») — слова совершенно разного происхождения и смысла, совпавшие случайно. Это омонимы!",
+      "Ошибка! Зерно истины — перенос по сходству: маленькое ценное начало (многозначность).",
+      "Ошибка! Гребень горы похож на гребень петуха по зубчатой форме (многозначность).",
+      "Ошибка! Игла ежа и швейная игла острые и тонкие, сходство очевидно (многозначность)."
+    ],
+    ruleMemo: "<i>Брак (супружество)</i> и <i>брак (дефектная продукция)</i> — классический пример <b>омонимов</b>: значения не имеют ни малейшей смысловой связи и происходят из разных языков."
+  },
+  {
+    id: 9,
+    level: 3,
+    levelTitle: "Зал 3 • Омонимы против Многозначных",
+    speech: "«А как омонимы обозначаются в настоящем толковом словаре? Это важный теоретический вопрос!»",
+    context: "В толковом словаре слова КЛЮЧ (от замка) и КЛЮЧ (родник) даны как КЛЮЧ¹ и КЛЮЧ².",
+    question: "Почему составители словаря поместили эти слова в разные словарные статьи?",
+    options: [
+      "Это разные слова-омонимы, смысловая связь между которыми полностью утрачена",
+      "Это одно многозначное слово с близкими оттенками значения",
+      "Одно из слов является устаревшим, а второе — современным",
+      "Слова различаются грамматическим родом и склонением"
+    ],
+    correct: 0,
+    explanations: [
+      "Точно в цель! Так как омонимы — это совершенно разные слова, лексикографы посвящают каждому омониму отдельную словарную статью с цифровым индексом (КЛЮЧ¹ и КЛЮЧ²).",
+      "Ошибка! Значения многозначного слова помещаются в ОДНОЙ словарной статье под номерами 1, 2, 3...",
+      "Ошибка! Оба слова являются современными и общеупотребительными.",
+      "Ошибка! Оба слова относятся к мужскому роду и 2-му склонению."
+    ],
+    ruleMemo: "<b>Словарный маркер:</b><br>• Многозначное слово = <b>1 статья</b> с пунктами: 1), 2), 3)...<br>• Омонимы = <b>отдельные статьи</b> с индексами: <b>КОСА I</b> (девичья), <b>КОСА II</b> (инструмент), <b>КОСА III</b> (песчаная отмель)."
+  },
+
+  // --- ЗАЛ 4: Разновидности Омонимов ---
+  {
+    id: 10,
+    level: 4,
+    levelTitle: "Зал 4 • Разновидности Омонимов",
+    speech: "«Мы в лаборатории тонких созвучий! Слова звучат вслух совершенно одинаково, но на бумаге пишутся разными буквами. Назови термин!»",
+    context: "Пары слов: <b>гриб — грипп</b>, <b>луг — лук</b>, <b>плод — плот</b>, <b>туш — тушь</b>.",
+    question: "Какой разновидностью омонимов являются эти слова?",
+    options: [
+      "Омофонами",
+      "Омографами",
+      "Омоформами",
+      "Паронимами"
+    ],
+    correct: 0,
+    explanations: [
+      "Верно! Омофоны (от греч. phone — звук) звучат одинаково [лук], [грип], но пишутся по-разному из-за законов оглушения согласных на конце слова.",
+      "Ошибка! Омографы (от grapho — пишу) пишутся одинаково, а звучат по-разному из-за ударения (за́мок — замо́к).",
+      "Ошибка! Омоформы совпадают только в одной грамматической форме (лечу — лечу).",
+      "Ошибка! Паронимы звучат лишь похоже, но не одинаково (надеть/одеть)."
+    ],
+    ruleMemo: "<b>Омофоны (фонетические омонимы):</b> звучат абсолютно одинаково, но пишутся разными буквами (<i>плод — плот, луг — лук, туш — тушь, рог — рок, посветить — посвятить</i>)."
+  },
+  {
+    id: 11,
+    level: 4,
+    levelTitle: "Зал 4 • Разновидности Омонимов",
+    speech: "«А теперь буквы в словах абсолютно одинаковые, но стоит сдвинуть ударение — и смысл меняется! Какой это термин?»",
+    context: "Пары слов: <b>за́мок — замо́к</b>, <b>мука́ — му́ка</b>, <b>а́тлас — атла́с</b>, <b>хло́пок — хлопо́к</b>.",
+    question: "Какой разновидностью омонимов являются эти слова?",
+    options: [
+      "Омографами",
+      "Омофонами",
+      "Омоформами",
+      "Однозначными словами"
+    ],
+    correct: 0,
+    explanations: [
+      "Великолепно! Омографы (от греч. grapho — пишу) графически (буквами) пишутся абсолютно одинаково, но различаются местом ударения!",
+      "Ошибка! Омофоны звучат одинаково, а пишутся по-разному (луг — лук). Здесь же буквы одинаковые, а звучание разное!",
+      "Ошибка! Омоформы — это совпадение лишь в одной форме разных частей речи.",
+      "Ошибка! Однозначные слова имеют 1 значение, а здесь перед нами разные слова."
+    ],
+    ruleMemo: "<b>Омографы (графические омонимы):</b> пишутся одинаковыми буквами, но различаются местом ударения и звучанием (<i>за́мок — замо́к, мука́ — му́ка, а́тлас — атла́с, хло́пок — хлопо́к</i>)."
+  },
+  {
+    id: 12,
+    level: 4,
+    levelTitle: "Зал 4 • Разновидности Омонимов",
+    speech: "«Финальный вопрос без единой подсказки! Слова разных частей речи встретились в одной грамматической форме. Что это?»",
+    context: "Примеры употребления:<br>1) На каникулах я <b>ЛЕЧУ</b> в Москву.<br>2) Я тщательно <b>ЛЕЧУ</b> больное горло.",
+    question: "Какой разновидностью омонимов являются выделенные глаголы?",
+    options: [
+      "Омоформами",
+      "Омографами",
+      "Омофонами",
+      "Многозначными словами"
+    ],
+    correct: 0,
+    explanations: [
+      "БРАВО! Это омоформы (грамматические омонимы). В начальной форме это разные глаголы: лететь и лечить. Они случайно совпали только в форме 1-го лица единственного числа!",
+      "Ошибка! У омографов различается ударение (за́мок — замо́к), а здесь ударение падает на один и тот же слог.",
+      "Ошибка! Омофоны различаются написанием (плод — плот), а здесь слова пишутся и звучат одинаково в данной форме.",
+      "Ошибка! Лететь на самолёте и лечить таблетками не имеют никакого общего сходства — это не многозначность!"
+    ],
+    ruleMemo: "<b>Омоформы (грамматические омонимы):</b> слова совпадают по звучанию и написанию только в <b>одной отдельной грамматической форме</b> (<i>лечу [от лететь] — лечу [от лечить]; три [число] — три [глагол повел. накл.]</i>)."
+  }
+];
+
+/* ==================== GAME STATE & LOGIC ==================== */
+let currentQIndex = 0;
+let userScore = 0;
+let answeredCurrent = false;
+let currentShuffledOptions = [];
+let memoTimerInterval = null;
+
+function initQuest() {
+  currentQIndex = 0;
+  userScore = 0;
+  loadQuestion(currentQIndex);
+}
+
+function loadQuestion(idx) {
+  if (idx >= QUESTIONS.length) {
+    showVictoryScreen();
+    return;
+  }
+
+  answeredCurrent = false;
+  const q = QUESTIONS[idx];
+
+  document.getElementById('hud-level-badge').textContent = `Зал ${q.level} • ${q.levelTitle.split('•')[1] || 'Испытание'}`;
+  document.getElementById('hud-progress-fill').style.width = `${((idx) / QUESTIONS.length) * 100}%`;
+  document.getElementById('hud-score').textContent = `${userScore} / ${QUESTIONS.length}`;
+
+  document.getElementById('character-text').textContent = q.speech;
+  document.getElementById('room-title').textContent = q.levelTitle;
+  document.getElementById('q-counter').textContent = `Вопрос ${idx + 1} из ${QUESTIONS.length}`;
+
+  document.getElementById('context-box').innerHTML = q.context;
+  document.getElementById('academic-question').textContent = q.question;
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.style.display = 'none';
+
+  const optIndices = q.options.map((_, i) => i);
+  for (let i = optIndices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [optIndices[i], optIndices[j]] = [optIndices[j], optIndices[i]];
+  }
+  currentShuffledOptions = optIndices;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  const letters = ['А', 'Б', 'В', 'Г'];
+
+  optIndices.forEach((origIdx, pos) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-key">${letters[pos]}</span><span>${q.options[origIdx]}</span>`;
+    btn.onclick = () => selectOption(origIdx, btn);
+    container.appendChild(btn);
+  });
+}
+
+function selectOption(selectedOrigIdx, clickedBtn) {
+  if (answeredCurrent) return;
+  answeredCurrent = true;
+
+  const q = QUESTIONS[currentQIndex];
+  const isCorrect = (selectedOrigIdx === q.correct);
+
+  const allBtns = document.querySelectorAll('.opt-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback-box');
+  const fbTitle = document.getElementById('feedback-title');
+  const fbText = document.getElementById('feedback-text');
+
+  if (isCorrect) {
+    audio.playSuccessChime();
+    clickedBtn.classList.add('correct-glow');
+    userScore++;
+    document.getElementById('hud-score').textContent = `${userScore} / ${QUESTIONS.length}`;
+
+    fb.className = 'feedback-box correct';
+    fbTitle.className = 'feedback-title correct';
+    fbTitle.innerHTML = '<span>✨</span><span>Отлично! Верный ответ</span>';
+    fbText.innerHTML = q.explanations[selectedOrigIdx];
+    fb.style.display = 'block';
+
+    document.getElementById('character-text').textContent = '«Великолепно! Ты точно видишь структуру слова. Переходим дальше!»';
+  } else {
+    audio.playJumpscareError();
+    clickedBtn.classList.add('wrong-glow');
+
+    allBtns.forEach(btn => {
+      if (btn.textContent.includes(q.options[q.correct])) {
+        btn.classList.add('correct-glow');
+      }
+    });
+
+    fb.className = 'feedback-box wrong';
+    fbTitle.className = 'feedback-title wrong';
+    fbTitle.innerHTML = '<span>⚠️</span><span>Разбор ошибки:</span>';
+    fbText.innerHTML = q.explanations[selectedOrigIdx];
+    fb.style.display = 'block';
+
+    document.getElementById('character-text').textContent = '«Не спеши! Слова любят расставлять ловушки. Прочти разбор и правило!»';
+
+    setTimeout(() => {
+      openMemoCard(q.ruleMemo);
+    }, 1300);
+  }
+}
+
+function nextQuestion() {
+  currentQIndex++;
+  loadQuestion(currentQIndex);
+}
+
+function openMemoCard(ruleHtml) {
+  if (memoTimerInterval) {
+    clearInterval(memoTimerInterval);
+    memoTimerInterval = null;
+  }
+
+  const memoBody = document.getElementById('memo-modal-body');
+  const continueBtn = document.getElementById('memo-continue-btn');
+
+  memoBody.innerHTML = ruleHtml;
+
+  continueBtn.disabled = true;
+  continueBtn.innerHTML = 'Изучи правило (<span id="memo-timer-sec">2</span>с)...';
+
+  let secondsLeft = 2;
+  memoTimerInterval = setInterval(() => {
+    secondsLeft--;
+    const timerSpan = document.getElementById('memo-timer-sec');
+    if (timerSpan) {
+      timerSpan.textContent = secondsLeft;
+    }
+    if (secondsLeft <= 0) {
+      clearInterval(memoTimerInterval);
+      memoTimerInterval = null;
+      continueBtn.disabled = false;
+      continueBtn.innerHTML = 'Понятно! Вернуться к заданию →';
+    }
+  }, 1000);
+
+  document.getElementById('memo-modal').classList.add('is-active');
+}
+
+function closeMemoAndRetry() {
+  document.getElementById('memo-modal').classList.remove('is-active');
+}
+
+function showVictoryScreen() {
+  document.getElementById('hud-progress-fill').style.width = '100%';
+  document.getElementById('character-text').textContent = '«Поздравляю! Ты безупречно справился со всеми 12 практическими испытаниями по пройденной теме!»';
+
+  const card = document.getElementById('quest-card');
+  card.innerHTML = `
+    <div style="text-align: center; padding: 28px 10px;">
+      <div style="font-size: 50px; margin-bottom: 10px;">🏆</div>
+      <h2 style="color: var(--gold-bright); font-size: 22px; text-transform: uppercase; margin-bottom: 8px;">Домашнее задание выполнено!</h2>
+      <p style="color: #cbd5e1; font-size: 14px; max-width: 480px; margin: 0 auto 18px auto; line-height: 1.5;">
+        Ты успешно разобрал все тонкости однозначных и многозначных слов, научился отличать полисемию от омонимов и виртуозно распознаёшь омофоны, омографы и омоформы.
+      </p>
+      <div style="font-size: 17px; font-weight: 700; color: #34d399; margin-bottom: 22px;">
+        Твой результат: ${userScore} из ${QUESTIONS.length} баллов!
+      </div>
+      <button class="next-btn" style="font-size: 14px; padding: 13px 26px; background: #2563eb; color: #fff;" onclick="openDiplomaModal()">
+        <span>📜 Получить именной сертификат о прохождении</span>
+      </button>
+    </div>
+  `;
+}
+
+function openDiplomaModal() {
+  let studentName = prompt('Введи имя и фамилию для внесения в сертификат:', 'Ученик');
+  if (!studentName || studentName.trim() === '') {
+    studentName = 'Ученик';
+  }
+  document.getElementById('diploma-student-name').textContent = studentName;
+  document.getElementById('diploma-modal').classList.add('is-active');
+}
+
+function restartQuest() {
+  document.getElementById('diploma-modal').classList.remove('is-active');
+  window.location.reload();
+}
+
+function openRulebook() {
+  document.getElementById('rulebook-modal').classList.add('is-active');
+}
+
+function closeRulebook() {
+  document.getElementById('rulebook-modal').classList.remove('is-active');
+}
+
+function switchTab(tabIdx) {
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panes = document.querySelectorAll('.tab-pane');
+  tabs.forEach((t, i) => t.classList.toggle('active', i === tabIdx));
+  panes.forEach((p, i) => p.classList.toggle('active', i === tabIdx));
+}
+
+window.addEventListener('DOMContentLoaded', initQuest);
+</script>
+</body>
+</html>

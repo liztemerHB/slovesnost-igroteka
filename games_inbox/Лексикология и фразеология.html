@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Домашнее задание-квест: Лексикология и Фразеология</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7C4DFF;
+            --primary-light: #EDE7F6;
+            --track-bg: #DCE1F0;
+            --board-bg: #F3F4F8;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #FFFFFF;
+            color: #1E293B;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        /* Текстурная подложка карты как на скриншоте */
+        .map-board {
+            background-color: #F2F3F7;
+            background-image: radial-gradient(#CBD5E1 0.85px, transparent 0.85px);
+            background-size: 12px 12px;
+            border-radius: 1.25rem;
+            position: relative;
+        }
+        /* Кружочки шагов на карте */
+        .step-node {
+            width: 42px;
+            height: 42px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+        }
+        .step-node-default {
+            background: #F8FAFC;
+            border: 2.5px solid #D8DFEE;
+            color: #64748B;
+        }
+        .step-node-passed {
+            background: #EDE9FE;
+            border: 2.5px solid #8B5CF6;
+            color: #5B21B6;
+        }
+        .step-node-active {
+            width: 52px;
+            height: 52px;
+            background: #F5F3FF;
+            border: 3px solid #8B5CF6;
+            color: #4C1D95;
+            box-shadow: 0 0 0 5px rgba(139, 92, 246, 0.16);
+            font-size: 1.05rem;
+        }
+        .step-node-penalty {
+            width: 52px;
+            height: 52px;
+            background: #FEF3C7;
+            border: 3px solid #F59E0B;
+            color: #92400E;
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.25);
+            animation: pulse-penalty 1.5s infinite;
+        }
+        @keyframes pulse-penalty {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.07); }
+        }
+        /* Кнопки выбора в точности как на референсе */
+        .choice-btn {
+            background: #FFFFFF;
+            border: 2px solid #E2E8F0;
+            border-radius: 1rem;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+            transition: all 0.18s ease;
+        }
+        .choice-btn:hover:not(:disabled) {
+            border-color: #7C4DFF;
+            box-shadow: 0 6px 20px rgba(124, 77, 255, 0.12);
+            transform: translateY(-1px);
+        }
+        .choice-btn-selected {
+            border-color: #7C4DFF !important;
+            box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.25) !important;
+        }
+        .choice-btn-correct {
+            background: #ECFDF5 !important;
+            border-color: #10B981 !important;
+            color: #065F46 !important;
+        }
+        .choice-btn-wrong {
+            background: #FEF2F2 !important;
+            border-color: #EF4444 !important;
+            color: #991B1B !important;
+        }
+        /* Плавное покачивание ведьмочки/мага */
+        @keyframes float-mage {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+        .mage-avatar {
+            animation: float-mage 2.6s ease-in-out infinite;
+            transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes pop-card {
+            0% { transform: scale(0.94); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: pop-card 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-10">
+
+    <!-- 1. ВЕРХНИЙ БАР (Сердечки, Прогресс 1/20, Звук, Звёзды, Отчёт) -->
+    <header class="max-w-6xl w-full mx-auto px-4 sm:px-8 pt-4 pb-2">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Левая часть: 5 сердечек + Бейдж штрафного круга -->
+            <div class="flex items-center gap-3">
+                <div id="heartsContainer" class="flex items-center gap-1.5" title="Жизни (восстанавливаются при отработке ошибок)">
+                    <!-- Рендерится через JS -->
+                </div>
+                <div id="penaltyBadge" class="hidden items-center gap-1.5 bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1 rounded-full text-xs font-extrabold animate-pop">
+                    <span>⚡</span>
+                    <span id="penaltyBadgeText">Отработка: +1</span>
+                </div>
+            </div>
+
+            <!-- Центральная часть: Тонкий фиолетовый прогресс-бар + 1 / 20 -->
+            <div class="flex items-center gap-3 flex-1 max-w-xs sm:max-w-sm mx-auto">
+                <div class="relative flex-1 h-2 bg-violet-100 rounded-full overflow-visible">
+                    <div id="topProgressBar" class="h-full bg-[#7C4DFF] rounded-full transition-all duration-300" style="width: 5%;"></div>
+                    <div id="topProgressDot" class="w-3.5 h-3.5 rounded-full bg-[#7C4DFF] border-2 border-white shadow absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-all duration-300" style="left: 5%;"></div>
+                </div>
+                <span id="topProgressLabel" class="text-xs sm:text-sm font-bold text-slate-500 whitespace-nowrap">1 / 20</span>
+            </div>
+
+            <!-- Правая часть: Звук, Звёзды, Отчёт для учителя -->
+            <div class="flex items-center gap-2.5">
+                <button onclick="toggleSound()" id="soundBtn" title="Включить/выключить звук" class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-violet-600 hover:bg-violet-50 transition">
+                    <span id="soundIcon">🔊</span>
+                </button>
+                <div class="h-10 px-3.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5 font-bold text-slate-700 text-sm">
+                    <span class="text-amber-400 text-base">⭐</span>
+                    <span id="starsCount">0</span>
+                </div>
+                <button onclick="toggleReportModal()" class="h-10 px-3.5 rounded-xl bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-800 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition">
+                    <span>📊</span>
+                    <span class="hidden md:inline">Отчёт учителю</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. КАРТА ПРИКЛЮЧЕНИЙ (Змейка 1..20 с ведьмочкой и сундуками в точности как на скриншоте) -->
+    <section class="max-w-6xl w-full mx-auto px-4 sm:px-8 mt-2">
+        <div class="map-board py-8 sm:py-10 px-4 sm:px-10 shadow-inner border border-slate-200/80 overflow-x-auto">
+            <div class="min-w-[740px] max-w-4xl mx-auto relative">
+
+                <!-- ВЕРХНИЙ РЯД: Персонаж на старте + Шаги 1 .. 10 -->
+                <div class="relative flex items-center justify-between">
+                    <!-- Фоновая дорожка верхнего ряда -->
+                    <div class="absolute left-[46px] right-[21px] top-1/2 -translate-y-1/2 h-7 bg-[#DCE1F0]/90 rounded-full z-0"></div>
+
+                    <!-- Вертикальная соединительная дорожка от 10 к 11 -->
+                    <div class="absolute right-[7px] top-1/2 w-7 h-[108px] bg-[#DCE1F0]/90 rounded-full z-0"></div>
+
+                    <!-- Стартовая площадка Мага слева от 1 кружка -->
+                    <div class="relative z-10 w-14 flex items-center justify-center">
+                        <div id="mageStartSlot" class="w-14 h-16 flex items-center justify-center"></div>
+                    </div>
+
+                    <!-- Узлы 1..10 -->
+                    <div id="topRowNodes" class="flex-1 flex items-center justify-between relative z-10 pl-2">
+                        <!-- Генерируется через JS -->
+                    </div>
+                </div>
+
+                <!-- НИЖНИЙ РЯД: Флаг 20 слева + Шаги 19 .. 11 справа -->
+                <div class="relative flex items-center justify-between mt-16">
+                    <!-- Фоновая дорожка нижнего ряда -->
+                    <div class="absolute left-[76px] right-[21px] top-1/2 -translate-y-1/2 h-7 bg-[#DCE1F0]/90 rounded-full z-0"></div>
+
+                    <!-- Пустой отступ под стартовой позицией мага -->
+                    <div class="w-14 shrink-0"></div>
+
+                    <!-- Узлы 20 .. 11 (слева направо отображаются 20, 19, 18 ... 11) -->
+                    <div id="bottomRowNodes" class="flex-1 flex items-center justify-between relative z-10 pl-2">
+                        <!-- Генерируется через JS -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ЦЕНТРАЛЬНАЯ РАБОЧАЯ ЗОНА ЗАДАНИЯ (Внизу под картой, как на скриншоте) -->
+    <main class="flex-1 max-w-3xl w-full mx-auto px-4 pt-7 pb-6 flex flex-col items-center justify-center text-center">
+        
+        <!-- Плашка текущей темы или Штрафного задания -->
+        <div id="topicPill" class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2">
+            <!-- Заполняется JS -->
+        </div>
+
+        <!-- Короткая инструкция (например, «Выбери верный ответ») -->
+        <p id="taskInstruction" class="text-slate-500 font-semibold text-sm sm:text-base mb-2"></p>
+
+        <!-- Крупный вопрос по центру -->
+        <h1 id="taskTitle" class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug mb-6 max-w-2xl"></h1>
+
+        <!-- Интерактивная область (кнопки / соотнесение / ввод) -->
+        <div id="taskInteractiveArea" class="w-full max-w-xl mx-auto"></div>
+
+        <!-- Блок мгновенного объяснения после ответа -->
+        <div id="feedbackBox" class="hidden w-full max-w-xl mx-auto mt-6 p-4 rounded-2xl border-2 text-left animate-pop">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1">
+                    <div id="feedbackHeader" class="font-extrabold text-sm uppercase tracking-wider"></div>
+                    <p id="feedbackText" class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed"></p>
+                </div>
+                <button id="continueBtn" onclick="nextTaskStep()" class="shrink-0 px-6 py-3 rounded-xl font-extrabold text-sm text-white bg-[#7C4DFF] hover:bg-violet-700 shadow-md transition">
+                    Дальше →
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО: КАРТОЧКА-ЗНАКОМСТВО ИЛИ ОТКРЫТИЕ СУНДУКА -->
+    <div id="storyModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border-2 border-violet-200 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl text-center space-y-4 animate-pop">
+            <div id="storyModalIcon" class="text-5xl mx-auto"></div>
+            <div id="storyModalBadge" class="inline-block px-3 py-1 rounded-full bg-violet-100 text-violet-800 font-extrabold text-xs uppercase"></div>
+            <h2 id="storyModalTitle" class="text-2xl font-black text-slate-900"></h2>
+            <div id="storyModalBody" class="text-sm sm:text-base text-slate-700 font-medium leading-relaxed text-left bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2"></div>
+            <button onclick="closeStoryModal()" class="w-full py-3.5 rounded-2xl bg-[#7C4DFF] hover:bg-violet-700 text-white font-extrabold text-base shadow-lg shadow-violet-200 transition">
+                Понятно, вперёд! ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: ОТЧЁТ ДЛЯ УЧИТЕЛЯ И ФИНАЛ -->
+    <div id="reportModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border-2 border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto animate-pop">
+            <div class="flex items-center justify-between border-b pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">📊</span>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">Карта успеха ученика</h3>
+                        <p class="text-xs text-slate-500 font-medium">Домашняя работа: Лексикология и фразеология</p>
+                    </div>
+                </div>
+                <button onclick="toggleReportModal()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-slate-600">✕</button>
+            </div>
+
+            <div id="reportContent" class="space-y-4">
+                <!-- Заполняется динамически -->
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t">
+                <button onclick="copyReportToClipboard()" id="copyReportBtn" class="flex-1 py-3 px-4 rounded-xl bg-[#7C4DFF] hover:bg-violet-700 text-white font-extrabold text-sm shadow transition">
+                    📋 Скопировать отчёт для репетитора
+                </button>
+                <button onclick="restartFullQuest()" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition">
+                    🔄 Начать заново
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // SVG-АССЕТЫ (Ведьмочка/Маг с кристаллом, Сундук сокровищ, Финишный флаг)
+        // =========================================================================
+        function getMageSVG() {
+            return `
+            <svg class="w-12 h-14 drop-shadow-md" viewBox="0 0 64 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Кристалл на верхушке шляпы -->
+                <polygon points="32,2 41,10 32,20 23,10" fill="#C4B5FD" stroke="#7C3AED" stroke-width="1.5"/>
+                <polygon points="32,2 37,10 32,20 27,10" fill="#DDD6FE"/>
+                <!-- Искры вокруг кристалла -->
+                <circle cx="46" cy="7" r="1.8" fill="#FBBF24"/>
+                <circle cx="18" cy="11" r="1.4" fill="#FBBF24"/>
+                <!-- Остроконечная шляпа -->
+                <path d="M32 13 L48 36 H16 L32 13 Z" fill="#7C4DFF"/>
+                <ellipse cx="32" cy="36" rx="20" ry="5.5" fill="#6D28D9"/>
+                <!-- Звёздочка на шляпе -->
+                <polygon points="32,22 33.8,26 38,26.5 34.8,29.2 35.8,33.2 32,31 28.2,33.2 29.2,29.2 26,26.5 30.2,26" fill="#FCD34D"/>
+                <!-- Волосы и лицо -->
+                <path d="M20 38 C17 44, 17 50, 21 52" stroke="#4C1D95" stroke-width="5" stroke-linecap="round"/>
+                <path d="M44 38 C47 44, 47 50, 43 52" stroke="#4C1D95" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="32" cy="44" r="9.5" fill="#FDE68A"/>
+                <!-- Глазки и улыбка -->
+                <circle cx="28.5" cy="43" r="1.5" fill="#1E293B"/>
+                <circle cx="35.5" cy="43" r="1.5" fill="#1E293B"/>
+                <path d="M29 47 Q32 49.5 35 47" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+                <!-- Мантия -->
+                <path d="M18 68 C18 54, 46 54, 46 68 Z" fill="#A78BFA"/>
+                <path d="M26 55 L32 68 L38 55" fill="#8B5CF6"/>
+                <ellipse cx="23" cy="63" rx="4.5" ry="6" fill="#C4B5FD"/>
+                <ellipse cx="41" cy="63" rx="4.5" ry="6" fill="#C4B5FD"/>
+            </svg>`;
+        }
+
+        function getChestSVG(opened = false) {
+            if (opened) {
+                return `
+                <svg class="w-10 h-10 drop-shadow" viewBox="0 0 48 48" fill="none">
+                    <rect x="6" y="20" width="36" height="22" rx="4" fill="#B45309" stroke="#78350F" stroke-width="2"/>
+                    <path d="M8 16 C8 9, 40 9, 40 16 L42 20 H6 L8 16 Z" fill="#F59E0B" stroke="#78350F" stroke-width="2"/>
+                    <circle cx="24" cy="21" r="5" fill="#FEF08A" stroke="#CA8A04" stroke-width="1.5"/>
+                    <text x="17" y="15" font-size="11">✨</text>
+                </svg>`;
+            }
+            return `
+            <svg class="w-10 h-10 drop-shadow" viewBox="0 0 48 48" fill="none">
+                <path d="M7 18 C7 10, 41 10, 41 18 V38 C41 40, 39 42, 37 42 H11 C9 42, 7 40, 7 38 V18 Z" fill="#9A5B25" stroke="#5C3412" stroke-width="2"/>
+                <path d="M7 23 H41" stroke="#5C3412" stroke-width="2.5"/>
+                <path d="M16 12 V42 M32 12 V42" stroke="#D9A05B" stroke-width="3.5"/>
+                <rect x="21" y="19" width="6" height="8" rx="2" fill="#FDE047" stroke="#78350F" stroke-width="1.5"/>
+                <circle cx="24" cy="23" r="1.2" fill="#451A03"/>
+            </svg>`;
+        }
+
+        function getFlagSVG() {
+            return `
+            <svg class="w-9 h-11" viewBox="0 0 40 48" fill="none">
+                <line x1="8" y1="6" x2="8" y2="44" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="8" cy="5" r="3" fill="#F59E0B"/>
+                <!-- Клетчатый флаг -->
+                <rect x="10" y="7" width="8" height="7" fill="#1E293B"/>
+                <rect x="18" y="7" width="8" height="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.5"/>
+                <rect x="26" y="7" width="8" height="7" fill="#1E293B"/>
+                <rect x="10" y="14" width="8" height="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.5"/>
+                <rect x="18" y="14" width="8" height="7" fill="#1E293B"/>
+                <rect x="26" y="14" width="8" height="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.5"/>
+            </svg>`;
+        }
+
+        // =========================================================================
+        // ЗВУКОВОЙ ДВИЖОК (Web Audio API без внешних ссылок)
+        // =========================================================================
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function playTone(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioCtx.currentTime;
+                if (type === 'success') {
+                    [523.25, 659.25, 783.99].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.08, now + i * 0.07);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.22);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + i * 0.07);
+                        osc.stop(now + i * 0.07 + 0.24);
+                    });
+                } else if (type === 'error') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(165, now + 0.25);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'chest') {
+                    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.1, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.32);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        // =========================================================================
+        // 20 ОСНОВНЫХ ЗАДАНИЙ (5 БЛОКОВ) + БАНК ШТРАФНЫХ ЗАДАНИЙ ПО КАЖДОЙ ТЕМЕ
+        // =========================================================================
+        const topicNames = {
+            poly: "Блок 1 • Однозначные и многозначные слова",
+            homo: "Блок 2 • Омонимы и виды омонимов",
+            syn: "Блок 3 • Синонимы и антонимы",
+            par: "Блок 4 • Паронимы (знакомство)",
+            idiom: "Блок 5 • Фразеологизмы (знакомство)"
+        };
+
+        const mainSteps = [
+            // --- БЛОК 1: ОДНОЗНАЧНЫЕ И МНОГОЗНАЧНЫЕ СЛОВА (Шаги 1–4) ---
+            {
+                step: 1, topic: "poly", type: "choice",
+                instruction: "Выбери верный ответ",
+                title: "Слово «АЙСБЕРГ» в русском языке является...",
+                options: ["Однозначным", "Многозначным"],
+                correct: 0,
+                explanation: "Верно! Айсберг — это только ледяная глыба в океане. У него одно значение."
+            },
+            {
+                step: 2, topic: "poly", type: "choice",
+                instruction: "Определи количество значений у слова",
+                title: "Каким является слово «КИСТЬ»?",
+                options: ["Однозначное слово", "Многозначное слово"],
+                correct: 1,
+                explanation: "Это многозначное слово! Бывает кисть руки, кисть рябины и кисть для рисования — все они похожи по форме."
+            },
+            {
+                step: 3, topic: "poly", type: "choice",
+                instruction: "Найди слово в переносном значении",
+                title: "В каком словосочетании слово «ЗОЛОТОЙ» употреблено в переносном смысле?",
+                options: ["Золотое кольцо", "Золотые руки мастера"],
+                correct: 1,
+                explanation: "Руки не сделаны из металла золота — «золотыми» называют умелые, искусные руки!"
+            },
+            {
+                step: 4, topic: "poly", type: "match",
+                instruction: "Соотнеси слово и его характеристику",
+                title: "Распредели слова по группам",
+                pairs: [
+                    { left: "Фломастер", right: "Однозначное слово" },
+                    { left: "Иголка", right: "Многозначное слово" },
+                    { left: "Тёплый взгляд мамы", right: "Переносное значение" }
+                ],
+                explanation: "Отлично! Фломастер — всегда только предмет для рисования, а иголка бывает для шитья, у ежа и у сосны."
+            },
+
+            // --- БЛОК 2: ОМОНИМЫ И ВИДЫ ОМОНИМОВ (Шаги 5–8) ---
+            {
+                step: 5, topic: "homo", type: "choice", chestBefore: 1,
+                instruction: "Отличи многозначное слово от омонимов",
+                title: "Горький репчатый ЛУК и стрелять из ЛУКА",
+                options: ["Многозначное слово", "Омонимы"],
+                correct: 1,
+                explanation: "Между овощем на грядке и оружием со стрелами нет ничего общего! Это слова-омонимы."
+            },
+            {
+                step: 6, topic: "homo", type: "choice",
+                instruction: "Определи вид неполных омонимов",
+                title: "Старинный ЗА́МОК — дверной ЗАМО́К",
+                options: ["Омографы", "Омофоны"],
+                correct: 0,
+                explanation: "Секрет: омоГРАФЫ пишутся буква в букву одинаково, но различаются ударением!"
+            },
+            {
+                step: 7, topic: "homo", type: "choice",
+                instruction: "Определи вид неполных омонимов",
+                title: "Серый КОТ — секретный КОД",
+                options: ["Омофоны", "Омографы"],
+                correct: 0,
+                explanation: "Секрет: ФОН — это звук (как телефон). Омофоны звучат одинаково [кот], но пишутся с разной буквой!"
+            },
+            {
+                step: 8, topic: "homo", type: "match",
+                instruction: "Соедини каждую пару с видом омонимов",
+                title: "Три вида неполных омонимов",
+                pairs: [
+                    { left: "Географический а́тлас — шёлковый атла́с", right: "Омографы" },
+                    { left: "Зелёный луг — репчатый лук", right: "Омофоны" },
+                    { left: "Тёплая печь — печь пироги", right: "Омоформы" }
+                ],
+                explanation: "Супер! Омографы — разное ударение, омофоны — одинаковый звук при разном написании, омоформы — совпали только в одной форме."
+            },
+
+            // --- БЛОК 3: СИНОНИМЫ И АНТОНИМЫ (Шаги 9–12) ---
+            {
+                step: 9, topic: "syn", type: "choice",
+                instruction: "Выбери подходящее слово",
+                title: "Подбери СИНОНИМ к слову «СМЕЛЫЙ»",
+                options: ["Храбрый", "Трусливый", "Высокий"],
+                correct: 0,
+                explanation: "Смелый и храбрый значат почти одно и то же — это синонимы!"
+            },
+            {
+                step: 10, topic: "syn", type: "choice", chestBefore: 2,
+                instruction: "Выбери подходящее слово",
+                title: "Подбери АНТОНИМ к слову «РАССВЕТ»",
+                options: ["Утро", "Закат", "Восход"],
+                correct: 1,
+                explanation: "Рассвет — начало дня, а закат — его противоположность (конец дня). Это антонимы!"
+            },
+            {
+                step: 11, topic: "syn", type: "input",
+                instruction: "Впиши или выбери антоним в известную пословицу",
+                title: "Ученье — свет, а неученье — ...",
+                answer: "тьма",
+                wordBank: ["тьма", "день", "луч"],
+                explanation: "Свет ↔ тьма — классическая пара противоположных слов (антонимов)!"
+            },
+            {
+                step: 12, topic: "syn", type: "match",
+                instruction: "Определи, какая связь между словами в паре",
+                title: "Синонимы или Антонимы?",
+                pairs: [
+                    { left: "Огромный — гигантский", right: "Синонимы" },
+                    { left: "Говорить — молчать", right: "Антонимы" },
+                    { left: "Друг — приятель", right: "Синонимы" }
+                ],
+                explanation: "Молодец! Синонимы близки по смыслу и помогают не повторяться, а антонимы противоположны."
+            },
+
+            // --- БЛОК 4: ПАРОНИМЫ — ЗНАКОМСТВО ПЕРЕД УРОКОМ (Шаги 13–16) ---
+            {
+                step: 13, topic: "par", type: "choice", introCard: "par",
+                instruction: "Выбери верный пароним по смыслу",
+                title: "На улице мороз! Нужно ___ тёплую шапку.",
+                options: ["НАДЕТЬ", "ОДЕТЬ"],
+                correct: 0,
+                explanation: "Запомни подсказку: НАдеть шапку НА себя! А «одеть» можно младшего брата или куклу."
+            },
+            {
+                step: 14, topic: "par", type: "choice",
+                instruction: "Выбери верный пароним по смыслу",
+                title: "Мама купила месячный ___ в плавательный бассейн.",
+                options: ["Абонемент", "Абонент"],
+                correct: 0,
+                explanation: "АбонемеНТ — это билет или карточка (в бассейн, спортзал). А абонеНТ — это человек у телефона!"
+            },
+            {
+                step: 15, topic: "par", type: "choice", chestBefore: 3,
+                instruction: "Выбери подходящий по смыслу пароним",
+                title: "В мастерской слепили красивый ___ кувшин.",
+                options: ["Глиняный", "Глинистый"],
+                correct: 0,
+                explanation: "Предмет, целиком сделанный из глины — глиняный! А глинистой бывает почва или берег реки."
+            },
+            {
+                step: 16, topic: "par", type: "match",
+                instruction: "Соедини паронимы с подходящими словами",
+                title: "Какое слово к чему подходит?",
+                pairs: [
+                    { left: "Одеть", right: "маленького ребёнка" },
+                    { left: "Абонент", right: "временно недоступен" },
+                    { left: "Рыбный", right: "вкусный суп" }
+                ],
+                explanation: "Отлично! Одеть — кого-то (ребёнка), абонент — владелец номера, рыбный — суп."
+            },
+
+            // --- БЛОК 5: ФРАЗЕОЛОГИЗМЫ — ЗНАКОМСТВО ПЕРЕД УРОКОМ (Шаги 17–20) ---
+            {
+                step: 17, topic: "idiom", type: "choice", introCard: "idiom",
+                instruction: "Определи значение крылатого выражения",
+                title: "Что означает выражение «БИТЬ БАКЛУШИ»?",
+                options: ["Бездельничать, лениться", "Колоть дрова в лесу", "Очень громко стучать"],
+                correct: 0,
+                explanation: "Когда говорят «хватит бить баклуши», имеют в виду: хватит бездельничать!"
+            },
+            {
+                step: 18, topic: "idiom", type: "input",
+                instruction: "Вставь пропущенное слово во фразеологизм",
+                title: "Делать из мухи ...",
+                answer: "слона",
+                wordBank: ["слона", "кота", "орла"],
+                explanation: "«Делать из мухи слона» — значит сильно преувеличивать пустяковую проблему!"
+            },
+            {
+                step: 19, topic: "idiom", type: "match",
+                instruction: "Переведи каждый фразеологизм одним понятным словом",
+                title: "Найди смысл каждого выражения",
+                pairs: [
+                    { left: "Кот наплакал", right: "Очень мало" },
+                    { left: "Водить за нос", right: "Обманывать" },
+                    { left: "Зарубить на носу", right: "Крепко запомнить" }
+                ],
+                explanation: "Идеально! Теперь на уроке ты легко узнаешь эти крылатые выражения."
+            },
+            {
+                step: 20, topic: "idiom", type: "choice",
+                instruction: "Финальный шаг к флагу! 🏁",
+                title: "Работать «ЗАСУЧИВ РУКАВА» — это значит...",
+                options: ["Работать усердно и старательно", "Работать плохо и лениво"],
+                correct: 0,
+                explanation: "Победа! «Засучив рукава» — старательно, а его противоположность — «спустя рукава» (небрежно)."
+            }
+        ];
+
+        // =========================================================================
+        // РЕЗЕРВНЫЙ БАНК СМЕЖНЫХ ШТРАФНЫХ ЗАДАНИЙ (Включаются при ошибках!)
+        // =========================================================================
+        const penaltyBank = {
+            poly: [
+                {
+                    topic: "poly", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи тип слова",
+                    title: "Каким является слово «БИНОКЛЬ»?",
+                    options: ["Однозначное слово", "Многозначное слово"],
+                    correct: 0,
+                    explanation: "У слова «бинокль» только один смысл — оптический прибор. Значит, оно однозначное!"
+                },
+                {
+                    topic: "poly", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи тип слова",
+                    title: "Каким является слово «ХВОСТ»?",
+                    options: ["Многозначное слово", "Однозначное слово"],
+                    correct: 0,
+                    explanation: "Хвост бывает у лисы, у поезда, у самолёта и у кометы — это задняя вытянутая часть чего-то. Поэтому слово многозначное!"
+                },
+                {
+                    topic: "poly", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи тип слова",
+                    title: "Каким является слово «КОРЕНЬ»?",
+                    options: ["Многозначное слово", "Однозначное слово"],
+                    correct: 0,
+                    explanation: "Бывает корень дерева, корень зуба и корень слова. Значений несколько — слово многозначное!"
+                },
+                {
+                    topic: "poly", type: "choice",
+                    instruction: "⚡ Закрепим переносное значение",
+                    title: "Где слово «ЖЕЛЕЗНЫЙ» употреблено в ПЕРЕНОСНОМ смысле?",
+                    options: ["Железный гвоздь", "Железный характер"],
+                    correct: 1,
+                    explanation: "Характер не выплавляют из железа — так образно называют твёрдую силу воли!"
+                }
+            ],
+            homo: [
+                {
+                    topic: "homo", type: "choice",
+                    instruction: "⚡ Штрафное задание: сравни значения слов",
+                    title: "Лесной родниковый КЛЮЧ и гаечный КЛЮЧ",
+                    options: ["Омонимы", "Однозначное слово"],
+                    correct: 0,
+                    explanation: "Между лесным ручьём и железным инструментом нет никакого сходства — это полные омонимы!"
+                },
+                {
+                    topic: "homo", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи вид омонимов",
+                    title: "Пшеничная МУКА́ — душевная МУ́КА",
+                    options: ["Омографы", "Омофоны"],
+                    correct: 0,
+                    explanation: "Буквы одинаковые (м-у-к-а), а ударение разное — это точно ОМОГРАФЫ!"
+                },
+                {
+                    topic: "homo", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи вид омонимов",
+                    title: "Деревянный ПЛОТ на реке — спелый ПЛОД на дереве",
+                    options: ["Омофоны", "Омографы"],
+                    correct: 0,
+                    explanation: "На конце обоих слов слышится звук [т], но буквы разные (Т и Д) — это ОМОФОНЫ!"
+                }
+            ],
+            syn: [
+                {
+                    topic: "syn", type: "choice",
+                    instruction: "⚡ Штрафное задание: подбери нужное слово",
+                    title: "Выбери СИНОНИМ к слову «РАДОСТНЫЙ»",
+                    options: ["Весёлый", "Грустный"],
+                    correct: 0,
+                    explanation: "Радостный и весёлый обозначают одно и то же хорошее настроение — это синонимы!"
+                },
+                {
+                    topic: "syn", type: "choice",
+                    instruction: "⚡ Штрафное задание: подбери нужное слово",
+                    title: "Выбери АНТОНИМ к слову «ГОРЯЧИЙ»",
+                    options: ["Тёплый", "Холодный"],
+                    correct: 1,
+                    explanation: "Горячий ↔ холодный — полные противоположности, значит это антонимы!"
+                },
+                {
+                    topic: "syn", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи разряд слов",
+                    title: "Слова «ДЕНЬ — НОЧЬ» являются...",
+                    options: ["Антонимами", "Синонимами"],
+                    correct: 0,
+                    explanation: "День и ночь противоположны друг другу — это антонимы."
+                }
+            ],
+            par: [
+                {
+                    topic: "par", type: "choice",
+                    instruction: "⚡ Штрафное задание: выбери верный пароним",
+                    title: "Сестра помогла ___ маленькую куклу в платье.",
+                    options: ["ОДЕТЬ", "НАДЕТЬ"],
+                    correct: 0,
+                    explanation: "Кукла — это «кого?», поэтому правильно: ОДЕТЬ куклу!"
+                },
+                {
+                    topic: "par", type: "choice",
+                    instruction: "⚡ Штрафное задание: выбери верный пароним",
+                    title: "К сожалению, вызываемый вами ___ выключил телефон.",
+                    options: ["Абонент", "Абонемент"],
+                    correct: 0,
+                    explanation: "Человек, которому мы звоним по телефону — это АБОНЕНТ!"
+                },
+                {
+                    topic: "par", type: "choice",
+                    instruction: "⚡ Штрафное задание: выбери верный пароним",
+                    title: "В центре города построили высокий ___ дом из кирпича и камня.",
+                    options: ["Каменный", "Каменистый"],
+                    correct: 0,
+                    explanation: "Построенный из камня — каменный! А каменистым бывает дно реки, усыпанное камешками."
+                }
+            ],
+            idiom: [
+                {
+                    topic: "idiom", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи смысл выражения",
+                    title: "Что значит фразеологизм «КЛЕВАТЬ НОСОМ»?",
+                    options: ["Засыпать, дремать сидя", "Быстро бежать", "Громко смеяться"],
+                    correct: 0,
+                    explanation: "Когда человек сидит и засыпает, его голова опускается вниз — говорят «клюёт носом»!"
+                },
+                {
+                    topic: "idiom", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи смысл выражения",
+                    title: "Что значит «ДЕРЖАТЬ ЯЗЫК ЗА ЗУБАМИ»?",
+                    options: ["Молчать, хранить секрет", "Красиво петь"],
+                    correct: 0,
+                    explanation: "Держать язык за зубами = молчать и не выдавать тайну!"
+                },
+                {
+                    topic: "idiom", type: "choice",
+                    instruction: "⚡ Штрафное задание: определи смысл выражения",
+                    title: "Бежать «СЛОМЯ ГОЛОВУ» — это как?",
+                    options: ["Очень быстро, стремительно", "Очень медленно, еле-еле"],
+                    correct: 0,
+                    explanation: "«Сломя голову» = мчаться изо всех сил, очень быстро!"
+                }
+            ]
+        };
+
+        // =========================================================================
+        // СОСТОЯНИЕ ИГРЫ И СТАТИСТИКА ДЛЯ РЕПЕТИТОРА
+        // =========================================================================
+        let gameState = {
+            currentStepIndex: 0,       // Индекс от 0 до 19 (соответствует шагам 1..20)
+            hearts: 5,
+            stars: 0,
+            penaltyQueue: [],          // Очередь активных штрафных вопросов
+            activePenaltyTask: null,   // Текущий штрафной вопрос, если мы на штрафном круге
+            penaltyCursor: { poly: 0, homo: 0, syn: 0, par: 0, idiom: 0 },
+            openedChests: [],
+            shownIntros: [],
+            answeredCurrent: false,
+            // Состояние для механики match
+            matchSelectedLeft: null,
+            matchSolvedCount: 0,
+            matchLeftItems: [],
+            matchRightItems: [],
+            // Подробная статистика по темам для учителя
+            stats: {
+                poly: { mistakes: 0, penaltiesDone: 0, hardWords: [] },
+                homo: { mistakes: 0, penaltiesDone: 0, hardWords: [] },
+                syn:  { mistakes: 0, penaltiesDone: 0, hardWords: [] },
+                par:  { mistakes: 0, penaltiesDone: 0, hardWords: [] },
+                idiom:{ mistakes: 0, penaltiesDone: 0, hardWords: [] }
+            }
+        };
+
+        // =========================================================================
+        // ОТРИСОВКА КАРТЫ (Змейка 1..10 и 20..11) И ВЕРХНЕЙ ПАНЕЛИ
+        // =========================================================================
+        function renderTopBar() {
+            // 5 сердечек
+            const heartsEl = document.getElementById('heartsContainer');
+            let heartsHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const alive = i < gameState.hearts;
+                heartsHTML += `<span class="text-xl transition-transform ${alive ? 'text-rose-500 scale-100' : 'text-slate-300 scale-90'}">❤️</span>`;
+            }
+            heartsEl.innerHTML = heartsHTML;
+
+            // Бейдж штрафного круга
+            const penBadge = document.getElementById('penaltyBadge');
+            const totalPenaltiesLeft = (gameState.activePenaltyTask ? 1 : 0) + gameState.penaltyQueue.length;
+            if (totalPenaltiesLeft > 0) {
+                penBadge.classList.remove('hidden');
+                penBadge.classList.add('inline-flex');
+                document.getElementById('penaltyBadgeText').textContent = `Штрафной круг: ${totalPenaltiesLeft}`;
+            } else {
+                penBadge.classList.add('hidden');
+                penBadge.classList.remove('inline-flex');
+            }
+
+            // Прогресс-бар 1/20
+            const stepNum = gameState.currentStepIndex + 1;
+            const pct = Math.max(5, Math.min(100, (stepNum / 20) * 100));
+            document.getElementById('topProgressBar').style.width = `${pct}%`;
+            document.getElementById('topProgressDot').style.left = `${pct}%`;
+            document.getElementById('topProgressLabel').textContent = `${stepNum} / 20`;
+
+            // Звёзды
+            document.getElementById('starsCount').textContent = gameState.stars;
+        }
+
+        function renderMapBoard() {
+            const topRow = document.getElementById('topRowNodes');
+            const bottomRow = document.getElementById('bottomRowNodes');
+            const currentStepNum = gameState.currentStepIndex + 1;
+            const isPenaltyNow = !!gameState.activePenaltyTask;
+
+            // ВЕРХНИЙ РЯД: 1 .. 10
+            let topHTML = '';
+            for (let s = 1; s <= 10; s++) {
+                topHTML += buildNodeHTML(s, currentStepNum, isPenaltyNow);
+            }
+            topRow.innerHTML = topHTML;
+
+            // НИЖНИЙ РЯД: 20 .. 11 (слева направо: 20, 19, 18, ..., 11)
+            let bottomHTML = '';
+            for (let s = 20; s >= 11; s--) {
+                bottomHTML += buildNodeHTML(s, currentStepNum, isPenaltyNow);
+            }
+            bottomRow.innerHTML = bottomHTML;
+
+            // На шаге 1 рисуем мага также на стартовом слоте слева от 1-го кружка (как на референсе)
+            const startSlot = document.getElementById('mageStartSlot');
+            if (currentStepNum === 1) {
+                startSlot.innerHTML = `<div class="mage-avatar">${getMageSVG()}</div>`;
+            } else {
+                startSlot.innerHTML = `<div class="w-3 h-3 rounded-full bg-violet-200"></div>`;
+            }
+        }
+
+        function buildNodeHTML(stepNumber, currentStepNum, isPenaltyNow) {
+            const isCurrent = stepNumber === currentStepNum;
+            const isPassed = stepNumber < currentStepNum;
+            const hasChest = (stepNumber === 5 || stepNumber === 10 || stepNumber === 15);
+            const isFinish = (stepNumber === 20);
+            const chestOpened = gameState.openedChests.includes(stepNumber);
+
+            let nodeClass = "step-node step-node-default";
+            if (isPassed) nodeClass = "step-node step-node-passed";
+            if (isCurrent) nodeClass = isPenaltyNow ? "step-node step-node-penalty" : "step-node step-node-active";
+
+            // Сундук над узлом 5, 10, 15
+            let topDecoration = '';
+            if (hasChest) {
+                topDecoration = `
+                    <div class="absolute -top-11 left-1/2 -translate-x-1/2 pointer-events-none">
+                        ${getChestSVG(chestOpened)}
+                    </div>
+                `;
+            } else if (isFinish) {
+                topDecoration = `
+                    <div class="absolute -top-9 left-1/2 -translate-x-1/2 pointer-events-none">
+                        ${getFlagSVG()}
+                    </div>
+                `;
+            }
+
+            // Фигурка мага над текущим кружочком (начиная со 2-го шага она шагает прямо по кружочкам!)
+            let mageOverlay = '';
+            if (isCurrent && stepNumber > 1) {
+                mageOverlay = `
+                    <div class="absolute -top-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none mage-avatar">
+                        ${getMageSVG()}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="relative flex flex-col items-center justify-center">
+                    ${topDecoration}
+                    ${mageOverlay}
+                    <div class="${nodeClass}">
+                        ${isPassed ? '✓' : (isFinish ? '' : stepNumber)}
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // ОТРИСОВКА ТЕКУЩЕГО ЗАДАНИЯ (Основного или Штрафного)
+        // =========================================================================
+        function getCurrentTaskObj() {
+            if (gameState.activePenaltyTask) return gameState.activePenaltyTask;
+            return mainSteps[gameState.currentStepIndex];
+        }
+
+        function renderCurrentTask() {
+            renderTopBar();
+            renderMapBoard();
+
+            const task = getCurrentTaskObj();
+            const isPenalty = !!gameState.activePenaltyTask;
+            gameState.answeredCurrent = false;
+
+            // Скрываем блок обратной связи
+            document.getElementById('feedbackBox').classList.add('hidden');
+
+            // Проверяем, нужно ли показать сундук или карточку знакомства перед основным шагом
+            if (!isPenalty) {
+                if (task.chestBefore && !gameState.openedChests.includes(task.step)) {
+                    gameState.openedChests.push(task.step);
+                    gameState.stars += 5;
+                    playTone('chest');
+                    showChestModal(task.chestBefore);
+                    renderTopBar();
+                    renderMapBoard();
+                } else if (task.introCard && !gameState.shownIntros.includes(task.introCard)) {
+                    gameState.shownIntros.push(task.introCard);
+                    showIntroModal(task.introCard);
+                }
+            }
+
+            // Бейдж темы
+            const pill = document.getElementById('topicPill');
+            if (isPenalty) {
+                pill.className = "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2 bg-amber-100 text-amber-900 border border-amber-400 animate-pop";
+                pill.innerHTML = `<span>⚡ Штрафное задание • Отрабатываем тему</span>`;
+            } else {
+                pill.className = "inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2 bg-violet-100 text-violet-800";
+                pill.textContent = topicNames[task.topic] || "Лексикология";
+            }
+
+            // Инструкция и крупный заголовок
+            document.getElementById('taskInstruction').textContent = task.instruction;
+            document.getElementById('taskTitle').textContent = task.title;
+
+            // Рендерим интерактивную зону по типу задания
+            const area = document.getElementById('taskInteractiveArea');
+            if (task.type === 'choice') {
+                renderChoiceArea(area, task);
+            } else if (task.type === 'input') {
+                renderInputArea(area, task);
+            } else if (task.type === 'match') {
+                initMatchState(task);
+                renderMatchArea(area, task);
+            }
+        }
+
+        // --- Механика 1: Крупные кнопки выбора (как на скриншоте) ---
+        function renderChoiceArea(area, task) {
+            const colsClass = task.options.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-3';
+            area.innerHTML = `
+                <div class="grid ${colsClass} gap-3.5 mt-2">
+                    ${task.options.map((opt, idx) => `
+                        <button onclick="handleChoiceAnswer(${idx})" id="choiceBtn_${idx}"
+                            class="choice-btn py-5 px-6 text-lg sm:text-xl font-bold text-slate-800 flex items-center justify-center text-center min-h-[76px]">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function handleChoiceAnswer(pickedIdx) {
+            if (gameState.answeredCurrent) return;
+            gameState.answeredCurrent = true;
+
+            const task = getCurrentTaskObj();
+            const isCorrect = pickedIdx === task.correct;
+
+            task.options.forEach((_, idx) => {
+                const btn = document.getElementById(`choiceBtn_${idx}`);
+                if (!btn) return;
+                btn.disabled = true;
+                if (idx === task.correct) btn.classList.add('choice-btn-correct');
+                if (idx === pickedIdx && !isCorrect) btn.classList.add('choice-btn-wrong');
+            });
+
+            finalizeAnswer(isCorrect, task);
+        }
+
+        // --- Механика 2: Вписать слово (или кликнуть по подсказке-плашке) ---
+        function renderInputArea(area, task) {
+            area.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
+                        <input id="taskTextInput" type="text" placeholder="Впиши ответ сюда..." autocomplete="off"
+                            onkeydown="if(event.key==='Enter') handleInputSubmit()"
+                            class="w-full sm:w-72 px-5 py-4 text-center text-xl font-bold rounded-2xl border-2 border-violet-300 focus:border-[#7C4DFF] focus:outline-none bg-violet-50/40 text-slate-900"/>
+                        <button onclick="handleInputSubmit()" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-[#7C4DFF] hover:bg-violet-700 text-white font-extrabold text-base shadow-md transition">
+                            Проверить
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+                        <span class="text-xs font-bold text-slate-400 mr-1">Подсказка (можно нажать):</span>
+                        ${task.wordBank.map(w => `
+                            <button onclick="fillInputWithWord('${w}')" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-violet-100 text-slate-700 hover:text-violet-900 font-bold text-sm border border-slate-200 transition">
+                                ${w}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function fillInputWithWord(word) {
+            if (gameState.answeredCurrent) return;
+            const inp = document.getElementById('taskTextInput');
+            if (inp) {
+                inp.value = word;
+                handleInputSubmit();
+            }
+        }
+
+        function handleInputSubmit() {
+            if (gameState.answeredCurrent) return;
+            const inp = document.getElementById('taskTextInput');
+            if (!inp || !inp.value.trim()) return;
+
+            gameState.answeredCurrent = true;
+            const task = getCurrentTaskObj();
+            const userVal = inp.value.trim().toLowerCase().replace(/ё/g, 'е');
+            const correctVal = task.answer.toLowerCase().replace(/ё/g, 'е');
+            const isCorrect = userVal === correctVal;
+
+            inp.disabled = true;
+            if (isCorrect) {
+                inp.className = "w-full sm:w-72 px-5 py-4 text-center text-xl font-bold rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900";
+            } else {
+                inp.className = "w-full sm:w-72 px-5 py-4 text-center text-xl font-bold rounded-2xl border-2 border-rose-500 bg-rose-50 text-rose-900";
+            }
+
+            finalizeAnswer(isCorrect, task);
+        }
+
+        // --- Механика 3: Соотнесение пар (Match) ---
+        function initMatchState(task) {
+            gameState.matchSelectedLeft = null;
+            gameState.matchSolvedCount = 0;
+            gameState.matchLeftItems = task.pairs.map((p, idx) => ({ id: idx, text: p.left, matched: false }));
+            // Перемешиваем правый столбец
+            const rightRaw = task.pairs.map((p, idx) => ({ id: idx, text: p.right, matched: false }));
+            gameState.matchRightItems = rightRaw.sort(() => Math.random() - 0.5);
+        }
+
+        function renderMatchArea(area, task) {
+            area.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                    <div class="space-y-2.5">
+                        <div class="text-xs font-extrabold uppercase text-slate-400 text-center sm:text-left">1. Нажми на карточку слева</div>
+                        ${gameState.matchLeftItems.map(item => {
+                            const selected = gameState.matchSelectedLeft === item.id;
+                            let cls = "choice-btn w-full p-4 font-bold text-sm sm:text-base text-slate-800 flex items-center justify-between";
+                            if (item.matched) cls = "w-full p-4 rounded-2xl border-2 border-emerald-400 bg-emerald-50 text-emerald-900 font-bold text-sm sm:text-base opacity-80 flex items-center justify-between";
+                            else if (selected) cls += " choice-btn-selected bg-violet-50";
+                            return `
+                                <button onclick="selectMatchLeft(${item.id})" ${item.matched ? 'disabled' : ''} class="${cls}">
+                                    <span>${item.text}</span>
+                                    <span>${item.matched ? '✓' : '→'}</span>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div class="text-xs font-extrabold uppercase text-slate-400 text-center sm:text-left">2. Нажми на пару справа</div>
+                        ${gameState.matchRightItems.map((item, rIdx) => {
+                            let cls = "choice-btn w-full p-4 font-bold text-sm sm:text-base text-slate-800 flex items-center justify-between";
+                            if (item.matched) cls = "w-full p-4 rounded-2xl border-2 border-emerald-400 bg-emerald-50 text-emerald-900 font-bold text-sm sm:text-base opacity-80 flex items-center justify-between";
+                            return `
+                                <button id="matchRight_${rIdx}" onclick="selectMatchRight(${item.id}, ${rIdx})" ${item.matched ? 'disabled' : ''} class="${cls}">
+                                    <span>${item.text}</span>
+                                    <span>${item.matched ? '✅' : ''}</span>
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectMatchLeft(id) {
+            if (gameState.answeredCurrent) return;
+            gameState.matchSelectedLeft = id;
+            renderMatchArea(document.getElementById('taskInteractiveArea'), getCurrentTaskObj());
+        }
+
+        function selectMatchRight(targetId, rIdx) {
+            if (gameState.answeredCurrent || gameState.matchSelectedLeft === null) return;
+            const task = getCurrentTaskObj();
+
+            if (gameState.matchSelectedLeft === targetId) {
+                // Пара совпала!
+                playTone('success');
+                const leftObj = gameState.matchLeftItems.find(x => x.id === targetId);
+                const rightObj = gameState.matchRightItems.find(x => x.id === targetId);
+                if (leftObj) leftObj.matched = true;
+                if (rightObj) rightObj.matched = true;
+                gameState.matchSelectedLeft = null;
+                gameState.matchSolvedCount++;
+
+                renderMatchArea(document.getElementById('taskInteractiveArea'), task);
+
+                if (gameState.matchSolvedCount === task.pairs.length) {
+                    gameState.answeredCurrent = true;
+                    finalizeAnswer(true, task);
+                }
+            } else {
+                // Ошибка при соотнесении: подсвечиваем кнопку красным и назначаем штрафное задание!
+                const btn = document.getElementById(`matchRight_${rIdx}`);
+                if (btn) btn.classList.add('choice-btn-wrong');
+                gameState.answeredCurrent = true;
+                finalizeAnswer(false, task);
+            }
+        }
+
+        // =========================================================================
+        // ОБРАБОТКА ОТВЕТА И НАЗНАЧЕНИЕ СМЕЖНЫХ ШТРАФНЫХ ВОПРОСОВ
+        // =========================================================================
+        function finalizeAnswer(isCorrect, task) {
+            const box = document.getElementById('feedbackBox');
+            const header = document.getElementById('feedbackHeader');
+            const text = document.getElementById('feedbackText');
+            const isPenalty = !!gameState.activePenaltyTask;
+
+            box.classList.remove('hidden');
+
+            if (isCorrect) {
+                playTone('success');
+                gameState.stars += isPenalty ? 1 : 2;
+                if (isPenalty) {
+                    gameState.stats[task.topic].penaltiesDone++;
+                    // Если сердечек было меньше 5, восстанавливаем 1 сердечко за успешную отработку!
+                    if (gameState.hearts < 5) gameState.hearts++;
+                }
+
+                box.className = "w-full max-w-xl mx-auto mt-6 p-4 rounded-2xl border-2 border-emerald-400 bg-emerald-50 text-left animate-pop";
+                header.className = "font-extrabold text-xs sm:text-sm uppercase tracking-wider text-emerald-800";
+                header.textContent = isPenalty ? "✅ Штрафное задание закрыто! (+1 ⭐ и +1 ❤️)" : "✅ Правильно! (+2 ⭐)";
+                text.textContent = task.explanation;
+            } else {
+                playTone('error');
+                gameState.hearts = Math.max(1, gameState.hearts - 1);
+                gameState.stats[task.topic].mistakes++;
+                if (!gameState.stats[task.topic].hardWords.includes(task.title)) {
+                    gameState.stats[task.topic].hardWords.push(task.title);
+                }
+
+                // Добавляем 2 смежных штрафных вопроса из банка по этой теме (если это основное задание) или 1 (если ошибся в штрафном)
+                enqueuePenaltyQuestions(task.topic, isPenalty ? 1 : 2);
+
+                box.className = "w-full max-w-xl mx-auto mt-6 p-4 rounded-2xl border-2 border-rose-400 bg-rose-50 text-left animate-pop";
+                header.className = "font-extrabold text-xs sm:text-sm uppercase tracking-wider text-rose-800";
+                header.textContent = "💡 Ошибка! Сейчас спокойно отработаем на похожем примере:";
+                text.textContent = task.explanation;
+            }
+
+            renderTopBar();
+            renderMapBoard();
+        }
+
+        function enqueuePenaltyQuestions(topicKey, count) {
+            const pool = penaltyBank[topicKey] || [];
+            if (!pool.length) return;
+            for (let i = 0; i < count; i++) {
+                const cursor = gameState.penaltyCursor[topicKey] % pool.length;
+                const penaltyItem = Object.assign({}, pool[cursor]);
+                gameState.penaltyQueue.push(penaltyItem);
+                gameState.penaltyCursor[topicKey]++;
+            }
+        }
+
+        function nextTaskStep() {
+            // Если в очереди есть штрафные задания — сначала достаём их (Маг остаётся на текущем кружке и закрепляет тему!)
+            if (gameState.penaltyQueue.length > 0) {
+                gameState.activePenaltyTask = gameState.penaltyQueue.shift();
+                renderCurrentTask();
+                return;
+            }
+
+            // Если штрафная очередь пуста, сбрасываем флаг штрафного вопроса и двигаем Мага на следующий кружок!
+            gameState.activePenaltyTask = null;
+
+            if (gameState.currentStepIndex < mainSteps.length - 1) {
+                gameState.currentStepIndex++;
+                renderCurrentTask();
+            } else {
+                // Дошли до 20-го флажка!
+                playTone('chest');
+                toggleReportModal(true);
+            }
+        }
+
+        // =========================================================================
+        // МОДАЛЬНЫЕ ОКНА: СУНДУКИ, КАРТОЧКИ-ЗНАКОМСТВА И ОТЧЁТ ДЛЯ УЧИТЕЛЯ
+        // =========================================================================
+        function showChestModal(chestNum) {
+            const modal = document.getElementById('storyModal');
+            document.getElementById('storyModalIcon').textContent = "🎁";
+            document.getElementById('storyModalBadge').textContent = `Сундук сокровищ #${chestNum} открыт! +5 ⭐`;
+
+            if (chestNum === 1) {
+                document.getElementById('storyModalTitle').textContent = "Блок 1 пройден! Впереди — Омонимы";
+                document.getElementById('storyModalBody').innerHTML = `
+                    <p>🎉 Ты отлично разобрался с однозначными и многозначными словами!</p>
+                    <p><b>Шпаргалка перед следующим участком карты:</b></p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><b>ОмоГРАФЫ</b> — пишутся одинаково, но разное ударение (<i>за́мок — замо́к</i>).</li>
+                        <li><b>ОмоФОНЫ</b> — звучат одинаково, но пишутся по-разному (<i>кот — код</i>).</li>
+                        <li><b>ОмоФОРМЫ</b> — совпадают только в одной форме (<i>печь пироги — тёплая печь</i>).</li>
+                    </ul>
+                `;
+            } else if (chestNum === 2) {
+                document.getElementById('storyModalTitle').textContent = "Экватор позади! Синонимы и Антонимы";
+                document.getElementById('storyModalBody').innerHTML = `
+                    <p>🏆 Половина карты пройдена! Ты заработал +5 бонусных звёзд.</p>
+                    <p>Помни простое правило: <b>Синонимы</b> — слова-друзья (близкие по смыслу), <b>Антонимы</b> — слова-противники (противоположные по смыслу).</p>
+                `;
+            } else {
+                document.getElementById('storyModalTitle').textContent = "Третий сундук твой! Остался финишный рывок";
+                document.getElementById('storyModalBody').innerHTML = `
+                    <p>✨ Супер! Ты познакомился с паронимами (<i>надеть — одеть, абонемент — абонент</i>).</p>
+                    <p>Впереди последние 5 шагов до финишного флага — разберём <b>Фразеологизмы</b>!</p>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function showIntroModal(introType) {
+            const modal = document.getElementById('storyModal');
+            if (introType === 'par') {
+                document.getElementById('storyModalIcon').textContent = "👯‍♂️";
+                document.getElementById('storyModalBadge').textContent = "Знакомство перед уроком • Новая тема";
+                document.getElementById('storyModalTitle').textContent = "Что такое ПАРОНИМЫ?";
+                document.getElementById('storyModalBody').innerHTML = `
+                    <p><b>Паронимы</b> — это слова, которые звучат и пишутся очень похоже (почти как близнецы), но имеют <b>РАЗНЫЙ смысл</b>!</p>
+                    <div class="p-3 bg-violet-50 rounded-xl border border-violet-200 mt-2 space-y-1 text-xs sm:text-sm">
+                        <div>👕 <b>НАдеть</b> — НА себя (шапку, куртку). <b>Одеть</b> — когО-то другого (Надежду, ребёнка).</div>
+                        <div>🎫 <b>АбонемеНТ</b> — билет в бассейн. <b>АбонеНТ</b> — человек у телефона.</div>
+                        <div>🏺 <b>Глиняный</b> — кувшин из глины. <b>Глинистый</b> — берег с примесью глины.</div>
+                    </div>
+                `;
+            } else if (introType === 'idiom') {
+                document.getElementById('storyModalIcon').textContent = "🦊";
+                document.getElementById('storyModalBadge').textContent = "Знакомство перед уроком • Новая тема";
+                document.getElementById('storyModalTitle').textContent = "Что такое ФРАЗЕОЛОГИЗМЫ?";
+                document.getElementById('storyModalBody').innerHTML = `
+                    <p><b>Фразеологизмы</b> — это устойчивые крылатые выражения с переносным смыслом. Главный секрет: их можно заменить <b>ОДНИМ словом</b>!</p>
+                    <div class="p-3 bg-violet-50 rounded-xl border border-violet-200 mt-2 space-y-1 text-xs sm:text-sm">
+                        <div>🪵 <b>Бить баклуши</b> = бездельничать</div>
+                        <div>👃 <b>Водить за нос</b> = обманывать</div>
+                        <div>🐱 <b>Кот наплакал</b> = очень мало</div>
+                    </div>
+                `;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeStoryModal() {
+            document.getElementById('storyModal').classList.add('hidden');
+        }
+
+        function toggleReportModal(isFinished = false) {
+            const modal = document.getElementById('reportModal');
+            if (!modal.classList.contains('hidden') && !isFinished) {
+                modal.classList.add('hidden');
+                return;
+            }
+
+            const container = document.getElementById('reportContent');
+            const rows = Object.keys(topicNames).map(key => {
+                const st = gameState.stats[key];
+                const clean = st.mistakes === 0;
+                return `
+                    <div class="p-3.5 rounded-2xl border ${clean ? 'bg-emerald-50/70 border-emerald-200' : 'bg-amber-50/80 border-amber-300'} flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="font-extrabold text-sm text-slate-900">${topicNames[key]}</div>
+                            ${st.hardWords.length ? `<div class="text-xs text-amber-900 font-medium mt-0.5">Потребовали повторения: ${st.hardWords.join(' • ')}</div>` : `<div class="text-xs text-emerald-800 font-medium">Без затруднений!</div>`}
+                        </div>
+                        <div class="shrink-0 text-xs font-extrabold px-3 py-1 rounded-xl ${clean ? 'bg-emerald-200 text-emerald-950' : 'bg-amber-200 text-amber-950'}">
+                            ${clean ? '✅ 0 ошибок' : `Ошибок: ${st.mistakes} (Отработано: ${st.penaltiesDone})`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="p-4 rounded-2xl bg-violet-50 border border-violet-200 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-extrabold uppercase text-violet-700">${gameState.currentStepIndex === 19 && gameState.answeredCurrent ? '🏁 Квест полностью пройден!' : 'Текущий прогресс'}</div>
+                        <div class="text-lg font-black text-slate-900">Шаг ${gameState.currentStepIndex + 1} из 20 • Собрано ${gameState.stars} ⭐</div>
+                    </div>
+                    <div class="text-3xl">🧙‍♂️</div>
+                </div>
+                <div class="space-y-2.5">${rows}</div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function copyReportToClipboard() {
+            const lines = [
+                `📊 ОТЧЁТ ПО ДОМАШНЕМУ КВЕСТУ (Лексикология и фразеология)`,
+                `Пройдено шагов: ${gameState.currentStepIndex + 1} / 20 | Звёзд: ${gameState.stars} ⭐`,
+                `----------------------------------------`
+            ];
+            Object.keys(topicNames).forEach(key => {
+                const st = gameState.stats[key];
+                lines.push(`${topicNames[key]}: ошибок — ${st.mistakes}, закрыто штрафных заданий — ${st.penaltiesDone}.`);
+                if (st.hardWords.length) {
+                    lines.push(`   ↳ Повторить на уроке: ${st.hardWords.join('; ')}`);
+                }
+            });
+
+            const textArea = document.createElement("textarea");
+            textArea.value = lines.join('\n');
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            const btn = document.getElementById('copyReportBtn');
+            btn.textContent = "✅ Скопировано! Отправь репетитору";
+            setTimeout(() => {
+                btn.textContent = "📋 Скопировать отчёт для репетитора";
+            }, 3000);
+        }
+
+        function restartFullQuest() {
+            gameState.currentStepIndex = 0;
+            gameState.hearts = 5;
+            gameState.stars = 0;
+            gameState.penaltyQueue = [];
+            gameState.activePenaltyTask = null;
+            gameState.openedChests = [];
+            gameState.shownIntros = [];
+            Object.keys(gameState.stats).forEach(k => {
+                gameState.stats[k] = { mistakes: 0, penaltiesDone: 0, hardWords: [] };
+            });
+            document.getElementById('reportModal').classList.add('hidden');
+            renderCurrentTask();
+        }
+
+        window.onload = function () {
+            renderCurrentTask();
+        };
+    </script>
+</body>
+</html>
