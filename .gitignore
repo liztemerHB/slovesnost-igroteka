@@ -1,0 +1,10 @@
+.admin_secret
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache/
+.dist_vendor/
+dist/
+sessions/
+assets_archive/
