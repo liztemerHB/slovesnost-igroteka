@@ -1,0 +1,2668 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Осеннее приключение корги — Орфографический квест (6 класс)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --board-yellow: #FCE473;
+      --board-border: #E5C138;
+      --cream-card: #FFFDF7;
+      --pumpkin-main: #F28522;
+      --pumpkin-rib: #D96B18;
+      --espresso: #2B1B12;
+      --corgi-tan: #C68B59;
+      --corgi-dark: #231F20;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FCE473;
+      color: #2B1B12;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .font-serif-title {
+      font-family: 'Lora', serif;
+    }
+
+    /* Crisp Board & Card Styling Matching Reference Board */
+    .board-surface {
+      background-color: #FCE473;
+      border: 3px solid #E5C547;
+      box-shadow: 0 16px 40px rgba(84, 48, 18, 0.14);
+    }
+
+    .clean-card {
+      background-color: #FFFDF7;
+      border: 3px solid #96C9E6;
+      box-shadow: -6px 6px 0px #A8D5EE, 0 10px 24px rgba(54, 34, 20, 0.1);
+    }
+
+    .warm-panel {
+      background-color: #FFFDF7;
+      border: 2.5px solid #E8B84B;
+      box-shadow: 0 8px 20px rgba(84, 48, 18, 0.09);
+    }
+
+    .pumpkin-btn {
+      background-color: #F28522;
+      border: 2.5px solid #B8520A;
+      box-shadow: 0 4px 0 #963E03, 0 8px 16px rgba(84, 45, 22, 0.18);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+    }
+
+    .pumpkin-btn:hover:not(:disabled) {
+      background-color: #F89132;
+      transform: translateY(-1px);
+    }
+
+    .pumpkin-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #963E03;
+    }
+
+    .pumpkin-btn:disabled {
+      background-color: #C7B9A3;
+      border-color: #9E8F78;
+      box-shadow: 0 3px 0 #7D705C;
+      cursor: not-allowed;
+    }
+
+    .option-pill {
+      background-color: #FFFFFF;
+      border: 2.5px solid #D96B18;
+      box-shadow: 0 4px 0 #B8520A;
+      transition: all 0.15s ease;
+    }
+
+    .option-pill:hover:not(:disabled) {
+      background-color: #FFF5E6;
+      transform: translateY(-2px);
+    }
+
+    .option-pill:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #B8520A;
+    }
+
+    .option-pill.selected-pill {
+      background-color: #F28522;
+      color: #FFFFFF;
+      border-color: #8C3B00;
+      box-shadow: 0 3px 0 #6E2E00;
+    }
+
+    .interactive-target {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
+    }
+
+    .interactive-target:hover {
+      transform: translateY(-4px) scale(1.015);
+    }
+
+    @keyframes gentleBob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.95); opacity: 0.4; }
+      70% { transform: scale(1.02); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes corgiChew {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.04, 0.96) rotate(-2deg); }
+      50% { transform: scale(0.97, 1.04) rotate(2deg); }
+      75% { transform: scale(1.03, 0.97) rotate(-1deg); }
+    }
+
+    @keyframes earWiggleLeft {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-9deg); }
+    }
+
+    @keyframes earWiggleRight {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(9deg); }
+    }
+
+    @keyframes crumbBurst {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
+    }
+
+    .animate-bob {
+      animation: gentleBob 3.6s ease-in-out infinite;
+    }
+
+    .animate-pop {
+      animation: popIn 0.24s ease-out forwards;
+    }
+
+    .animate-chew {
+      animation: corgiChew 0.38s ease-in-out 3;
+    }
+
+    .ear-wiggle-l {
+      transform-origin: 75px 85px;
+      animation: earWiggleLeft 0.32s ease-in-out 4;
+    }
+
+    .ear-wiggle-r {
+      transform-origin: 165px 85px;
+      animation: earWiggleRight 0.32s ease-in-out 4;
+    }
+
+    .crumb-particle {
+      animation: crumbBurst 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .bone-draggable {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.18s ease;
+    }
+
+    .bone-draggable:hover {
+      transform: scale(1.08) rotate(-4deg);
+      filter: drop-shadow(0 6px 10px rgba(184, 82, 10, 0.28));
+    }
+
+    .mouth-dropzone-active {
+      filter: drop-shadow(0 0 14px rgba(242, 133, 34, 0.85));
+      transform: scale(1.03);
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #F7DA5B; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb { background: #D96B18; border-radius: 8px; }
+  </style>
+</head>
+<body class="antialiased selection:bg-orange-400 selection:text-white">
+
+  <!-- Decorative Crisp Paw Prints & Autumn Leaves on the Yellow Board (Matching image_793921.jpg) -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
+    <!-- Left Top Paw Prints -->
+    <svg class="absolute top-28 left-4 w-12 h-16 opacity-85" viewBox="0 0 60 80">
+      <g transform="translate(18, 18) rotate(-20)" fill="#1E1916">
+        <ellipse cx="12" cy="16" rx="6.5" ry="5"/>
+        <circle cx="4" cy="8" r="2.8"/>
+        <circle cx="9.5" cy="5.5" r="2.8"/>
+        <circle cx="15" cy="6" r="2.8"/>
+        <circle cx="20" cy="9.5" r="2.6"/>
+      </g>
+      <g transform="translate(26, 48) rotate(-12)" fill="#1E1916">
+        <ellipse cx="12" cy="16" rx="6.5" ry="5"/>
+        <circle cx="4" cy="8" r="2.8"/>
+        <circle cx="9.5" cy="5.5" r="2.8"/>
+        <circle cx="15" cy="6" r="2.8"/>
+        <circle cx="20" cy="9.5" r="2.6"/>
+      </g>
+    </svg>
+
+    <!-- Right Bottom Paw Prints -->
+    <svg class="absolute bottom-24 right-5 w-14 h-20 opacity-85" viewBox="0 0 60 80">
+      <g transform="translate(12, 14) rotate(18)" fill="#1E1916">
+        <ellipse cx="12" cy="16" rx="6.5" ry="5"/>
+        <circle cx="4" cy="8" r="2.8"/>
+        <circle cx="9.5" cy="5.5" r="2.8"/>
+        <circle cx="15" cy="6" r="2.8"/>
+        <circle cx="20" cy="9.5" r="2.6"/>
+      </g>
+      <g transform="translate(24, 44) rotate(25)" fill="#1E1916">
+        <ellipse cx="12" cy="16" rx="6.5" ry="5"/>
+        <circle cx="4" cy="8" r="2.8"/>
+        <circle cx="9.5" cy="5.5" r="2.8"/>
+        <circle cx="15" cy="6" r="2.8"/>
+        <circle cx="20" cy="9.5" r="2.6"/>
+      </g>
+    </svg>
+
+    <!-- Crisp Solid Autumn Leaf Top Right -->
+    <svg class="absolute top-8 right-10 w-12 h-12 opacity-90" viewBox="0 0 60 60">
+      <path d="M12 44 C10 26 24 12 46 10 C44 32 30 46 12 44 Z" fill="#D94E1F"/>
+      <path d="M12 44 C24 34 34 24 46 10 C44 32 30 46 12 44 Z" fill="#E87A24"/>
+      <path d="M8 48 L42 14" stroke="#6E240B" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- Main Application Container -->
+  <div id="app" class="relative z-10 max-w-6xl mx-auto px-2.5 sm:px-5 lg:px-6 py-3 sm:py-5 flex flex-col min-h-screen">
+
+    <!-- Top Header Bar (Timer completely hidden from student view!) -->
+    <header class="warm-panel rounded-2xl px-3.5 py-2.5 sm:px-6 sm:py-3.5 mb-3.5 flex flex-wrap items-center justify-between gap-2.5">
+      <div class="flex items-center gap-3">
+        <!-- Crisp Solid-Fill Corgi-in-Pumpkin Avatar -->
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FCE473] border-2 border-[#E5B83B] flex items-center justify-center shrink-0 overflow-hidden">
+          <svg viewBox="0 0 200 220" class="w-11 h-11 sm:w-13 sm:h-13">
+            <!-- Back Pumpkin Rim -->
+            <ellipse cx="100" cy="130" rx="62" ry="18" fill="#D96B18"/>
+            <!-- Left & Right Ears -->
+            <path d="M46 92 C35 55 38 22 52 18 C65 14 80 42 84 68 Z" fill="#231F20"/>
+            <path d="M52 84 C45 56 47 32 56 29 C65 26 75 46 78 68 Z" fill="#F7EFE6"/>
+            <path d="M154 92 C165 55 162 22 148 18 C135 14 120 42 116 68 Z" fill="#231F20"/>
+            <path d="M148 84 C155 56 153 32 144 29 C135 26 125 46 122 68 Z" fill="#F7EFE6"/>
+            <!-- Corgi Head Base (Charcoal Cap) -->
+            <path d="M44 108 C42 74 64 52 100 52 C136 52 158 74 156 108 L152 135 L48 135 Z" fill="#231F20"/>
+            <!-- Symmetrical Tan/Caramel Cheeks -->
+            <path d="M48 112 C48 85 68 70 86 76 C92 92 88 125 74 135 L48 135 Z" fill="#C68B59"/>
+            <path d="M152 112 C152 85 132 70 114 76 C108 92 112 125 126 135 L152 135 Z" fill="#C68B59"/>
+            <!-- Crisp White Forehead Blaze & Muzzle -->
+            <path d="M91 55 C95 53 105 53 109 55 L112 94 C126 100 132 115 128 135 L72 135 C68 115 74 100 88 94 Z" fill="#FFFFFF"/>
+            <!-- Dark Oval Eyes -->
+            <ellipse cx="77" cy="95" rx="7.5" ry="10.5" fill="#141212"/>
+            <circle cx="75" cy="91" r="2.2" fill="#FFFFFF"/>
+            <ellipse cx="123" cy="95" rx="7.5" ry="10.5" fill="#141212"/>
+            <circle cx="121" cy="91" r="2.2" fill="#FFFFFF"/>
+            <!-- Nose & Cute Confident Smirk -->
+            <ellipse cx="100" cy="112" rx="13" ry="8.5" fill="#141212"/>
+            <path d="M96 125 Q107 127 114 120" fill="none" stroke="#141212" stroke-width="3.2" stroke-linecap="round"/>
+            <!-- Plump Orange Pumpkin Body (Front Layer) -->
+            <path d="M22 158 C22 124 56 116 100 116 C144 116 178 124 178 158 C178 196 144 212 100 212 C56 212 22 196 22 158 Z" fill="#F28522"/>
+            <!-- Pumpkin Rib Lines -->
+            <path d="M100 120 L100 210" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+            <path d="M72 122 C56 148 58 184 74 207" fill="none" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+            <path d="M128 122 C144 148 142 184 126 207" fill="none" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+            <!-- White Paws Resting ON TOP of Pumpkin Rim -->
+            <rect x="50" y="114" width="34" height="22" rx="11" fill="#FFFFFF"/>
+            <path d="M61 120 C59 125 59 130 61 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M73 120 C75 125 75 130 73 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+            <rect x="116" y="114" width="34" height="22" rx="11" fill="#FFFFFF"/>
+            <path d="M127 120 C125 125 125 130 127 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M139 120 C141 125 141 130 139 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <h1 class="font-serif-title text-base sm:text-xl font-bold text-[#2B1B12] leading-tight">
+            Осеннее приключение корги
+          </h1>
+          <p class="text-[11px] sm:text-sm text-[#6E4726] font-medium">
+            Орфографическое путешествие по осенней поляне
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Controls: Treats Fed, Score & Tutor Report (No visible timer for student!) -->
+      <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+        <div class="bg-[#FFFDF5] border-2 border-[#E8B84B] rounded-xl px-2.5 sm:px-3.5 py-1.5 sm:py-2 flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#2B1B12]" title="Сколько вкусняшек съел корги">
+          <svg class="w-4 h-4 text-[#D96B18] shrink-0" viewBox="0 0 36 22" fill="none">
+            <path d="M7 5 C4 5 2 7 2 9.5 C2 11 3 12 4.5 12.5 C3 13 2 14 2 15.5 C2 18 4 20 7 20 C9 20 10.5 18.5 11.5 16.5 L24.5 16.5 C25.5 18.5 27 20 29 20 C32 20 34 18 34 15.5 C34 14 33 13 31.5 12.5 C33 12 34 11 34 9.5 C34 7 32 5 29 5 C27 5 25.5 6.5 24.5 8.5 L11.5 8.5 C10.5 6.5 9 5 7 5 Z" fill="#F4C47E" stroke="#8C4A15" stroke-width="2"/>
+          </svg>
+          <span class="hidden md:inline">Вкусняшки:</span>
+          <span id="header-treats" class="text-[#B8520A]">0</span>
+        </div>
+
+        <div class="bg-[#FFFDF5] border-2 border-[#E8B84B] rounded-xl px-2.5 sm:px-3.5 py-1.5 sm:py-2 flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#2B1B12]" title="Набранные баллы">
+          <svg class="w-4 h-4 text-[#F28522] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/>
+          </svg>
+          <span>Баллы: <span id="header-score" class="text-[#D95B16]">0</span></span>
+        </div>
+
+        <button id="btn-open-report" type="button" class="bg-[#2B1B12] hover:bg-[#422B1D] text-[#FFFDF5] text-xs sm:text-sm font-semibold px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
+          <svg class="w-4 h-4 text-[#FCE473] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="M9 12h6M9 16h4"/>
+          </svg>
+          <span class="hidden sm:inline">Отчёт репетитору</span>
+          <span class="sm:hidden">Отчёт</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Interactive 6-Round Navigation Bar -->
+    <nav id="progress-map" class="hidden warm-panel rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 mb-3.5">
+      <div class="flex items-center justify-between text-[11px] sm:text-xs font-bold text-[#5C3818] uppercase tracking-wider mb-2">
+        <span>Карта осенней поляны (можно переключать раунды)</span>
+        <span id="progress-counter">Локация 1 из 6</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2" id="route-steps"></div>
+    </nav>
+
+    <!-- Main Dynamic Game Area -->
+    <main id="game-viewport" class="flex-1 flex flex-col"></main>
+
+  </div>
+
+  <!-- MANDATORY 10-SECOND ERROR EXPLANATION MODAL -->
+  <div id="error-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div class="warm-panel rounded-3xl max-w-xl w-full p-5 sm:p-7 border-4 border-[#F28522] shadow-2xl animate-pop relative">
+      <div class="flex items-start gap-4 mb-4">
+        <!-- Crisp Solid-Fill Corgi in Pumpkin Mentor -->
+        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#FCE473] border-2 border-[#E5B83B] flex items-center justify-center shrink-0 p-1">
+          <svg viewBox="0 0 200 220" class="w-full h-full">
+            <ellipse cx="100" cy="130" rx="62" ry="18" fill="#D96B18"/>
+            <path d="M46 92 C35 55 38 22 52 18 C65 14 80 42 84 68 Z" fill="#231F20"/>
+            <path d="M52 84 C45 56 47 32 56 29 C65 26 75 46 78 68 Z" fill="#F7EFE6"/>
+            <path d="M154 92 C165 55 162 22 148 18 C135 14 120 42 116 68 Z" fill="#231F20"/>
+            <path d="M148 84 C155 56 153 32 144 29 C135 26 125 46 122 68 Z" fill="#F7EFE6"/>
+            <path d="M44 108 C42 74 64 52 100 52 C136 52 158 74 156 108 L152 135 L48 135 Z" fill="#231F20"/>
+            <path d="M48 112 C48 85 68 70 86 76 C92 92 88 125 74 135 L48 135 Z" fill="#C68B59"/>
+            <path d="M152 112 C152 85 132 70 114 76 C108 92 112 125 126 135 L152 135 Z" fill="#C68B59"/>
+            <path d="M91 55 C95 53 105 53 109 55 L112 94 C126 100 132 115 128 135 L72 135 C68 115 74 100 88 94 Z" fill="#FFFFFF"/>
+            <ellipse cx="77" cy="95" rx="7.5" ry="10.5" fill="#141212"/>
+            <circle cx="75" cy="91" r="2.2" fill="#FFFFFF"/>
+            <ellipse cx="123" cy="95" rx="7.5" ry="10.5" fill="#141212"/>
+            <circle cx="121" cy="91" r="2.2" fill="#FFFFFF"/>
+            <ellipse cx="100" cy="112" rx="13" ry="8.5" fill="#141212"/>
+            <path d="M96 125 Q107 127 114 120" fill="none" stroke="#141212" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M22 158 C22 124 56 116 100 116 C144 116 178 124 178 158 C178 196 144 212 100 212 C56 212 22 196 22 158 Z" fill="#F28522"/>
+            <path d="M100 120 L100 210" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+            <path d="M72 122 C56 148 58 184 74 207" fill="none" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+            <path d="M128 122 C144 148 142 184 126 207" fill="none" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+            <rect x="50" y="114" width="34" height="22" rx="11" fill="#FFFFFF"/>
+            <path d="M61 120 C59 125 59 130 61 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M73 120 C75 125 75 130 73 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+            <rect x="116" y="114" width="34" height="22" rx="11" fill="#FFFFFF"/>
+            <path d="M127 120 C125 125 125 130 127 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M139 120 C141 125 141 130 139 134" fill="none" stroke="#231F20" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <span class="inline-block bg-red-100 text-red-800 border border-red-300 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide mb-1">
+            Стоп! Разберёмся вместе с корги
+          </span>
+          <h3 class="font-serif-title text-xl sm:text-2xl font-bold text-[#2B1B12]" id="err-modal-title">
+            Правильное написание: ...
+          </h3>
+          <p class="text-xs sm:text-sm text-[#6E4726] mt-0.5 font-medium" id="err-modal-user-choice">
+            Твой выбор: ...
+          </p>
+        </div>
+      </div>
+
+      <!-- Rule Explanation Box -->
+      <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-4 mb-3 text-sm sm:text-base text-[#2B1B12] leading-relaxed font-medium" id="err-modal-explanation"></div>
+
+      <!-- Lexical Meaning Box inside Error Modal -->
+      <div id="err-modal-meaning-box" class="hidden bg-orange-50 border-2 border-orange-300 rounded-xl p-3.5 mb-3 text-xs sm:text-sm text-[#2B1B12]">
+        <span class="font-bold text-[#D95B16] uppercase tracking-wider text-xs block mb-0.5">Словарик корги (значение слова):</span>
+        <span id="err-modal-meaning-text"></span>
+      </div>
+
+      <!-- Spaced Repetition Notice -->
+      <div class="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#8C3B00] bg-[#FFE8CC] border border-[#F28522] rounded-xl px-3.5 py-2.5 mb-4">
+        <svg class="w-5 h-5 text-[#D95B16] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        </svg>
+        <span id="err-modal-repeat-note">Это слово вернётся в игру ещё минимум 2 раза, чтобы ты точно его запомнил!</span>
+      </div>
+
+      <!-- 10-Second Mandatory Countdown Bar & Button -->
+      <div class="space-y-2">
+        <div class="w-full h-3 bg-[#F5E1A4] rounded-full overflow-hidden border border-[#D9B44A]">
+          <div id="err-timer-bar" class="h-full bg-[#F28522] transition-all duration-1000 ease-linear" style="width: 100%"></div>
+        </div>
+        <button id="btn-close-error" type="button" disabled class="pumpkin-btn w-full py-3.5 px-5 rounded-xl text-white font-bold text-base tracking-wide">
+          Внимательно прочитай объяснение (10 сек.)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUTOR REPORT MODAL -->
+  <div id="report-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs">
+    <div class="warm-panel rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col border-4 border-[#2B1B12] shadow-2xl animate-pop">
+      <div class="px-5 py-4 border-b-2 border-[#E8B84B] flex items-center justify-between">
+        <div>
+          <h2 class="font-serif-title text-xl sm:text-2xl font-bold text-[#2B1B12]">Отчёт для репетитора</h2>
+          <p class="text-xs sm:text-sm text-[#6E4726]">Скрытый хронометраж сессии, точность, список ошибок и статус повторов</p>
+        </div>
+        <button id="btn-close-report" type="button" class="w-9 h-9 rounded-xl bg-[#FCE473] hover:bg-[#F28522] hover:text-white text-[#2B1B12] font-bold flex items-center justify-center border border-[#D9B44A] cursor-pointer transition">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="report-content" class="p-5 overflow-y-auto space-y-5 flex-1"></div>
+
+      <div class="px-5 py-3.5 border-t-2 border-[#E8B84B] bg-[#FFF9E6] rounded-b-3xl flex flex-wrap items-center justify-between gap-3">
+        <span id="copy-feedback" class="text-xs sm:text-sm font-bold text-emerald-700 opacity-0 transition-opacity">
+          Отчёт скопирован в буфер обмена!
+        </span>
+        <div class="flex items-center gap-2 ml-auto">
+          <button id="btn-copy-report" type="button" class="pumpkin-btn px-4 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 cursor-pointer">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+            <span>Скопировать отчёт для репетитора</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * =========================================================================
+     * REUSABLE SOLID-FILL SVG ARTWORK HELPERS (ZERO BROKEN GRADIENTS/WIREFRAMES)
+     * Exact visual match to user's reference images (image_78b882.png & image_793921.jpg)
+     * =========================================================================
+     */
+
+    // 1. Exact Replica of Corgi Peeking Out of Pumpkin with Interactive Mouth States!
+    // mouthState: "smile" | "open" | "chew"
+    function getCorgiInPumpkinSVG(className = "w-56 h-56", variant = "tricolor", mouthState = "smile") {
+      const capColor = variant === "tricolor" ? "#231F20" : "#D97A2B";
+      const cheekColor = variant === "tricolor" ? "#C68B59" : "#E8963E";
+      const earAnimL = mouthState === "chew" ? "ear-wiggle-l" : "";
+      const earAnimR = mouthState === "chew" ? "ear-wiggle-r" : "";
+
+      let mouthSVG = `<path class="corgi-mouth-smile" d="M115 141 Q128 143 137 135" fill="none" stroke="#141212" stroke-width="3.6" stroke-linecap="round"/>`;
+      if (mouthState === "open") {
+        mouthSVG = `
+          <!-- Wide Happy Open Mouth Waiting for Bone Treat -->
+          <path d="M104 136 Q120 132 136 136 C138 152 130 162 120 162 C110 162 102 152 104 136 Z" fill="#4A151B" stroke="#141212" stroke-width="3"/>
+          <path d="M111 146 C111 141 129 141 129 146 C129 156 125 161 120 161 C115 161 111 156 111 146 Z" fill="#F27289"/>
+        `;
+      } else if (mouthState === "chew") {
+        mouthSVG = `
+          <!-- Happy Chewing Mouth with Cute Tongue Tip -->
+          <path d="M107 139 Q120 147 133 139" fill="none" stroke="#141212" stroke-width="3.8" stroke-linecap="round"/>
+          <path d="M116 142 C116 150 126 150 126 142 Z" fill="#F27289" stroke="#141212" stroke-width="2.2"/>
+          <!-- Rosy Happy Cheeks -->
+          <ellipse cx="82" cy="124" rx="8" ry="4.5" fill="#F27289" opacity="0.55"/>
+          <ellipse cx="158" cy="124" rx="8" ry="4.5" fill="#F27289" opacity="0.55"/>
+        `;
+      }
+
+      // Happy squinted eyes when chewing vs glossy oval eyes normally
+      const eyesSVG = mouthState === "chew" ? `
+        <path d="M83 107 Q93 97 103 107" fill="none" stroke="#141212" stroke-width="4" stroke-linecap="round"/>
+        <path d="M137 107 Q147 97 157 107" fill="none" stroke="#141212" stroke-width="4" stroke-linecap="round"/>
+      ` : `
+        <ellipse cx="93" cy="107" rx="8.5" ry="12" fill="#141212"/>
+        <circle cx="90.5" cy="102.5" r="2.5" fill="#FFFFFF"/>
+        <ellipse cx="147" cy="107" rx="8.5" ry="12" fill="#141212"/>
+        <circle cx="144.5" cy="102.5" r="2.5" fill="#FFFFFF"/>
+      `;
+
+      return `
+        <svg viewBox="0 0 240 250" class="${className} select-none">
+          <!-- Back Pumpkin Opening Rim -->
+          <ellipse cx="120" cy="144" rx="74" ry="22" fill="#D96B18"/>
+
+          <!-- Left Ear (Solid Outer & Soft Cream Inner) -->
+          <g class="${earAnimL}">
+            <path d="M56 104 C42 62 46 22 62 18 C78 14 96 46 100 78 Z" fill="${capColor}"/>
+            <path d="M63 94 C54 62 57 34 68 30 C79 27 91 52 94 78 Z" fill="#F7EFE6"/>
+          </g>
+
+          <!-- Right Ear (Solid Outer & Soft Cream Inner) -->
+          <g class="${earAnimR}">
+            <path d="M184 104 C198 62 194 22 178 18 C162 14 144 46 140 78 Z" fill="${capColor}"/>
+            <path d="M177 94 C186 62 183 34 172 30 C161 27 149 52 146 78 Z" fill="#F7EFE6"/>
+          </g>
+
+          <!-- Corgi Head Base -->
+          <path d="M54 122 C50 82 76 58 120 58 C164 58 190 82 186 122 L182 152 L58 152 Z" fill="${capColor}"/>
+
+          <!-- Warm Caramel/Tan Cheeks -->
+          <path d="M58 126 C58 94 82 78 104 84 C110 102 106 140 90 152 L58 152 Z" fill="${cheekColor}"/>
+          <path d="M182 126 C182 94 158 78 136 84 C130 102 134 140 150 152 L182 152 Z" fill="${cheekColor}"/>
+
+          <!-- Continuous White Blaze & Muzzle -->
+          <path d="M109 61 C114 58 126 58 131 61 L134 106 C152 112 158 130 154 152 L86 152 C82 130 88 112 106 106 Z" fill="#FFFFFF"/>
+
+          <!-- Eyes -->
+          ${eyesSVG}
+
+          <!-- Crisp Black Oval Nose -->
+          <ellipse cx="120" cy="124" rx="15.5" ry="9.5" fill="#141212"/>
+
+          <!-- Dynamic Mouth Target Zone -->
+          <g class="corgi-mouth-group">
+            ${mouthSVG}
+          </g>
+
+          <!-- Plump Pumpkin Body (Overlapping Corgi Torso Cleanly) -->
+          <path d="M26 178 C26 138 68 130 120 130 C172 130 214 138 214 178 C214 224 172 242 120 242 C68 242 26 224 26 178 Z" fill="#F28522"/>
+
+          <!-- 3 Smooth Curved Pumpkin Ribs -->
+          <path d="M120 134 L120 240" stroke="#D96B18" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M86 136 C68 166 70 208 88 236" fill="none" stroke="#D96B18" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M154 136 C172 166 170 208 152 236" fill="none" stroke="#D96B18" stroke-width="4.5" stroke-linecap="round"/>
+
+          <!-- Plump White Paws Resting ON TOP of Front Pumpkin Edge -->
+          <rect x="60" y="128" width="40" height="25" rx="12.5" fill="#FFFFFF"/>
+          <path d="M73 135 C71 140 71 146 73 150" fill="none" stroke="#231F20" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M87 135 C89 140 89 146 87 150" fill="none" stroke="#231F20" stroke-width="2.4" stroke-linecap="round"/>
+
+          <rect x="140" y="128" width="40" height="25" rx="12.5" fill="#FFFFFF"/>
+          <path d="M153 135 C151 140 151 146 153 150" fill="none" stroke="#231F20" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M167 135 C169 140 169 146 167 150" fill="none" stroke="#231F20" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    // 2. Crisp Vector Golden Biscuit Bone Treat (No Emoji!)
+    function getBiscuitBoneSVG(className = "w-24 h-14") {
+      return `
+        <svg viewBox="0 0 130 76" class="${className} select-none pointer-events-none">
+          <!-- Biscuit 3D Bottom Shadow Rim -->
+          <path d="M27 18 C16 18 8 25 8 34 C8 39 11 43 16 45 C11 47 8 51 8 56 C8 65 16 72 27 72 C35 72 41 66 44 59 L86 59 C89 66 95 72 103 72 C114 72 122 65 122 56 C122 51 119 47 114 45 C119 43 122 39 122 34 C122 25 114 18 103 18 C95 18 89 24 86 31 L44 31 C41 24 35 18 27 18 Z" fill="#C67D3B" stroke="#5C2D0C" stroke-width="3"/>
+
+          <!-- Biscuit Golden-Baked Top Surface -->
+          <path d="M27 12 C16 12 8 19 8 28 C8 33 11 37 16 39 C11 41 8 45 8 50 C8 59 16 66 27 66 C35 66 41 60 44 53 L86 53 C89 60 95 66 103 66 C114 66 122 59 122 50 C122 45 119 41 114 39 C119 37 122 33 122 28 C122 19 114 12 103 12 C95 12 89 18 86 25 L44 25 C41 18 35 12 27 12 Z" fill="#FAD292" stroke="#5C2D0C" stroke-width="3"/>
+
+          <!-- Warm Baked Glaze Center & Dock Holes -->
+          <ellipse cx="65" cy="39" rx="26" ry="7" fill="#EDA854" opacity="0.65"/>
+          <circle cx="52" cy="39" r="2.2" fill="#8C4A15"/>
+          <circle cx="65" cy="39" r="2.2" fill="#8C4A15"/>
+          <circle cx="78" cy="39" r="2.2" fill="#8C4A15"/>
+          <!-- Subtle Cream Highlight -->
+          <path d="M20 22 C24 19 30 19 34 23" fill="none" stroke="#FFF8EB" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M96 22 C100 19 106 19 110 23" fill="none" stroke="#FFF8EB" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    // 3. Interactive "Feed Corgi a Treat for Inspiration" Widget (Works on Desktop Sidebar & Mobile/Tablet Top Bar)
+    function renderFeedableCorgiWidget(mode = "sidebar") {
+      const isCompact = mode === "playing";
+      const speechText = state.corgiSpeech || "«Ты справишься! Я верю. И хочу вкусняшку за вдохновение!»";
+
+      return `
+        <div id="corgi-companion-card" class="rounded-3xl bg-[#FCE473] border-3 border-[#E5B83B] p-3.5 sm:p-4 shadow-md flex flex-col items-center justify-between relative overflow-hidden">
+          <!-- Speech Bubble Above Corgi (Matching Task 2 on image_793921.jpg) -->
+          <div class="bg-white border-2 border-[#2B1B12] rounded-2xl px-3.5 py-2 text-center text-xs sm:text-[13px] font-bold text-[#2B1B12] mb-2 relative shadow-xs w-full leading-snug min-h-[46px] flex items-center justify-center">
+            <span id="corgi-speech-text">${speechText}</span>
+            <div class="w-3 h-3 bg-white border-r-2 border-b-2 border-[#2B1B12] rotate-45 absolute -bottom-2 left-1/2 -translate-x-1/2"></div>
+          </div>
+
+          <!-- Corgi + Bone Treat Row (Side-by-side on phones so dragging is only 5-6 cm, stacked or side-by-side on desktop) -->
+          <div class="flex flex-row lg:flex-col items-center justify-center gap-3 sm:gap-4 w-full my-1">
+            <!-- Corgi Drop Target Container -->
+            <div id="corgi-mouth-dropzone" class="relative flex flex-col items-center justify-center transition-transform duration-200 rounded-2xl p-1 select-none">
+              <div id="corgi-svg-holder" class="${state.corgiMouthState === 'chew' ? 'animate-chew' : 'animate-bob'}">
+                ${getCorgiInPumpkinSVG(
+                  isCompact ? "w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48" : "w-44 h-44 sm:w-56 sm:h-56",
+                  "tricolor",
+                  state.corgiMouthState
+                )}
+              </div>
+              <!-- Particle Burst Layer for Crumbs & Sparkles -->
+              <div id="corgi-crumbs-layer" class="absolute inset-0 pointer-events-none flex items-center justify-center"></div>
+            </div>
+
+            <!-- Interactive Bone Treat Plate ("Покорми меня!") -->
+            <div class="bg-[#FFFDF7] border-2 border-[#D9822B] rounded-2xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-center shadow-xs w-40 sm:w-48 lg:w-full shrink-0">
+              <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#B8520A] block mb-1">
+                Покорми корги!
+              </span>
+
+              <div id="bone-treat-slot" class="h-14 sm:h-16 flex items-center justify-center w-full relative">
+                ${state.boneCooldown ? `
+                  <div class="text-xs font-extrabold text-[#3B7A57] animate-pop flex items-center gap-1">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    <span>Хрум-хрум! Вкусно!</span>
+                  </div>
+                ` : `
+                  <div id="draggable-bone" draggable="true" role="button" tabindex="0" aria-label="Сахарная косточка для корги. Перетащи в ротик корги или нажми" class="bone-draggable cursor-grab active:cursor-grabbing inline-flex flex-col items-center justify-center p-1">
+                    ${getBiscuitBoneSVG("w-24 sm:w-28 h-12 sm:h-14")}
+                  </div>
+                `}
+              </div>
+
+              <span class="text-[10px] sm:text-[11px] text-[#5C3818] font-semibold leading-tight mt-1">
+                Перетащи косточку в ротик или просто нажми на неё
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. Pumpkin Hot-Air Balloon with Corgi Passenger & Sky Clouds (Matching Task 5 on image_793921.jpg)
+    function getPumpkinBalloonSVG(className = "w-44 h-52") {
+      return `
+        <svg viewBox="0 0 240 280" class="${className}">
+          <!-- Soft Sky Blue Cloud Behind Balloon -->
+          <path d="M18 158 C18 142 32 132 46 136 C54 120 76 118 88 132 C102 128 116 138 116 154 Z" fill="#BFE6F7" opacity="0.85"/>
+
+          <!-- Dark Brown Pumpkin Stem at Top of Balloon -->
+          <path d="M113 24 C112 10 118 4 126 6 C129 7 128 14 125 24 Z" fill="#3D2314"/>
+
+          <!-- Giant Pumpkin Envelope -->
+          <path d="M32 92 C32 42 70 22 120 22 C170 22 208 42 208 92 C208 142 170 162 120 162 C70 162 32 142 32 92 Z" fill="#F28522"/>
+          <!-- Pumpkin Envelope Ribs -->
+          <path d="M120 24 L120 160" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+          <path d="M84 27 C62 62 62 122 84 157" fill="none" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+          <path d="M156 27 C178 62 178 122 156 157" fill="none" stroke="#D96B18" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- Suspension Ropes -->
+          <line x1="68" y1="152" x2="84" y2="218" stroke="#2B1B12" stroke-width="2.5"/>
+          <line x1="172" y1="152" x2="156" y2="218" stroke="#2B1B12" stroke-width="2.5"/>
+
+          <!-- Autumn Leaves Tucked in Basket Corners -->
+          <path d="M64 218 C54 206 58 194 72 202 Z" fill="#D94E1F"/>
+          <path d="M176 218 C186 206 182 194 168 202 Z" fill="#E8963E"/>
+
+          <!-- Cute Corgi Sitting Inside Gondola Basket -->
+          <g transform="translate(60, 146)">
+            <path d="M28 46 C20 24 22 4 32 2 C42 0 50 18 52 34 Z" fill="#C68B59"/>
+            <path d="M32 42 C26 25 28 10 34 8 C40 6 46 20 48 34 Z" fill="#F7EFE6"/>
+            <path d="M92 46 C100 24 98 4 88 2 C78 0 70 18 68 34 Z" fill="#C68B59"/>
+            <path d="M88 42 C94 25 92 10 86 8 C80 6 74 20 72 34 Z" fill="#F7EFE6"/>
+            <path d="M26 56 C24 34 40 22 60 22 C80 22 96 34 94 56 L92 74 L28 74 Z" fill="#C68B59"/>
+            <path d="M54 24 L66 24 L68 48 C78 52 82 62 80 74 L40 74 C38 62 42 52 52 48 Z" fill="#FFFFFF"/>
+            <ellipse cx="45" cy="48" rx="4.5" ry="6.5" fill="#141212"/>
+            <circle cx="43.8" cy="45.5" r="1.4" fill="#FFFFFF"/>
+            <ellipse cx="75" cy="48" rx="4.5" ry="6.5" fill="#141212"/>
+            <circle cx="73.8" cy="45.5" r="1.4" fill="#FFFFFF"/>
+            <ellipse cx="60" cy="58" rx="8" ry="5.5" fill="#141212"/>
+          </g>
+
+          <!-- Dark Woven Gondola Basket -->
+          <path d="M74 216 L166 216 L158 264 C156 270 144 274 120 274 C96 274 84 270 82 264 Z" fill="#3D2616"/>
+          <rect x="70" y="212" width="100" height="9" rx="4.5" fill="#593820"/>
+          <!-- Corgi Paws Over Basket Rim -->
+          <rect x="86" y="208" width="22" height="14" rx="7" fill="#FFFFFF"/>
+          <rect x="132" y="208" width="22" height="14" rx="7" fill="#FFFFFF"/>
+        </svg>
+      `;
+    }
+
+    /**
+     * =========================================================================
+     * CURRICULUM DATA BANK (6TH GRADE RUSSIAN ORTHOGRAPHY)
+     * Every complex or vocabulary word has an immediate open lexical meaning.
+     * No foreign prefixes (диз-/дис-, экс-/экз-) included.
+     * =========================================================================
+     */
+    const ROUNDS = [
+      {
+        id: 1,
+        shortTitle: "1. Согревающее какао",
+        title: "Раунд 1. Согревающее какао",
+        subtitle: "Правописание приставок и согласных на стыке морфем",
+        mechanicType: "sorter_two",
+        instruction: "Прочитай слово на зефирке и опусти её в подходящую кружку горячего какао!",
+        items: [
+          {
+            id: "r1_1",
+            masked: "чере..зерница",
+            full: "череззерница",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 1,
+            optionsLabel: "Пишем З (череззерница)",
+            meaning: "Неполное наливание зёрен в колосе (когда зёрна в колосе развиваются через одно).",
+            explanation: "В приставке через- перед звонким согласным [з] пишется буква З, а корень начинается с буквы З: череззерница."
+          },
+          {
+            id: "r1_2",
+            masked: "ни..провергнуть",
+            full: "ниспровергнуть",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 2,
+            optionsLabel: "Пишем С (ниспровергнуть)",
+            meaning: "Свергнуть, разрушить или решительно отвергнуть что-то устоявшееся.",
+            explanation: "В приставке низ-/нис- перед глухим согласным [п] пишется буква С: ниспровергнуть."
+          },
+          {
+            id: "r1_3",
+            masked: "ни..вести",
+            full: "низвести",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 1,
+            optionsLabel: "Пишем З (низвести)",
+            meaning: "Опустить ниже, свести до более низкого положения или лишить прежнего значения.",
+            explanation: "В приставке низ-/нис- перед звонким согласным [в] пишется буква З: низвести."
+          },
+          {
+            id: "r1_4",
+            masked: "чре..кожный",
+            full: "чрескожный",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 2,
+            optionsLabel: "Пишем С (чрескожный)",
+            meaning: "Проходящий сквозь кожу (например, медицинская процедура).",
+            explanation: "В приставке чрез-/чрес- перед глухим согласным [к] пишется буква С: чрескожный."
+          },
+          {
+            id: "r1_5",
+            masked: "во..пламениться",
+            full: "воспламениться",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 2,
+            optionsLabel: "Пишем С (воспламениться)",
+            explanation: "В приставке воз-/вос- перед глухим согласным [п] пишется буква С: воспламениться."
+          },
+          {
+            id: "r1_6",
+            masked: "бе..шовный",
+            full: "бесшовный",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 2,
+            optionsLabel: "Пишем С (бесшовный)",
+            explanation: "В приставке без-/бес- перед глухим согласным [ш] пишется буква С: бесшовный."
+          },
+          {
+            id: "r1_7",
+            masked: "ни..кий",
+            full: "низкий",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 1,
+            optionsLabel: "Пишем З (низкий)",
+            explanation: "В словах низкий и низший буква З входит в состав корня (проверочное слово — низок), приставки здесь нет."
+          },
+          {
+            id: "r1_8",
+            masked: "..делать",
+            full: "сделать",
+            mug1: "Пишем З",
+            mug2: "Пишем С",
+            correctMug: 2,
+            optionsLabel: "Пишем С (сделать)",
+            explanation: "Приставка с- неизменяемая (приставки з- в русском языке не бывает): сделать."
+          },
+          {
+            id: "r1_9",
+            masked: "ра..считать",
+            full: "рассчитать",
+            mug1: "Пишем С",
+            mug2: "Пишем СС",
+            correctMug: 2,
+            optionsLabel: "Пишем СС (рассчитать)",
+            explanation: "В словах с корнем -чит- используются две приставки (рас- и с-), поэтому пишется удвоенная СС: рассчитать, рассчитывать."
+          },
+          {
+            id: "r1_10",
+            masked: "ра..чётливый",
+            full: "расчётливый",
+            mug1: "Пишем С",
+            mug2: "Пишем СС",
+            correctMug: 1,
+            optionsLabel: "Пишем С (расчётливый)",
+            explanation: "В словах с корнем -чёт- пишется одна буква С: расчёт, расчётливый."
+          },
+          {
+            id: "r1_11",
+            masked: "ра..каз",
+            full: "рассказ",
+            mug1: "Пишем С",
+            mug2: "Пишем СС",
+            correctMug: 2,
+            optionsLabel: "Пишем СС (рассказ)",
+            explanation: "На стыке приставки рас- и корня -сказ- пишется двойная согласная СС: рассказ."
+          },
+          {
+            id: "r1_12",
+            masked: "ра..зява",
+            full: "раззява",
+            mug1: "Пишем З",
+            mug2: "Пишем ЗЗ",
+            correctMug: 2,
+            optionsLabel: "Пишем ЗЗ (раззява)",
+            meaning: "(разг.) Рассеянный, невнимательный человек, ротозей.",
+            explanation: "На стыке приставки раз- и корня -зяв- встречаются две одинаковые согласные, поэтому пишем двойную ЗЗ: раззява."
+          },
+          {
+            id: "r1_13",
+            masked: "ра..евать",
+            full: "разевать",
+            mug1: "Пишем З",
+            mug2: "Пишем ЗЗ",
+            correctMug: 1,
+            optionsLabel: "Пишем З (разевать)",
+            explanation: "Слова «разевать» и «разинуть» — исключения, в них пишется одна буква З."
+          },
+          {
+            id: "r1_14",
+            masked: "р..зыгрыш",
+            full: "розыгрыш",
+            mug1: "Пишем О",
+            mug2: "Пишем А",
+            correctMug: 1,
+            optionsLabel: "Пишем О (розыгрыш)",
+            explanation: "В приставках раз-(роз-) / рас-(рос-) под ударением пишется буква О: ро́зыгрыш, ро́спись."
+          },
+          {
+            id: "r1_15",
+            masked: "р..ссыпать",
+            full: "рассыпать",
+            mug1: "Пишем О",
+            mug2: "Пишем А",
+            correctMug: 2,
+            optionsLabel: "Пишем А (рассыпать)",
+            explanation: "В приставках раз-(роз-) / рас-(рос-) в безударной позиции пишется буква А: рассы́пать."
+          }
+        ]
+      },
+      {
+        id: 2,
+        shortTitle: "2. Листопад: О и Ё",
+        title: "Раунд 2. Листопад на поляне",
+        subtitle: "Буквы О и Ё после шипящих в разных частях слова",
+        mechanicType: "leaf_insert",
+        instruction: "Помоги корги собрать осенние листья в плетёную корзинку! Выбери правильную букву после шипящей.",
+        items: [
+          {
+            id: "r2_1",
+            masked: "ш..рох листвы",
+            full: "шорох",
+            choices: ["О", "Ё"],
+            correct: "О",
+            explanation: "Орфограмма в корне слова. Проверочного слова с Е подобрать нельзя (слово-исключение): пишем О — шорох."
+          },
+          {
+            id: "r2_2",
+            masked: "ч..порный вид",
+            full: "чопорный",
+            choices: ["О", "Ё"],
+            correct: "О",
+            meaning: "Чрезмерно строгий, натянутый и неестественно важный в поведении.",
+            explanation: "Орфограмма в корне. Проверочного слова с Е нет: пишем букву О — чопорный."
+          },
+          {
+            id: "r2_3",
+            masked: "подж..г костёр",
+            full: "поджёг",
+            choices: ["О", "Ё"],
+            correct: "Ё",
+            explanation: "Смотри на часть речи! Это глагол (что сделал? поджёг), а в глаголах в корне -жёг- пишется буква Ё."
+          },
+          {
+            id: "r2_4",
+            masked: "сильный ож..г руки",
+            full: "ожог",
+            choices: ["О", "Ё"],
+            correct: "О",
+            explanation: "Это имя существительное (что? ожог руки). В существительном корень пишется с буквой О: ожог."
+          },
+          {
+            id: "r2_5",
+            masked: "туш..нка в походе",
+            full: "тушёнка",
+            choices: ["О", "Ё"],
+            correct: "Ё",
+            explanation: "Слово образовано от глагола «тушить». В суффиксах отглагольных существительных (-ёнк-, -ёвк-) после шипящих пишется Ё: тушёнка, ночёвка."
+          },
+          {
+            id: "r2_6",
+            masked: "выкорч..вывать пни",
+            full: "выкорчёвывать",
+            choices: ["О", "Ё"],
+            correct: "Ё",
+            meaning: "Удалять пни или деревья вместе с корнями из земли.",
+            explanation: "В глагольных суффиксах -ёв- / -ёвыва- после шипящих всегда пишется буква Ё: выкорчёвывать."
+          },
+          {
+            id: "r2_7",
+            masked: "весёлая девч..нка",
+            full: "девчонка",
+            choices: ["О", "Ё"],
+            correct: "О",
+            explanation: "Существительное образовано не от глагола. В суффиксе -онк- под ударением после шипящей пишется буква О: девчонка."
+          },
+          {
+            id: "r2_8",
+            masked: "звонкая трещ..тка",
+            full: "трещотка",
+            choices: ["О", "Ё"],
+            correct: "О",
+            meaning: "Деревянный народный музыкальный инструмент (или предмет), издающий громкий треск.",
+            explanation: "Внимание на исключение из твоей таблицы! Слово «трещотка» (а также скачок, прыжок, толчок) пишется с буквой О."
+          },
+          {
+            id: "r2_9",
+            masked: "спорить горяч..",
+            full: "горячо",
+            choices: ["О", "Ё"],
+            correct: "О",
+            explanation: "В суффиксах наречий после шипящих под ударением пишется буква О: горячо́, свежо́ (исключение: ещё)."
+          }
+        ]
+      },
+      {
+        id: 3,
+        shortTitle: "3. Урожай в корзинки",
+        title: "Раунд 3. Сбор урожая в корзинки",
+        subtitle: "Чередующиеся гласные в корне слова",
+        mechanicType: "sorter_three",
+        instruction: "Сначала выбери пропущенную букву в корне (Шаг 1), а затем отправь слово в нужную плетёную корзинку по условию выбора гласной (Шаг 2)!",
+        bins: [
+          { id: "STRESS", label: "От ударения" },
+          { id: "SUFFIX_A", label: "От суффикса -А-" },
+          { id: "CONSONANT", label: "От согласной корня" }
+        ],
+        items: [
+          {
+            id: "r3_1",
+            masked: "з..рница",
+            full: "зарница",
+            letterOptions: ["А", "О"],
+            correctLetter: "А",
+            targetBin: "STRESS",
+            optionsLabel: "Буква «А», от ударения (зарница)",
+            meaning: "Мгновенная беззвучная вспышка света на горизонте (отдалённая молния без грома).",
+            explanation: "Корень -зар-/-зор- зависит от ударения: без ударения всегда пишется А — зарни́ца."
+          },
+          {
+            id: "r3_2",
+            masked: "заг..релый",
+            full: "загорелый",
+            letterOptions: ["А", "О"],
+            correctLetter: "О",
+            targetBin: "STRESS",
+            optionsLabel: "Буква «О», от ударения (загорелый)",
+            explanation: "Корень -гар-/-гор- зависит от ударения: под ударением пишем А (зага́р), без ударения — О (загоре́лый)."
+          },
+          {
+            id: "r3_3",
+            masked: "утв..рь",
+            full: "утварь",
+            letterOptions: ["А", "О"],
+            correctLetter: "А",
+            targetBin: "STRESS",
+            optionsLabel: "Буква «А», от ударения (утварь)",
+            meaning: "Совокупность предметов домашнего обихода (посуда, кухонные принадлежности).",
+            explanation: "Корень -твар-/-твор- относится к группе, зависящей от ударения (без ударения обычно О: твори́ть, но слово «утварь» — исключение с буквой А)."
+          },
+          {
+            id: "r3_4",
+            masked: "соб..рать",
+            full: "собирать",
+            letterOptions: ["Е", "И"],
+            correctLetter: "И",
+            targetBin: "SUFFIX_A",
+            optionsLabel: "Буква «И», от суффикса -А- (собирать)",
+            explanation: "В корнях -бер-/-бир- пишется буква И, если за корнем следует суффикс -а-: собирать (но соберу)."
+          },
+          {
+            id: "r3_5",
+            masked: "расст..лить",
+            full: "расстелить",
+            letterOptions: ["Е", "И"],
+            correctLetter: "Е",
+            targetBin: "SUFFIX_A",
+            optionsLabel: "Буква «Е», от суффикса -А- (расстелить)",
+            explanation: "В корнях -стел-/-стил- выбор гласной зависит от суффикса -а-: после корня нет суффикса -а-, поэтому пишем букву Е — расстелить."
+          },
+          {
+            id: "r3_6",
+            masked: "соч..тать",
+            full: "сочетать",
+            letterOptions: ["Е", "И"],
+            correctLetter: "Е",
+            targetBin: "SUFFIX_A",
+            optionsLabel: "Буква «Е», от суффикса -А- (сочетать)",
+            meaning: "Соединять, связывать между собой в единое гармоничное целое.",
+            explanation: "Корень -чет-/-чит- зависит от суффикса -а-, но слова «сочетать» и «сочетание» — исключения, в них всегда пишется буква Е."
+          },
+          {
+            id: "r3_7",
+            masked: "прик..снуться",
+            full: "прикоснуться",
+            letterOptions: ["А", "О"],
+            correctLetter: "О",
+            targetBin: "SUFFIX_A",
+            optionsLabel: "Буква «О», от суффикса -А- (прикоснуться)",
+            explanation: "В корнях -кас-/-кос- выбор гласной зависит от суффикса -а-: за корнем нет суффикса -а-, поэтому пишем букву О — прикоснуться."
+          },
+          {
+            id: "r3_8",
+            masked: "предл..гать",
+            full: "предлагать",
+            letterOptions: ["А", "О"],
+            correctLetter: "А",
+            targetBin: "CONSONANT",
+            optionsLabel: "Буква «А», от согласной корня (предлагать)",
+            explanation: "В корнях -лаг-/-лож- выбор гласной зависит от согласной корня: перед Г пишется буква А (предлагать), перед Ж — О (предложить)."
+          },
+          {
+            id: "r3_9",
+            masked: "р..сток",
+            full: "росток",
+            letterOptions: ["А", "О"],
+            correctLetter: "О",
+            targetBin: "CONSONANT",
+            optionsLabel: "Буква «О», от согласной корня (росток)",
+            explanation: "Корни -раст-/-ращ-/-рос- зависят от конечных согласных корня (перед СТ и Щ обычно А), но слово «росток» — исключение, пишется с буквой О."
+          },
+          {
+            id: "r3_10",
+            masked: "выск..чить",
+            full: "выскочить",
+            letterOptions: ["А", "О"],
+            correctLetter: "О",
+            targetBin: "CONSONANT",
+            optionsLabel: "Буква «О», от согласной корня (выскочить)",
+            explanation: "Корни -скак-/-скоч- зависят от согласной корня: перед К пишем А (скакать), перед Ч — О (выскочить)."
+          }
+        ]
+      },
+      {
+        id: 4,
+        shortTitle: "4. Тыквенная грядка",
+        title: "Раунд 4. Тыквенная грядка",
+        subtitle: "Безударная проверяемая гласная в корне слова",
+        mechanicType: "two_step_verify",
+        instruction: "Чтобы корги собрал спелую тыкву, сначала выбери проверочное слово по смыслу, а затем вставь гласную в корень!",
+        items: [
+          {
+            id: "r4_1",
+            masked: "цветы начали ув..дать без воды",
+            full: "увядать",
+            verifyOptions: ["вянуть", "видеть", "ведать"],
+            correctVerify: "вянуть",
+            letterOptions: ["Я", "И", "Е"],
+            correctLetter: "Я",
+            explanation: "Смотри на контекст: цветы без воды вянут — проверочное слово «вя́нуть», пишем букву Я: увядать (а «увидать издалека» — от «ви́деть»)."
+          },
+          {
+            id: "r4_2",
+            masked: "посв..тить стихотворение другу",
+            full: "посвятить",
+            verifyOptions: ["святость", "свет", "свита"],
+            correctVerify: "святость",
+            letterOptions: ["Я", "Е", "И"],
+            correctLetter: "Я",
+            explanation: "Посвятить стихи другу — проверочное слово «свя́тость» / «свя́т», пишем букву Я (а «посветить фонарём» — от слова «свет»)."
+          },
+          {
+            id: "r4_3",
+            masked: "прим..рять поссорившихся ребят",
+            full: "примирять",
+            verifyOptions: ["мир", "мерить", "мерещиться"],
+            correctVerify: "мир",
+            letterOptions: ["И", "Е"],
+            correctLetter: "И",
+            explanation: "Примирять ребят — помочь им заключить «мир», поэтому пишем букву И: примирять (а «примерять куртку» — от «ме́рить»)."
+          },
+          {
+            id: "r4_4",
+            masked: "флаг красиво разв..вается на ветру",
+            full: "развевается",
+            verifyOptions: ["веять", "развитие", "вить"],
+            correctVerify: "веять",
+            letterOptions: ["Е", "И"],
+            correctLetter: "Е",
+            explanation: "Флаг колышется на ветру — проверочное слово «ве́ять», пишем букву Е: развевается (а «ребёнок развивается» — от «разви́тие»)."
+          },
+          {
+            id: "r4_5",
+            masked: "тихое оч..рование осени",
+            full: "очарование",
+            verifyOptions: ["чары", "очи", "чертит"],
+            correctVerify: "чары",
+            letterOptions: ["А", "О", "Е"],
+            correctLetter: "А",
+            explanation: "Очарование — проверочное слово «ча́ры» (волшебство, обаяние), поэтому в корне пишется буква А."
+          }
+        ]
+      },
+      {
+        id: 5,
+        shortTitle: "5. Тайник корги",
+        title: "Раунд 5. Секретный тайник корги",
+        subtitle: "Правописание словарных слов",
+        mechanicType: "vocab_mastery",
+        instruction: "Прочитай значение слова в словарике корги и выбери правильное написание!",
+        items: [
+          {
+            id: "r5_1",
+            masked: "бе..летристика",
+            full: "беллетристика",
+            choices: ["ЛЛ (беллетристика)", "Л (белетристика)"],
+            correct: "ЛЛ (беллетристика)",
+            meaning: "Художественная повествовательная литература (романы, повести, рассказы), которая легко и увлекательно читается.",
+            explanation: "Словарное слово (от франц. belles lettres — «изящная словесность»): пишется с удвоенной ЛЛ — беллетристика."
+          },
+          {
+            id: "r5_2",
+            masked: "п..лисадник",
+            full: "палисадник",
+            choices: ["А (палисадник)", "О (полисадник)"],
+            correct: "А (палисадник)",
+            meaning: "Небольшой огороженный садик с цветами и кустарниками прямо перед домом.",
+            explanation: "Словарное слово: в первом слоге пишется непроверяемая гласная А — палисадник."
+          },
+          {
+            id: "r5_3",
+            masked: "бр..ш..ра",
+            full: "брошюра",
+            choices: ["О и Ю (брошюра)", "О и У (брошура)", "А и Ю (брашюра)"],
+            correct: "О и Ю (брошюра)",
+            meaning: "Небольшая книжка в мягкой обложке (обычно без твёрдого переплёта), скреплённая скрепкой.",
+            explanation: "Словарное слово-исключение: в первом слоге пишется О, а после шипящей Ш пишется буква Ю — брошюра."
+          },
+          {
+            id: "r5_4",
+            masked: "пр..в..легия",
+            full: "привилегия",
+            choices: ["И — И (привилегия)", "Е — И (превилегия)", "И — Е (привелегия)"],
+            correct: "И — И (привилегия)",
+            meaning: "Исключительное право или особое преимущество, предоставленное кому-либо.",
+            explanation: "Словарное слово: запоминаем две буквы И подряд в первых двух слогах — прИвИлегия."
+          },
+          {
+            id: "r5_5",
+            masked: "об..яние",
+            full: "обаяние",
+            choices: ["А (обаяние)", "О (обояние)"],
+            correct: "А (обаяние)",
+            meaning: "Притягательная сила, очарование и шарм человека в общении.",
+            explanation: "Запомни разницу! Обаяние (очарование, шарм) пишется через А, а обоняние (способность чувствовать запахи) — через О."
+          },
+          {
+            id: "r5_6",
+            masked: "об..няние",
+            full: "обоняние",
+            choices: ["О (обоняние)", "А (обаняние)"],
+            correct: "О (обоняние)",
+            meaning: "Способность живых существ чувствовать и различать запахи.",
+            explanation: "Обоняние (способность различать запахи, исторически родственно слову «вонь») пишется с буквой О: обоняние."
+          },
+          {
+            id: "r5_7",
+            masked: "инте..игентный",
+            full: "интеллигентный",
+            choices: ["ЛЛ (интеллигентный)", "Л (интелигентный)"],
+            correct: "ЛЛ (интеллигентный)",
+            meaning: "Образованный, воспитанный, культурный и деликатный человек.",
+            explanation: "Словарное слово: пишется с гласной Е, удвоенной ЛЛ и гласной И — интеллигентный."
+          },
+          {
+            id: "r5_8",
+            masked: "а..отация к книге",
+            full: "аннотация",
+            choices: ["НН (аннотация)", "Н (анотация)"],
+            correct: "НН (аннотация)",
+            meaning: "Краткое описание книги или статьи (о чём она и для кого предназначена) на первых страницах.",
+            explanation: "Словарное слово: пишется с удвоенной согласной НН — аннотация."
+          }
+        ]
+      },
+      {
+        id: 6,
+        shortTitle: "6. Шар: спряжения",
+        title: "Раунд 6. Полёты на тыкве-шаре",
+        subtitle: "Спряжение глаголов и безударные личные окончания",
+        mechanicType: "two_step_conjugation",
+        instruction: "Помоги корги взлететь на тыквенном воздушном шаре! Сначала определи спряжение глагола, а затем выбери букву в окончании.",
+        items: [
+          {
+            id: "r6_1",
+            masked: "они бор..тся за победу",
+            full: "борются",
+            infinitive: "бороться",
+            conjOptions: ["I спряжение", "II спряжение"],
+            correctConj: "I спряжение",
+            endingOptions: ["Ю", "Я"],
+            correctEnding: "Ю",
+            explanation: "Начальная форма — «бороться» (на -оть, не исключение), это I спряжение. В 3-м лице мн. числа пишем окончание -ют: они борются."
+          },
+          {
+            id: "r6_2",
+            masked: "туман стел..тся над поляной",
+            full: "стелется",
+            infinitive: "стелиться",
+            conjOptions: ["I спряжение", "II спряжение"],
+            correctConj: "I спряжение",
+            endingOptions: ["Е", "И"],
+            correctEnding: "Е",
+            explanation: "Глаголы «брить» и «стелить» — исключения и относятся к I спряжению! Поэтому пишем букву Е: туман стелется."
+          },
+          {
+            id: "r6_3",
+            masked: "они легко дыш..т осенней прохладой",
+            full: "дышат",
+            infinitive: "дышать",
+            conjOptions: ["I спряжение", "II спряжение"],
+            correctConj: "II спряжение",
+            endingOptions: ["А", "У"],
+            correctEnding: "А",
+            explanation: "Глагол «дышать» на -ать входит в 11 глаголов-исключений II спряжения (гнать, держать, дышать...). В 3-м лице мн. числа пишем -ат: они дышат."
+          },
+          {
+            id: "r6_4",
+            masked: "он аккуратно кле..т листья",
+            full: "клеит",
+            infinitive: "клеить",
+            conjOptions: ["I спряжение", "II спряжение"],
+            correctConj: "II спряжение",
+            endingOptions: ["И", "Е"],
+            correctEnding: "И",
+            explanation: "Начальная форма — «клеить» (на -ить, не исключение), это II спряжение. Поэтому в окончании пишем букву И: он клеит."
+          },
+          {
+            id: "r6_5",
+            masked: "ветер колыш..т верхушки деревьев",
+            full: "колышет",
+            infinitive: "колыхать",
+            conjOptions: ["I спряжение", "II спряжение"],
+            correctConj: "I спряжение",
+            endingOptions: ["Е", "И"],
+            correctEnding: "Е",
+            explanation: "Начальная форма — «колыхать» (на -ать, не исключение), это I спряжение. В окончании пишем букву Е: колышет."
+          },
+          {
+            id: "r6_6",
+            masked: "вы внимательно смотр..те",
+            full: "смотрите",
+            infinitive: "смотреть",
+            conjOptions: ["I спряжение", "II спряжение"],
+            correctConj: "II спряжение",
+            endingOptions: ["И", "Е"],
+            correctEnding: "И",
+            explanation: "Глагол «смотреть» на -еть входит в число 11 глаголов-исключений II спряжения. Поэтому пишем окончание -ите: вы смотрите."
+          }
+        ]
+      }
+    ];
+
+    /**
+     * =========================================================================
+     * GAME STATE & SILENT CHRONOMETRY ENGINE
+     * =========================================================================
+     */
+    const state = {
+      screen: "intro",
+      roundIndex: 0,
+      score: 0,
+      treatsFed: 0,
+      corgiMouthState: "smile", // "smile" | "open" | "chew"
+      corgiSpeech: "«Ты справишься! Я верю. И хочу вкусняшку за вдохновение!»",
+      boneCooldown: false,
+
+      // Silent session timestamps for tutor report (never shown on student HUD)
+      sessionStartTimestamp: null,
+      sessionEndTimestamp: null,
+
+      currentQueue: [],
+      currentTaskIdx: 0,
+
+      stepOneDone: false,
+      stepOneSelection: null,
+
+      wordStats: {},
+      globalPendingRepeats: [],
+      errorCountdownInterval: null
+    };
+
+    const CORGI_CHEER_PHRASES = [
+      "«Хрум-хрум! Так вкусно! Теперь у нас полно сил для пятёрки!»",
+      "«Ммм, сахарная косточка! Ты мой лучший друг, покорим все правила!»",
+      "«Ам-ам! Спасибо за угощение! Я верю в тебя на все сто процентов!»",
+      "«Какая хрустящая вкусняшка! Вдохновение получено — вперёд к победе!»"
+    ];
+
+    function initWordStats() {
+      state.wordStats = {};
+      ROUNDS.forEach(round => {
+        round.items.forEach(item => {
+          state.wordStats[item.id] = {
+            id: item.id,
+            full: item.full,
+            roundId: round.id,
+            roundTitle: round.shortTitle,
+            firstTryCorrect: null,
+            mistakesCount: 0,
+            wrongChoices: [],
+            remainingRepeats: 0,
+            consecutiveCorrect: 0,
+            isVocab: round.mechanicType === "vocab_mastery"
+          };
+        });
+      });
+    }
+
+    function formatClockTimestamp(ts) {
+      if (!ts) return "—";
+      const d = new Date(ts);
+      return d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function getSessionDurationSeconds() {
+      if (!state.sessionStartTimestamp) return 0;
+      const end = state.sessionEndTimestamp || Date.now();
+      return Math.max(1, Math.round((end - state.sessionStartTimestamp) / 1000));
+    }
+
+    function formatDuration(sec) {
+      const mins = Math.floor(sec / 60);
+      const remSec = sec % 60;
+      if (mins === 0) return `${remSec} сек.`;
+      return `${mins} мин. ${remSec} сек.`;
+    }
+
+    function updateHeaderScore() {
+      document.getElementById("header-score").textContent = state.score;
+      const treatsEl = document.getElementById("header-treats");
+      if (treatsEl) treatsEl.textContent = state.treatsFed;
+    }
+
+    /**
+     * =========================================================================
+     * INTERACTIVE BONE FEEDING MECHANIC (MOUSE DRAG, TOUCH POINTER DRAG & CLICK)
+     * =========================================================================
+     */
+    function setCorgiMouthState(newState) {
+      if (state.corgiMouthState === newState) return;
+      state.corgiMouthState = newState;
+      const holder = document.getElementById("corgi-svg-holder");
+      if (!holder) return;
+      const isCompact = state.screen === "playing";
+      holder.className = newState === "chew" ? "animate-chew" : "animate-bob";
+      holder.innerHTML = getCorgiInPumpkinSVG(
+        isCompact ? "w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48" : "w-44 h-44 sm:w-56 sm:h-56",
+        "tricolor",
+        newState
+      );
+    }
+
+    function spawnCrumbsAndSparkles() {
+      const layer = document.getElementById("corgi-crumbs-layer");
+      if (!layer) return;
+      const vectors = [
+        { tx: "-42px", ty: "-34px", color: "#FAD292", r: 5 },
+        { tx: "46px", ty: "-28px", color: "#F28522", r: 6 },
+        { tx: "-36px", ty: "26px", color: "#C67D3B", r: 4.5 },
+        { tx: "38px", ty: "30px", color: "#FAD292", r: 5 },
+        { tx: "0px", ty: "-48px", color: "#F28522", r: 6 },
+        { tx: "-22px", ty: "38px", color: "#8C4A15", r: 4 },
+        { tx: "26px", ty: "-40px", color: "#FFFDF7", r: 5 }
+      ];
+      layer.innerHTML = vectors.map(v => `
+        <svg class="crumb-particle absolute w-4 h-4" style="--tx: ${v.tx}; --ty: ${v.ty};" viewBox="0 0 20 20">
+          <circle cx="10" cy="10" r="${v.r}" fill="${v.color}" stroke="#5C2D0C" stroke-width="1.5"/>
+        </svg>
+      `).join("");
+      setTimeout(() => {
+        if (layer) layer.innerHTML = "";
+      }, 800);
+    }
+
+    function triggerFeedCorgiSuccess() {
+      if (state.boneCooldown) return;
+      state.boneCooldown = true;
+      state.treatsFed += 1;
+      state.corgiSpeech = CORGI_CHEER_PHRASES[(state.treatsFed - 1) % CORGI_CHEER_PHRASES.length];
+      updateHeaderScore();
+
+      const speechEl = document.getElementById("corgi-speech-text");
+      if (speechEl) speechEl.textContent = state.corgiSpeech;
+
+      const slotEl = document.getElementById("bone-treat-slot");
+      if (slotEl) {
+        slotEl.innerHTML = `
+          <div class="text-xs font-extrabold text-[#3B7A57] animate-pop flex items-center gap-1">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span>Хрум-хрум! Вкусно!</span>
+          </div>
+        `;
+      }
+
+      setCorgiMouthState("chew");
+      spawnCrumbsAndSparkles();
+
+      setTimeout(() => {
+        state.boneCooldown = false;
+        setCorgiMouthState("smile");
+        const refreshedSlot = document.getElementById("bone-treat-slot");
+        if (refreshedSlot) {
+          refreshedSlot.innerHTML = `
+            <div id="draggable-bone" draggable="true" role="button" tabindex="0" aria-label="Сахарная косточка для корги. Перетащи в ротик корги или нажми" class="bone-draggable cursor-grab active:cursor-grabbing inline-flex flex-col items-center justify-center p-1 animate-pop">
+              ${getBiscuitBoneSVG("w-24 sm:w-28 h-12 sm:h-14")}
+            </div>
+          `;
+          bindCorgiFeedingEvents();
+        }
+      }, 2100);
+    }
+
+    function bindCorgiFeedingEvents() {
+      const boneEl = document.getElementById("draggable-bone");
+      const dropzoneEl = document.getElementById("corgi-mouth-dropzone");
+      if (!boneEl || !dropzoneEl) return;
+
+      // 1. HTML5 Drag & Drop for Desktop Mice
+      boneEl.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", "corgi_bone_treat");
+        setCorgiMouthState("open");
+        dropzoneEl.classList.add("mouth-dropzone-active");
+      });
+
+      boneEl.addEventListener("dragend", () => {
+        dropzoneEl.classList.remove("mouth-dropzone-active");
+        if (state.corgiMouthState === "open") {
+          setCorgiMouthState("smile");
+        }
+      });
+
+      dropzoneEl.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        if (state.corgiMouthState !== "open" && !state.boneCooldown) {
+          setCorgiMouthState("open");
+        }
+      });
+
+      dropzoneEl.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzoneEl.classList.remove("mouth-dropzone-active");
+        triggerFeedCorgiSuccess();
+      });
+
+      // 2. Universal Pointer/Touch Dragging for Smartphones & Tablets + Click Fallback
+      let isPointerDragging = false;
+      let startX = 0;
+      let startY = 0;
+      let floatingClone = null;
+
+      boneEl.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        startX = e.clientX;
+        startY = e.clientY;
+        isPointerDragging = false;
+
+        const onPointerMove = (moveEv) => {
+          const dx = moveEv.clientX - startX;
+          const dy = moveEv.clientY - startY;
+          if (!isPointerDragging && Math.hypot(dx, dy) > 8) {
+            isPointerDragging = true;
+            setCorgiMouthState("open");
+            dropzoneEl.classList.add("mouth-dropzone-active");
+            boneEl.style.opacity = "0.25";
+
+            floatingClone = document.createElement("div");
+            floatingClone.className = "fixed z-50 pointer-events-none -translate-x-1/2 -translate-y-1/2";
+            floatingClone.innerHTML = getBiscuitBoneSVG("w-28 h-16");
+            document.body.appendChild(floatingClone);
+          }
+
+          if (isPointerDragging && floatingClone) {
+            floatingClone.style.left = `${moveEv.clientX}px`;
+            floatingClone.style.top = `${moveEv.clientY}px`;
+          }
+        };
+
+        const onPointerUp = (upEv) => {
+          window.removeEventListener("pointermove", onPointerMove);
+          window.removeEventListener("pointerup", onPointerUp);
+          window.removeEventListener("pointercancel", onPointerUp);
+
+          if (floatingClone) {
+            floatingClone.remove();
+            floatingClone = null;
+          }
+          boneEl.style.opacity = "1";
+          dropzoneEl.classList.remove("mouth-dropzone-active");
+
+          if (isPointerDragging) {
+            const rect = dropzoneEl.getBoundingClientRect();
+            const pad = 28;
+            const hit =
+              upEv.clientX >= rect.left - pad &&
+              upEv.clientX <= rect.right + pad &&
+              upEv.clientY >= rect.top - pad &&
+              upEv.clientY <= rect.bottom + pad;
+
+            if (hit) {
+              triggerFeedCorgiSuccess();
+            } else {
+              setCorgiMouthState("smile");
+            }
+          } else {
+            // Simple tap/click flies bone straight to Corgi's mouth!
+            setCorgiMouthState("open");
+            setTimeout(() => {
+              triggerFeedCorgiSuccess();
+            }, 220);
+          }
+        };
+
+        window.addEventListener("pointermove", onPointerMove);
+        window.addEventListener("pointerup", onPointerUp);
+        window.addEventListener("pointercancel", onPointerUp);
+      });
+    }
+
+    /**
+     * =========================================================================
+     * RENDERING: INTRO SCREEN MATCHING REFERENCE BOARD AESTHETIC
+     * =========================================================================
+     */
+    function renderIntro() {
+      document.getElementById("progress-map").classList.add("hidden");
+      const viewport = document.getElementById("game-viewport");
+
+      viewport.innerHTML = `
+        <div class="warm-panel rounded-3xl p-5 sm:p-8 lg:p-10 my-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            <!-- Left Column: Welcome & Game Overview -->
+            <div class="lg:col-span-7 space-y-4 sm:space-y-5">
+              <div class="inline-flex items-center gap-2 bg-[#FCE473] border-2 border-[#D99B1E] text-[#2B1B12] px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#F28522]"></span>
+                <span>Осеннее путешествие с корги</span>
+              </div>
+
+              <h2 class="font-serif-title text-2xl sm:text-4xl font-bold text-[#2B1B12] leading-tight">
+                Помоги корги пройти все 6 осенних испытаний!
+              </h2>
+
+              <p class="text-sm sm:text-base text-[#4A2F1B] leading-relaxed font-medium">
+                На солнечной осенней поляне мы сварим какао с зефирками, соберём яркий листопад, разложим урожай в плетёные корзинки, проверим тыквенную грядку, откроем словарный тайник и поднимемся в небо на тыкве-шаре. А чтобы у корги было отличное настроение — угощай его сахарной косточкой!
+              </p>
+
+              <!-- Pedagogical Features Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-[#F28522] text-white flex items-center justify-center shrink-0 font-extrabold text-sm">
+                    +2
+                  </div>
+                  <div class="text-xs sm:text-sm text-[#2B1B12]">
+                    <strong class="block font-bold">Умный повтор ошибок</strong>
+                    Каждое слово с ошибкой обязательно вернётся ещё минимум 2 раза для надёжного закрепления.
+                  </div>
+                </div>
+
+                <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-[#2B1B12] text-[#FCE473] flex items-center justify-center shrink-0 font-extrabold text-sm">
+                    А–Я
+                  </div>
+                  <div class="text-xs sm:text-sm text-[#2B1B12]">
+                    <strong class="block font-bold">Открытый словарик корги</strong>
+                    У всех сложных и словарных слов значение сразу написано под карточкой.
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button id="btn-start-game" type="button" class="pumpkin-btn w-full sm:w-auto px-8 py-4 rounded-2xl text-white font-bold text-base sm:text-lg tracking-wide flex items-center justify-center gap-3 cursor-pointer">
+                  <span>Начать осенний квест</span>
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M13 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Column: Interactive Corgi in Pumpkin with Draggable Bone Treat -->
+            <div class="lg:col-span-5 flex flex-col items-center justify-center">
+              <div class="w-full max-w-sm">
+                ${renderFeedableCorgiWidget("intro")}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("btn-start-game").addEventListener("click", startGame);
+      bindCorgiFeedingEvents();
+    }
+
+    /**
+     * =========================================================================
+     * GAME FLOW & QUEUE SCHEDULER
+     * =========================================================================
+     */
+    function startGame() {
+      initWordStats();
+      state.score = 0;
+      state.roundIndex = 0;
+      state.globalPendingRepeats = [];
+      state.sessionStartTimestamp = Date.now();
+      state.sessionEndTimestamp = null;
+      state.screen = "playing";
+      updateHeaderScore();
+      document.getElementById("progress-map").classList.remove("hidden");
+      loadRound(0);
+    }
+
+    function loadRound(rIndex) {
+      state.roundIndex = rIndex;
+      const round = ROUNDS[rIndex];
+      state.currentQueue = round.items.map(item => ({
+        ...item,
+        isRepeatInstance: false
+      }));
+
+      // Inject any pending repeat items from earlier rounds if switching to final round
+      if (rIndex === ROUNDS.length - 1 && state.globalPendingRepeats.length > 0) {
+        state.globalPendingRepeats.forEach(repItem => {
+          state.currentQueue.push({
+            ...repItem,
+            isRepeatInstance: true
+          });
+        });
+        state.globalPendingRepeats = [];
+      }
+
+      state.currentTaskIdx = 0;
+      state.stepOneDone = false;
+      state.stepOneSelection = null;
+
+      renderRouteMap();
+      renderCurrentTask();
+    }
+
+    function renderRouteMap() {
+      const stepsContainer = document.getElementById("route-steps");
+      document.getElementById("progress-counter").textContent = `Локация ${state.roundIndex + 1} из ${ROUNDS.length}`;
+
+      stepsContainer.innerHTML = ROUNDS.map((r, idx) => {
+        const isCurrent = idx === state.roundIndex;
+        const isDone = idx < state.roundIndex;
+        let bgClass = "bg-[#FFFDF5] border-[#D9B44A] text-[#5C3818] hover:border-[#F28522]";
+        if (isCurrent) bgClass = "bg-[#F28522] border-[#963E03] text-white shadow-sm";
+        else if (isDone) bgClass = "bg-[#EBF7EE] border-[#3B7A57] text-[#1E462F]";
+
+        return `
+          <button type="button" data-goto-round="${idx}" class="border-2 rounded-xl px-2.5 py-1.5 text-left transition flex items-center gap-2 cursor-pointer ${bgClass}">
+            <span class="w-5 h-5 rounded-full text-[11px] font-extrabold flex items-center justify-center shrink-0 ${isCurrent ? 'bg-white text-[#F28522]' : 'bg-[#FCE473] text-[#2B1B12]'}">
+              ${r.id}
+            </span>
+            <span class="text-[11px] sm:text-xs font-bold truncate">${r.shortTitle.replace(/^\d+\.\s*/, '')}</span>
+          </button>
+        `;
+      }).join("");
+
+      stepsContainer.querySelectorAll("[data-goto-round]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const targetIdx = parseInt(btn.getAttribute("data-goto-round"), 10);
+          loadRound(targetIdx);
+        });
+      });
+    }
+
+    function renderCurrentTask() {
+      const round = ROUNDS[state.roundIndex];
+      const item = state.currentQueue[state.currentTaskIdx];
+      const viewport = document.getElementById("game-viewport");
+
+      if (!item) {
+        if (state.roundIndex + 1 < ROUNDS.length) {
+          loadRound(state.roundIndex + 1);
+        } else {
+          finishGame();
+        }
+        return;
+      }
+
+      const wStat = state.wordStats[item.id];
+      const queueProgressPct = Math.round(((state.currentTaskIdx) / state.currentQueue.length) * 100);
+
+      const repeatBadgeHTML = item.isRepeatInstance
+        ? `<div class="mb-3 inline-flex items-center gap-1.5 bg-[#FFE8CC] border-2 border-[#F28522] text-[#8C3B00] px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide animate-pop">
+             <svg class="w-3.5 h-3.5 text-[#D95B16]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+             </svg>
+             <span>Закрепление слова (осталось повторов: ${wStat ? Math.max(1, wStat.remainingRepeats) : 1})</span>
+           </div>`
+        : "";
+
+      const openMeaningHTML = item.meaning
+        ? `<div class="mt-3 w-full max-w-lg bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl px-4 py-2.5 text-left shadow-xs">
+             <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#B8520A] block">Словарик корги (значение слова):</span>
+             <p class="text-xs sm:text-sm text-[#2B1B12] font-medium leading-snug mt-0.5">${item.meaning}</p>
+           </div>`
+        : "";
+
+      let workspaceHTML = "";
+
+      if (round.mechanicType === "sorter_two") {
+        workspaceHTML = renderTwoMugsSorter(round, item, repeatBadgeHTML, openMeaningHTML);
+      } else if (round.mechanicType === "leaf_insert") {
+        workspaceHTML = renderLeafInsert(round, item, repeatBadgeHTML, openMeaningHTML);
+      } else if (round.mechanicType === "sorter_three") {
+        workspaceHTML = renderThreeBasketsSorter(round, item, repeatBadgeHTML, openMeaningHTML);
+      } else if (round.mechanicType === "two_step_verify") {
+        workspaceHTML = renderTwoStepVerify(round, item, repeatBadgeHTML, openMeaningHTML);
+      } else if (round.mechanicType === "vocab_mastery") {
+        workspaceHTML = renderVocabMastery(round, item, repeatBadgeHTML, openMeaningHTML);
+      } else if (round.mechanicType === "two_step_conjugation") {
+        workspaceHTML = renderTwoStepConjugation(round, item, repeatBadgeHTML, openMeaningHTML);
+      }
+
+      viewport.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 flex-1 items-stretch">
+          <!-- Left / Top Companion Column: Feed Corgi a Bone Treat Any Time! -->
+          <aside class="lg:col-span-4 xl:col-span-3 flex flex-col">
+            ${renderFeedableCorgiWidget("playing")}
+          </aside>
+
+          <!-- Right / Main Task Column -->
+          <section class="lg:col-span-8 xl:col-span-9 warm-panel rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+            <!-- Round Title Header -->
+            <div class="border-b-2 border-[#F0D278] pb-3 mb-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border-2 border-[#2B1B12] flex items-center justify-center font-extrabold text-sm sm:text-base text-[#2B1B12] shrink-0">
+                  ${round.id}
+                </div>
+                <div>
+                  <h2 class="font-serif-title text-lg sm:text-2xl font-bold text-[#2B1B12] leading-tight">${round.title}</h2>
+                  <p class="text-xs sm:text-sm text-[#6E4726] font-medium">${round.subtitle}</p>
+                </div>
+              </div>
+              <div class="self-start sm:self-center shrink-0">
+                <span class="text-xs font-extrabold text-[#2B1B12] bg-[#FCE473] border-2 border-[#D9B44A] px-3 py-1 rounded-full">
+                  Слово ${state.currentTaskIdx + 1} из ${state.currentQueue.length}
+                </span>
+              </div>
+            </div>
+
+            <!-- Instruction Strip -->
+            <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm text-[#2B1B12] font-medium mb-4 flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#F28522] shrink-0"></span>
+              <span>${round.instruction}</span>
+            </div>
+
+            <!-- Active Interactive Workspace -->
+            <div class="my-auto py-1">
+              ${workspaceHTML}
+            </div>
+
+            <!-- Inline Toast Feedback -->
+            <div id="inline-success-banner" class="min-h-[48px] mt-3 flex items-center justify-center"></div>
+
+            <!-- Progress Footer -->
+            <div class="pt-3 border-t border-[#F0D278] flex items-center justify-between text-xs font-bold text-[#6E4726]">
+              <span>Прогресс текущего испытания</span>
+              <div class="w-32 sm:w-48 h-2.5 bg-[#F5E1A4] rounded-full overflow-hidden border border-[#D9B44A]">
+                <div class="h-full bg-[#F28522] transition-all duration-300" style="width: ${queueProgressPct}%"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+
+      bindTaskEvents(round, item);
+      bindCorgiFeedingEvents();
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * ROUND 1 VISUAL: REALISTIC PUFFY MARSHMALLOW (WITH WORD WRITTEN ON IT)
+     * AND TWO CERAMIC COCOA MUGS (Matching Task 1 on image_793921.jpg)
+     * Dynamic short labels strictly inside mug frames, no mug numbers or hints!
+     * -------------------------------------------------------------------------
+     */
+    function renderTwoMugsSorter(round, item, repeatBadgeHTML, openMeaningHTML) {
+      const wordLen = item.masked.length;
+      const svgFontSize = wordLen > 15 ? 20 : wordLen > 12 ? 23 : 26;
+
+      const mugs = [
+        { id: 1, badge: item.mug1 },
+        { id: 2, badge: item.mug2 }
+      ];
+
+      return `
+        <div class="flex flex-col items-center">
+          ${repeatBadgeHTML}
+
+          <!-- Realistic Wide Puffy 3D Marshmallow Pillow with Word Strictly Inside -->
+          <div id="marshmallow-card" draggable="true" class="cursor-grab active:cursor-grabbing flex flex-col items-center mb-5 w-full max-w-xl select-none">
+            <svg viewBox="0 0 380 144" class="w-full max-w-[340px] sm:max-w-[380px] h-auto animate-bob">
+              <!-- Ground Shadow Under Marshmallow -->
+              <ellipse cx="190" cy="132" rx="145" ry="10" fill="#D9B44A" opacity="0.45"/>
+
+              <!-- Marshmallow Lower Shadow Rim (3D Cylinder Volume) -->
+              <path d="M28 44 L352 44 L348 106 C348 128 32 128 32 106 Z" fill="#EDE3D2" stroke="#2B1B12" stroke-width="2.5"/>
+
+              <!-- Marshmallow Main Creamy-White Puffy Body -->
+              <path d="M28 38 L352 38 L349 98 C349 120 31 120 31 98 Z" fill="#FFFDF9" stroke="#2B1B12" stroke-width="2.5"/>
+
+              <!-- Marshmallow Top Surface (Warm Toasted Vanilla Oval) -->
+              <ellipse cx="190" cy="38" rx="162" ry="20" fill="#F7EFE2" stroke="#2B1B12" stroke-width="2.5"/>
+              <ellipse cx="190" cy="37" rx="116" ry="11" fill="#E8BA78" opacity="0.55"/>
+
+              <!-- Word Printed Strictly Inside the Marshmallow Body -->
+              <text x="190" y="90" text-anchor="middle" font-family="'Lora', serif" font-weight="700" font-size="${svgFontSize}" fill="#2B1B12">
+                ${item.masked}
+              </text>
+            </svg>
+
+            <!-- Immediate Open Lexical Meaning Below Marshmallow -->
+            ${openMeaningHTML}
+          </div>
+
+          <!-- Two Ceramic Cocoa Mugs (No numbering, no rule spoilers underneath, crisp frame inside mug) -->
+          <div class="grid grid-cols-2 gap-3 sm:gap-6 w-full max-w-2xl">
+            ${mugs.map((mug) => `
+              <button type="button" data-mug-num="${mug.id}" class="interactive-answer-btn interactive-target group bg-[#FFFDF7] hover:bg-[#FFF5E0] border-2 border-[#D9B44A] hover:border-[#F28522] rounded-2xl sm:rounded-3xl p-2.5 sm:p-5 flex flex-col items-center justify-center text-center cursor-pointer shadow-sm">
+                <!-- Crisp Solid-Fill Ceramic Mug with Wide Label Frame -->
+                <svg viewBox="0 0 240 150" class="w-full max-w-[190px] sm:max-w-[224px] h-auto">
+                  <!-- Mug Shadow -->
+                  <ellipse cx="110" cy="138" rx="74" ry="9" fill="#D9B44A" opacity="0.45"/>
+
+                  <!-- Ceramic Handle (Right Side) -->
+                  <path d="M174 48 C212 48 212 108 170 108" fill="none" stroke="#D5CFC4" stroke-width="15" stroke-linecap="round"/>
+                  <path d="M174 48 C208 48 208 108 170 108" fill="none" stroke="#F5F2EB" stroke-width="9" stroke-linecap="round"/>
+
+                  <!-- Ceramic Mug Body -->
+                  <path d="M32 34 L188 34 L178 102 C174 126 146 135 110 135 C74 135 46 126 42 102 Z" fill="#EAE5DC" stroke="#BFB8AC" stroke-width="2.2"/>
+                  <path d="M37 34 L170 34 L162 100 C158 122 134 130 102 130 C70 130 46 122 42 100 Z" fill="#F7F5F0"/>
+
+                  <!-- Mug Top Opening & Rich Hot Cocoa Surface -->
+                  <ellipse cx="110" cy="34" rx="78" ry="17" fill="#DDD6CA" stroke="#BFB8AC" stroke-width="2.2"/>
+                  <ellipse cx="110" cy="36" rx="71" ry="13.5" fill="#633B22"/>
+                  <!-- Lighter Cocoa Crema Swirl -->
+                  <ellipse cx="106" cy="35" rx="54" ry="8.5" fill="#7C4D30"/>
+                  <path d="M72 35 Q106 28 142 36" fill="none" stroke="#966242" stroke-width="2.5" stroke-linecap="round"/>
+
+                  <!-- Wide Crisp Condition Label Box Strictly Containing Short Label -->
+                  <rect x="33" y="68" width="174" height="38" rx="9" fill="#FFFFFF" stroke="#2B1B12" stroke-width="2.2"/>
+                  <text x="120" y="92" text-anchor="middle" font-family="'Inter', sans-serif" font-size="16" font-weight="800" fill="#2B1B12">${mug.badge}</text>
+                </svg>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * ROUND 2 VISUAL: CARVED AUTUMN LEAF + WOVEN BASKET (Task 3 on image_793921.jpg)
+     * -------------------------------------------------------------------------
+     */
+    function renderLeafInsert(round, item, repeatBadgeHTML, openMeaningHTML) {
+      return `
+        <div class="flex flex-col items-center">
+          ${repeatBadgeHTML}
+
+          <!-- Crisp Autumn Leaf Card -->
+          <div class="bg-[#FFFDF7] border-2 border-[#F28522] rounded-3xl px-5 py-5 sm:px-6 sm:py-6 max-w-xl w-full text-center shadow-sm mb-5 flex flex-col items-center">
+            <svg class="w-16 h-16 sm:w-20 sm:h-20 animate-bob mb-2" viewBox="0 0 100 100">
+              <path d="M18 76 C14 44 36 18 82 14 C78 56 52 80 18 76 Z" fill="#D94E1F"/>
+              <path d="M18 76 C38 58 58 40 82 14 C78 56 52 80 18 76 Z" fill="#F28522"/>
+              <path d="M12 84 L74 22" stroke="#5C230A" stroke-width="4" stroke-linecap="round"/>
+              <path d="M38 58 L34 36 M54 42 L72 44" stroke="#5C230A" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+
+            <div class="font-serif-title text-2xl sm:text-4xl font-bold text-[#2B1B12] tracking-wide">
+              ${item.masked}
+            </div>
+
+            ${openMeaningHTML}
+          </div>
+
+          <!-- Letter Choices -->
+          <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            ${item.choices.map(ch => `
+              <button type="button" data-choice="${ch}" class="interactive-answer-btn option-pill px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl text-xl sm:text-2xl font-extrabold text-[#2B1B12] cursor-pointer">
+                Буква ${ch}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * ROUND 3 VISUAL: TWO-STEP ALTERNATING VOWELS (1: CHOOSE LETTER -> 2: CHOOSE BASKET)
+     * -------------------------------------------------------------------------
+     */
+    function renderThreeBasketsSorter(round, item, repeatBadgeHTML, openMeaningHTML) {
+      const previewWord = state.stepOneDone
+        ? item.masked.replace("..", `<span class="text-[#D95B16] underline">${state.stepOneSelection.toLowerCase()}</span>`)
+        : item.masked;
+
+      return `
+        <div class="flex flex-col items-center">
+          ${repeatBadgeHTML}
+
+          <!-- Word Card (No spoiler label inside card) -->
+          <div id="acorn-card" ${state.stepOneDone ? 'draggable="true"' : ''} class="${state.stepOneDone ? 'cursor-grab active:cursor-grabbing' : ''} bg-[#FFFDF7] border-2 border-[#D9822B] rounded-3xl px-5 py-4 sm:px-7 sm:py-5 max-w-xl w-full text-center shadow-sm mb-4 flex flex-col items-center">
+            <div class="font-serif-title text-2xl sm:text-4xl font-bold text-[#2B1B12] tracking-wide">
+              ${previewWord}
+            </div>
+            ${openMeaningHTML}
+          </div>
+
+          <!-- Step 1: Choose Vowel in Root -->
+          <div class="w-full max-w-2xl mb-4 bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 sm:p-4 text-center">
+            <span class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#6E4726] block mb-2.5">
+              Шаг 1. Выбери гласную букву в корне:
+            </span>
+            <div class="flex items-center justify-center gap-3 sm:gap-4">
+              ${item.letterOptions.map(letter => {
+                const isSelected = state.stepOneSelection === letter;
+                return `
+                  <button type="button" data-r3-letter="${letter}" class="option-pill ${isSelected ? 'selected-pill' : ''} px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-extrabold text-base sm:text-lg cursor-pointer">
+                    Буква ${letter}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <!-- Step 2: Three Woven Wicker Baskets -->
+          <div class="w-full max-w-2xl ${state.stepOneDone ? 'opacity-100' : 'opacity-50 pointer-events-none'} transition-opacity">
+            <span class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#6E4726] block text-center mb-2.5">
+              Шаг 2. Отправь слово в корзинку по условию выбора гласной:
+            </span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full">
+              ${round.bins.map(bin => `
+                <button type="button" data-bin-id="${bin.id}" ${state.stepOneDone ? '' : 'disabled'} class="interactive-answer-btn interactive-target group bg-[#FFFDF7] hover:bg-[#FFF5E0] border-2 border-[#D9B44A] hover:border-[#F28522] rounded-2xl p-3 sm:p-4 flex flex-col items-center text-center cursor-pointer shadow-xs">
+                  <!-- Crisp Solid-Fill Woven Wicker Basket -->
+                  <svg viewBox="0 0 160 110" class="w-24 sm:w-32 h-16 sm:h-22 mb-1.5 sm:mb-2">
+                    <!-- Dark Brown Side Handles -->
+                    <path d="M26 38 C18 14 44 14 48 38" fill="none" stroke="#3D2314" stroke-width="6.5" stroke-linecap="round"/>
+                    <path d="M134 38 C142 14 116 14 112 38" fill="none" stroke="#3D2314" stroke-width="6.5" stroke-linecap="round"/>
+
+                    <!-- Basket Base Silhouette -->
+                    <path d="M22 38 L138 38 L124 94 C122 100 106 104 80 104 C54 104 38 100 36 94 Z" fill="#593820"/>
+
+                    <!-- Woven Checkerboard Blocks -->
+                    <rect x="30" y="46" width="22" height="10" rx="2" fill="#8C5A36"/>
+                    <rect x="56" y="46" width="22" height="10" rx="2" fill="#734728"/>
+                    <rect x="82" y="46" width="22" height="10" rx="2" fill="#8C5A36"/>
+                    <rect x="108" y="46" width="22" height="10" rx="2" fill="#734728"/>
+
+                    <rect x="34" y="60" width="20" height="10" rx="2" fill="#734728"/>
+                    <rect x="58" y="60" width="20" height="10" rx="2" fill="#8C5A36"/>
+                    <rect x="82" y="60" width="20" height="10" rx="2" fill="#734728"/>
+                    <rect x="106" y="60" width="20" height="10" rx="2" fill="#8C5A36"/>
+
+                    <rect x="38" y="74" width="18" height="10" rx="2" fill="#8C5A36"/>
+                    <rect x="60" y="74" width="18" height="10" rx="2" fill="#734728"/>
+                    <rect x="82" y="74" width="18" height="10" rx="2" fill="#8C5A36"/>
+                    <rect x="104" y="74" width="18" height="10" rx="2" fill="#734728"/>
+
+                    <!-- Top Braided Rim -->
+                    <rect x="18" y="34" width="124" height="10" rx="5" fill="#734728"/>
+                  </svg>
+                  <span class="font-bold text-xs sm:text-base text-[#2B1B12] group-hover:text-[#D95B16]">${bin.label}</span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * ROUND 4 VISUAL: PUMPKIN PATCH TWO-STEP VERIFICATION
+     * -------------------------------------------------------------------------
+     */
+    function renderTwoStepVerify(round, item, repeatBadgeHTML, openMeaningHTML) {
+      return `
+        <div class="flex flex-col items-center">
+          ${repeatBadgeHTML}
+
+          <!-- Pumpkin Word Banner -->
+          <div class="bg-[#FFFDF7] border-2 border-[#F28522] rounded-3xl px-5 py-4 sm:px-7 sm:py-5 max-w-xl w-full text-center shadow-sm mb-4 flex flex-col items-center">
+            <svg viewBox="0 0 120 90" class="w-16 h-12 sm:w-20 sm:h-14 mb-1.5 animate-bob">
+              <path d="M56 16 C55 6 60 2 66 4 C68 5 67 10 64 16 Z" fill="#3D2314"/>
+              <path d="M14 48 C14 24 34 16 60 16 C86 16 106 24 106 48 C106 74 86 84 60 84 C34 84 14 74 14 48 Z" fill="#F28522"/>
+              <path d="M60 18 L60 82 M40 20 C28 40 28 64 40 80 M80 20 C92 40 92 64 80 80" fill="none" stroke="#D96B18" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+            <div class="font-serif-title text-xl sm:text-3xl font-bold text-[#2B1B12]">
+              ${item.masked}
+            </div>
+            ${openMeaningHTML}
+          </div>
+
+          <!-- Step 1: Choose Verification Word -->
+          <div class="w-full max-w-2xl mb-4 bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 sm:p-4 text-center">
+            <span class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#6E4726] block mb-2.5">
+              Шаг 1. Подбери проверочное слово по смыслу:
+            </span>
+            <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5">
+              ${item.verifyOptions.map(vWord => {
+                const isSelected = state.stepOneSelection === vWord;
+                return `
+                  <button type="button" data-verify-word="${vWord}" class="option-pill ${isSelected ? 'selected-pill' : ''} px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm sm:text-base cursor-pointer">
+                    ${vWord}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <!-- Step 2: Choose Vowel -->
+          <div class="w-full max-w-2xl bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 sm:p-4 text-center ${state.stepOneDone ? 'opacity-100' : 'opacity-50 pointer-events-none'} transition-opacity">
+            <span class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#6E4726] block mb-2.5">
+              Шаг 2. Вставь пропущенную букву в корень:
+            </span>
+            <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              ${item.letterOptions.map(letOpt => `
+                <button type="button" data-letter="${letOpt}" ${state.stepOneDone ? '' : 'disabled'} class="interactive-answer-btn option-pill px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-extrabold text-base sm:text-xl cursor-pointer">
+                  Буква ${letOpt}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * ROUND 5 VISUAL: CORGI'S VOCABULARY CHEST (WITH IMMEDIATE MEANING)
+     * -------------------------------------------------------------------------
+     */
+    function renderVocabMastery(round, item, repeatBadgeHTML, openMeaningHTML) {
+      return `
+        <div class="flex flex-col items-center">
+          ${repeatBadgeHTML}
+
+          <div class="clean-card rounded-3xl px-5 py-5 sm:px-8 sm:py-6 max-w-xl w-full text-center mb-5 flex flex-col items-center">
+            <span class="inline-block bg-[#FCE473] border border-[#D9B44A] text-[#2B1B12] text-[11px] font-extrabold uppercase px-3 py-0.5 rounded-full mb-2">
+              Словарное слово 6 класса
+            </span>
+            <div class="font-serif-title text-2xl sm:text-4xl font-bold text-[#2B1B12] tracking-wide">
+              ${item.masked}
+            </div>
+            ${openMeaningHTML}
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full max-w-xl">
+            ${item.choices.map(ch => `
+              <button type="button" data-choice="${ch}" class="interactive-answer-btn option-pill px-5 sm:px-7 py-3 sm:py-3.5 rounded-2xl text-sm sm:text-lg font-extrabold text-[#2B1B12] cursor-pointer">
+                ${ch}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * -------------------------------------------------------------------------
+     * ROUND 6 VISUAL: PUMPKIN HOT-AIR BALLOON TWO-STEP CONJUGATION
+     * -------------------------------------------------------------------------
+     */
+    function renderTwoStepConjugation(round, item, repeatBadgeHTML, openMeaningHTML) {
+      return `
+        <div class="flex flex-col items-center">
+          ${repeatBadgeHTML}
+
+          <div class="bg-[#FFFDF7] border-2 border-[#F28522] rounded-3xl px-5 py-4 sm:px-7 sm:py-5 max-w-xl w-full text-center shadow-sm mb-4 flex flex-col items-center">
+            <div class="font-serif-title text-xl sm:text-3xl font-bold text-[#2B1B12]">
+              ${item.masked}
+            </div>
+            <div class="text-xs sm:text-sm font-bold text-[#6E4726] mt-1">
+              Начальная форма (инфинитив): <span class="text-[#D95B16] underline">${item.infinitive}</span>
+            </div>
+            ${openMeaningHTML}
+          </div>
+
+          <!-- Step 1: Select I or II Conjugation -->
+          <div class="w-full max-w-2xl mb-4 bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 sm:p-4 text-center">
+            <span class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#6E4726] block mb-2.5">
+              Шаг 1. Определи спряжение глагола:
+            </span>
+            <div class="flex items-center justify-center gap-3 sm:gap-4">
+              ${item.conjOptions.map(cOpt => {
+                const isSelected = state.stepOneSelection === cOpt;
+                return `
+                  <button type="button" data-conj="${cOpt}" class="option-pill ${isSelected ? 'selected-pill' : ''} px-5 sm:px-7 py-2.5 rounded-xl font-extrabold text-sm sm:text-base cursor-pointer">
+                    ${cOpt}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <!-- Step 2: Select Personal Ending Vowel -->
+          <div class="w-full max-w-2xl bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 sm:p-4 text-center ${state.stepOneDone ? 'opacity-100' : 'opacity-50 pointer-events-none'} transition-opacity">
+            <span class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-[#6E4726] block mb-2.5">
+              Шаг 2. Выбери букву в личном окончании глагола:
+            </span>
+            <div class="flex items-center justify-center gap-3 sm:gap-4">
+              ${item.endingOptions.map(endOpt => `
+                <button type="button" data-ending="${endOpt}" ${state.stepOneDone ? '' : 'disabled'} class="interactive-answer-btn option-pill px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-extrabold text-base sm:text-xl cursor-pointer">
+                  Буква ${endOpt}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * =========================================================================
+     * TASK EVENT BINDING & EVALUATION ENGINE
+     * =========================================================================
+     */
+    function bindTaskEvents(round, item) {
+      if (round.mechanicType === "sorter_two") {
+        const marshmallow = document.getElementById("marshmallow-card");
+        if (marshmallow) {
+          marshmallow.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", item.id);
+          });
+        }
+
+        document.querySelectorAll("[data-mug-num]").forEach(mugBtn => {
+          const mugNum = parseInt(mugBtn.getAttribute("data-mug-num"), 10);
+          const chosenBadge = mugNum === 1 ? item.mug1 : item.mug2;
+          const correctBadge = item.correctMug === 1 ? item.mug1 : item.mug2;
+
+          const submitMug = () => {
+            handleAnswerSubmission({
+              isCorrect: mugNum === item.correctMug,
+              userChoiceLabel: chosenBadge,
+              correctLabel: `${correctBadge} (${item.full})`
+            });
+          };
+
+          mugBtn.addEventListener("click", submitMug);
+          mugBtn.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            mugBtn.classList.add("ring-4", "ring-[#F28522]");
+          });
+          mugBtn.addEventListener("dragleave", () => {
+            mugBtn.classList.remove("ring-4", "ring-[#F28522]");
+          });
+          mugBtn.addEventListener("drop", (e) => {
+            e.preventDefault();
+            mugBtn.classList.remove("ring-4", "ring-[#F28522]");
+            submitMug();
+          });
+        });
+      }
+
+      if (round.mechanicType === "sorter_three") {
+        // Step 1: Letter selection buttons
+        document.querySelectorAll("[data-r3-letter]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.stepOneSelection = btn.getAttribute("data-r3-letter");
+            state.stepOneDone = true;
+            renderCurrentTask();
+          });
+        });
+
+        // Step 2: Drag or click into one of the 3 woven baskets
+        const draggableEl = document.getElementById("acorn-card");
+        if (draggableEl && state.stepOneDone) {
+          draggableEl.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", item.id);
+          });
+        }
+
+        document.querySelectorAll("[data-bin-id]").forEach(binBtn => {
+          const binId = binBtn.getAttribute("data-bin-id");
+          const binObj = round.bins.find(b => b.id === binId);
+          const correctBinObj = round.bins.find(b => b.id === item.targetBin);
+
+          const evaluateBin = () => {
+            if (!state.stepOneDone) return;
+            const isLetterRight = state.stepOneSelection === item.correctLetter;
+            const isBinRight = binId === item.targetBin;
+
+            handleAnswerSubmission({
+              isCorrect: isLetterRight && isBinRight,
+              userChoiceLabel: `Буква «${state.stepOneSelection}», корзинка «${binObj ? binObj.label : binId}»`,
+              correctLabel: `Буква «${item.correctLetter}», корзинка «${correctBinObj ? correctBinObj.label : item.targetBin}»`
+            });
+          };
+
+          binBtn.addEventListener("click", evaluateBin);
+          binBtn.addEventListener("dragover", (e) => {
+            if (!state.stepOneDone) return;
+            e.preventDefault();
+            binBtn.classList.add("ring-4", "ring-[#F28522]");
+          });
+          binBtn.addEventListener("dragleave", () => {
+            binBtn.classList.remove("ring-4", "ring-[#F28522]");
+          });
+          binBtn.addEventListener("drop", (e) => {
+            if (!state.stepOneDone) return;
+            e.preventDefault();
+            binBtn.classList.remove("ring-4", "ring-[#F28522]");
+            evaluateBin();
+          });
+        });
+      }
+
+      if (round.mechanicType === "leaf_insert" || round.mechanicType === "vocab_mastery") {
+        document.querySelectorAll("[data-choice]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const chosen = btn.getAttribute("data-choice");
+            handleAnswerSubmission({
+              isCorrect: chosen === item.correct,
+              userChoiceLabel: chosen,
+              correctLabel: item.correct
+            });
+          });
+        });
+      }
+
+      if (round.mechanicType === "two_step_verify") {
+        document.querySelectorAll("[data-verify-word]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.stepOneSelection = btn.getAttribute("data-verify-word");
+            state.stepOneDone = true;
+            renderCurrentTask();
+          });
+        });
+
+        document.querySelectorAll("[data-letter]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const chosenLetter = btn.getAttribute("data-letter");
+            const isVerifyRight = state.stepOneSelection === item.correctVerify;
+            const isLetterRight = chosenLetter === item.correctLetter;
+
+            handleAnswerSubmission({
+              isCorrect: isVerifyRight && isLetterRight,
+              userChoiceLabel: `${state.stepOneSelection} → «${chosenLetter}»`,
+              correctLabel: `${item.correctVerify} → «${item.correctLetter}»`
+            });
+          });
+        });
+      }
+
+      if (round.mechanicType === "two_step_conjugation") {
+        document.querySelectorAll("[data-conj]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.stepOneSelection = btn.getAttribute("data-conj");
+            state.stepOneDone = true;
+            renderCurrentTask();
+          });
+        });
+
+        document.querySelectorAll("[data-ending]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const chosenEnd = btn.getAttribute("data-ending");
+            const isConjRight = state.stepOneSelection === item.correctConj;
+            const isEndRight = chosenEnd === item.correctEnding;
+
+            handleAnswerSubmission({
+              isCorrect: isConjRight && isEndRight,
+              userChoiceLabel: `${state.stepOneSelection}, «${chosenEnd}»`,
+              correctLabel: `${item.correctConj}, «${item.correctEnding}»`
+            });
+          });
+        });
+      }
+    }
+
+    function handleAnswerSubmission({ isCorrect, userChoiceLabel, correctLabel }) {
+      const round = ROUNDS[state.roundIndex];
+      const item = state.currentQueue[state.currentTaskIdx];
+      const wStat = state.wordStats[item.id];
+
+      // Lock interactive buttons during transition
+      document.querySelectorAll(".interactive-answer-btn").forEach(b => {
+        b.disabled = true;
+      });
+
+      if (isCorrect) {
+        if (wStat.firstTryCorrect === null) {
+          wStat.firstTryCorrect = true;
+        }
+        wStat.consecutiveCorrect += 1;
+        if (wStat.remainingRepeats > 0) {
+          wStat.remainingRepeats -= 1;
+        }
+
+        state.score += item.isRepeatInstance ? 5 : 10;
+        updateHeaderScore();
+
+        const banner = document.getElementById("inline-success-banner");
+        if (banner) {
+          banner.innerHTML = `
+            <div class="bg-[#EBF7EE] border-2 border-[#3B7A57] text-[#1E462F] px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold flex items-center gap-2 animate-pop">
+              <svg class="w-4 h-4 text-[#3B7A57] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+              <span>Верно! Правильное написание: «${item.full}»</span>
+            </div>
+          `;
+        }
+
+        setTimeout(() => {
+          advanceToNextTask();
+        }, 750);
+      } else {
+        if (wStat.firstTryCorrect === null) {
+          wStat.firstTryCorrect = false;
+        }
+        wStat.mistakesCount += 1;
+        wStat.consecutiveCorrect = 0;
+        wStat.wrongChoices.push(userChoiceLabel);
+
+        // Enforce at least +2 mandatory repeats (or 2 consecutive correct for vocabulary words)
+        wStat.remainingRepeats = Math.max(wStat.remainingRepeats, 2);
+
+        // Schedule 2 repeats: one 2 steps later in the current round, one at the end of the round
+        const repeatCopy1 = { ...item, isRepeatInstance: true };
+        const repeatCopy2 = { ...item, isRepeatInstance: true };
+        const insertPos = Math.min(state.currentQueue.length, state.currentTaskIdx + 3);
+        state.currentQueue.splice(insertPos, 0, repeatCopy1);
+        state.currentQueue.push(repeatCopy2);
+
+        showMandatoryErrorModal(item, userChoiceLabel, correctLabel, wStat);
+      }
+    }
+
+    function advanceToNextTask() {
+      state.currentTaskIdx += 1;
+      state.stepOneDone = false;
+      state.stepOneSelection = null;
+      renderCurrentTask();
+    }
+
+    /**
+     * =========================================================================
+     * 10-SECOND MANDATORY EXPLANATION MODAL ON MISTAKE
+     * =========================================================================
+     */
+    function showMandatoryErrorModal(item, userChoiceLabel, correctLabel, wStat) {
+      const modal = document.getElementById("error-modal");
+      const titleEl = document.getElementById("err-modal-title");
+      const userChoiceEl = document.getElementById("err-modal-user-choice");
+      const explEl = document.getElementById("err-modal-explanation");
+      const meaningBox = document.getElementById("err-modal-meaning-box");
+      const meaningText = document.getElementById("err-modal-meaning-text");
+      const repeatNote = document.getElementById("err-modal-repeat-note");
+      const timerBar = document.getElementById("err-timer-bar");
+      const closeBtn = document.getElementById("btn-close-error");
+
+      titleEl.textContent = `Правильно: ${item.full}`;
+      userChoiceEl.textContent = `Твой ответ: ${userChoiceLabel} (нужно: ${correctLabel})`;
+      explEl.textContent = item.explanation;
+
+      if (item.meaning) {
+        meaningBox.classList.remove("hidden");
+        meaningText.textContent = item.meaning;
+      } else {
+        meaningBox.classList.add("hidden");
+      }
+
+      repeatNote.textContent = wStat.isVocab
+        ? "Это словарное слово! Оно будет возвращаться, пока ты не напишешь его безошибочно 2 раза подряд."
+        : "Это слово добавлено в очередь отработки и встретится ещё минимум 2 раза!";
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+
+      let secondsLeft = 10;
+      closeBtn.disabled = true;
+      closeBtn.textContent = `Внимательно прочитай объяснение (${secondsLeft} сек.)`;
+      timerBar.style.transition = "none";
+      timerBar.style.width = "100%";
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          timerBar.style.transition = "width 10s linear";
+          timerBar.style.width = "0%";
+        });
+      });
+
+      if (state.errorCountdownInterval) {
+        clearInterval(state.errorCountdownInterval);
+      }
+
+      state.errorCountdownInterval = setInterval(() => {
+        secondsLeft -= 1;
+        if (secondsLeft > 0) {
+          closeBtn.textContent = `Внимательно прочитай объяснение (${secondsLeft} сек.)`;
+        } else {
+          clearInterval(state.errorCountdownInterval);
+          state.errorCountdownInterval = null;
+          closeBtn.disabled = false;
+          closeBtn.textContent = "Я прочитал(а) правило — продолжить игру";
+        }
+      }, 1000);
+
+      closeBtn.onclick = () => {
+        if (closeBtn.disabled) return;
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        advanceToNextTask();
+      };
+    }
+
+    /**
+     * =========================================================================
+     * VICTORY SCREEN & TUTOR REPORT GENERATION
+     * =========================================================================
+     */
+    function finishGame() {
+      state.screen = "victory";
+      state.sessionEndTimestamp = Date.now();
+      document.getElementById("progress-map").classList.add("hidden");
+
+      const statsArr = Object.values(state.wordStats);
+      const totalWords = statsArr.length;
+      const firstTryRightCount = statsArr.filter(s => s.firstTryCorrect === true).length;
+      const accuracyPct = Math.round((firstTryRightCount / totalWords) * 100);
+      const wordsWithMistakes = statsArr.filter(s => s.mistakesCount > 0);
+
+      const viewport = document.getElementById("game-viewport");
+      viewport.innerHTML = `
+        <div class="warm-panel rounded-3xl p-6 sm:p-9 space-y-6 my-auto">
+          <div class="text-center max-w-2xl mx-auto space-y-3">
+            <div class="flex justify-center animate-bob">
+              ${getPumpkinBalloonSVG("w-40 h-44")}
+            </div>
+
+            <h2 class="font-serif-title text-2xl sm:text-4xl font-bold text-[#2B1B12]">
+              Ура! Все 6 осенних испытаний пройдены!
+            </h2>
+            <p class="text-sm sm:text-base text-[#4A2F1B] font-medium">
+              Корги поднялся на тыквенном воздушном шаре! Все правила отработаны, а сложные слова закреплены.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto">
+            <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-4 text-center">
+              <span class="text-xs font-extrabold uppercase text-[#6E4726] block">Набрано баллов</span>
+              <span class="font-serif-title text-2xl sm:text-3xl font-bold text-[#D95B16]">${state.score}</span>
+            </div>
+            <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-4 text-center">
+              <span class="text-xs font-extrabold uppercase text-[#6E4726] block">Чисто с 1-й попытки</span>
+              <span class="font-serif-title text-2xl sm:text-3xl font-bold text-[#3B7A57]">${accuracyPct}%</span>
+            </div>
+            <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-4 text-center">
+              <span class="text-xs font-extrabold uppercase text-[#6E4726] block">Отработано слов</span>
+              <span class="font-serif-title text-2xl sm:text-3xl font-bold text-[#2B1B12]">${totalWords - wordsWithMistakes.length} / ${totalWords}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button id="btn-view-full-report" type="button" class="pumpkin-btn px-6 py-3.5 rounded-2xl text-white font-bold text-sm sm:text-base cursor-pointer">
+              Открыть полный отчёт для репетитора
+            </button>
+            <button id="btn-restart-game" type="button" class="option-pill px-6 py-3.5 rounded-2xl font-bold text-sm sm:text-base text-[#2B1B12] cursor-pointer">
+              Пройти квест ещё раз
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("btn-view-full-report").addEventListener("click", openTutorReportModal);
+      document.getElementById("btn-restart-game").addEventListener("click", () => startGame());
+    }
+
+    /**
+     * =========================================================================
+     * TUTOR REPORT MODAL (SILENT TIMESTAMPS + COMPLETE ERROR LOG)
+     * =========================================================================
+     */
+    function buildReportData() {
+      const statsArr = Object.values(state.wordStats);
+      const answeredWords = statsArr.filter(s => s.firstTryCorrect !== null);
+      const firstTryRight = answeredWords.filter(s => s.firstTryCorrect === true).length;
+      const accuracy = answeredWords.length > 0 ? Math.round((firstTryRight / answeredWords.length) * 100) : 0;
+      const mistakesList = statsArr.filter(s => s.mistakesCount > 0);
+      const durationSec = getSessionDurationSeconds();
+
+      return {
+        startTimeFormatted: formatClockTimestamp(state.sessionStartTimestamp),
+        endTimeFormatted: state.sessionEndTimestamp
+          ? formatClockTimestamp(state.sessionEndTimestamp)
+          : "В процессе (текущий срез: " + formatClockTimestamp(Date.now()) + ")",
+        durationFormatted: state.sessionStartTimestamp ? formatDuration(durationSec) : "Ещё не начато",
+        score: state.score,
+        totalUniqueWords: statsArr.length,
+        answeredCount: answeredWords.length,
+        firstTryRight,
+        accuracy,
+        mistakesList
+      };
+    }
+
+    function openTutorReportModal() {
+      const data = buildReportData();
+      const contentEl = document.getElementById("report-content");
+
+      const mistakesHTML = data.mistakesList.length === 0
+        ? `<div class="bg-[#EBF7EE] border-2 border-[#3B7A57] rounded-2xl p-4 text-sm text-[#1E462F] font-bold">
+             Ошибок не зафиксировано! Все пройденные слова выполнены верно с первой попытки.
+           </div>`
+        : `<div class="space-y-2.5">
+             ${data.mistakesList.map(m => {
+               const mastered = m.remainingRepeats === 0 && m.consecutiveCorrect >= 1;
+               return `
+                 <div class="bg-[#FFF9E6] border-2 border-[#E8B84B] rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm">
+                   <div>
+                     <div class="font-bold text-[#2B1B12] text-base">${m.full} <span class="text-xs font-normal text-[#6E4726]">(${m.roundTitle})</span></div>
+                     <div class="text-red-800 mt-0.5 font-medium">Неверные выборы ученика: <strong>${m.wrongChoices.join("; ")}</strong> (всего ошибок: ${m.mistakesCount})</div>
+                   </div>
+                   <div class="shrink-0">
+                     ${mastered
+                       ? `<span class="inline-block bg-[#EBF7EE] text-[#1E462F] border border-[#3B7A57] font-bold text-xs px-2.5 py-1 rounded-lg">Повторы (+2) закрыты</span>`
+                       : `<span class="inline-block bg-[#FFE8CC] text-[#8C3B00] border border-[#F28522] font-bold text-xs px-2.5 py-1 rounded-lg">На отработке (осталось повторов: ${m.remainingRepeats})</span>`
+                     }
+                   </div>
+                 </div>
+               `;
+             }).join("")}
+           </div>`;
+
+      const roundsBreakdownHTML = ROUNDS.map(r => {
+        const rStats = r.items.map(it => state.wordStats[it.id]);
+        const rDone = rStats.filter(s => s.firstTryCorrect !== null).length;
+        const rClean = rStats.filter(s => s.firstTryCorrect === true).length;
+        return `
+          <div class="flex items-center justify-between bg-white border border-[#E8B84B] rounded-xl px-3.5 py-2 text-xs sm:text-sm">
+            <span class="font-bold text-[#2B1B12]">${r.title}</span>
+            <span class="font-extrabold text-[#6E4726]">С 1-й попытки: ${rClean} из ${rDone} (всего в раунде: ${r.items.length})</span>
+          </div>
+        `;
+      }).join("");
+
+      contentEl.innerHTML = `
+        <!-- Silent Chronometry Block for Tutor -->
+        <div class="bg-[#FCE473]/60 border-2 border-[#D9B44A] rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
+          <div>
+            <span class="text-[11px] uppercase font-extrabold text-[#6E4726] block">Начало работы:</span>
+            <span class="font-bold text-[#2B1B12]">${data.startTimeFormatted}</span>
+          </div>
+          <div>
+            <span class="text-[11px] uppercase font-extrabold text-[#6E4726] block">Окончание:</span>
+            <span class="font-bold text-[#2B1B12]">${data.endTimeFormatted}</span>
+          </div>
+          <div>
+            <span class="text-[11px] uppercase font-extrabold text-[#6E4726] block">Суммарная продолжительность:</span>
+            <span class="font-extrabold text-[#D95B16] text-base">${data.durationFormatted}</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-[#FFF9E6] border border-[#E8B84B] rounded-2xl p-3 text-center">
+            <div class="text-[11px] uppercase font-extrabold text-[#6E4726]">Баллы</div>
+            <div class="text-xl font-extrabold text-[#D95B16]">${data.score}</div>
+          </div>
+          <div class="bg-[#FFF9E6] border border-[#E8B84B] rounded-2xl p-3 text-center">
+            <div class="text-[11px] uppercase font-extrabold text-[#6E4726]">Точность (1-й раз)</div>
+            <div class="text-xl font-extrabold text-[#3B7A57]">${data.accuracy}%</div>
+          </div>
+          <div class="bg-[#FFF9E6] border border-[#E8B84B] rounded-2xl p-3 text-center">
+            <div class="text-[11px] uppercase font-extrabold text-[#6E4726]">Пройдено слов</div>
+            <div class="text-xl font-extrabold text-[#2B1B12]">${data.answeredCount} / ${data.totalUniqueWords}</div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-[#2B1B12] mb-2">Статистика по раундам:</h3>
+          <div class="space-y-1.5">${roundsBreakdownHTML}</div>
+        </div>
+
+        <div>
+          <h3 class="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-[#2B1B12] mb-2">Детальный журнал ошибок и контрольных повторов:</h3>
+          ${mistakesHTML}
+        </div>
+      `;
+
+      const modal = document.getElementById("report-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    document.getElementById("btn-open-report").addEventListener("click", openTutorReportModal);
+    document.getElementById("btn-close-report").addEventListener("click", () => {
+      const modal = document.getElementById("report-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    });
+
+    document.getElementById("btn-copy-report").addEventListener("click", () => {
+      const data = buildReportData();
+      const lines = [
+        "ОТЧЁТ ДЛЯ РЕПЕТИТОРА — «ОСЕННЕЕ ПРИКЛЮЧЕНИЕ КОРГИ» (6 КЛАСС)",
+        `Время начала: ${data.startTimeFormatted}`,
+        `Время окончания: ${data.endTimeFormatted}`,
+        `Суммарная продолжительность: ${data.durationFormatted}`,
+        `Набранные баллы: ${data.score}`,
+        `Точность с первой попытки: ${data.accuracy}% (${data.firstTryRight} из ${data.answeredCount} слов)`,
+        "",
+        "ЖУРНАЛ ОШИБОК И КОНТРОЛЬНЫХ ПОВТОРОВ:"
+      ];
+
+      if (data.mistakesList.length === 0) {
+        lines.push("— Ошибок не допущено.");
+      } else {
+        data.mistakesList.forEach((m, i) => {
+          const status = m.remainingRepeats === 0 && m.consecutiveCorrect >= 1 ? "повторы отработаны" : "ожидает повтора";
+          lines.push(`${i + 1}. «${m.full}» [${m.roundTitle}] — ошибка ученика: ${m.wrongChoices.join(", ")} (ошибок: ${m.mistakesCount}, статус: ${status})`);
+        });
+      }
+
+      const textToCopy = lines.join("\n");
+      const tempTextarea = document.createElement("textarea");
+      tempTextarea.value = textToCopy;
+      document.body.appendChild(tempTextarea);
+      tempTextarea.select();
+      try {
+        document.execCommand("copy");
+        const fb = document.getElementById("copy-feedback");
+        fb.classList.remove("opacity-0");
+        setTimeout(() => fb.classList.add("opacity-0"), 2500);
+      } catch (err) {
+        // Fallback ignored
+      }
+      document.body.removeChild(tempTextarea);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initWordStats();
+      renderIntro();
+    });
+  </script>
+</body>
+</html>

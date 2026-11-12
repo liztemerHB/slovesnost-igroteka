@@ -77,6 +77,21 @@
       "order": 4,
       "hidden": false,
       "archived": false
+    },
+    {
+      "id": "osennee-priklyuchenie-korgi-orfograficheskiy-kvest-6-klass",
+      "slug": "osennee-priklyuchenie-korgi-orfograficheskiy-kvest-6-klass",
+      "title": "Осеннее приключение корги — Орфографический квест (6 класс)",
+      "grade": 6,
+      "topic": "Орфография 6 класс Корги",
+      "subtitle": "Интерактивный квест-тренажёр",
+      "cover": "quest",
+      "kind": "game",
+      "file": "osennee-priklyuchenie-korgi-orfograficheskiy-kvest-6-klass.html",
+      "tags": [],
+      "order": 5,
+      "hidden": false,
+      "archived": false
     }
   ]
 }
